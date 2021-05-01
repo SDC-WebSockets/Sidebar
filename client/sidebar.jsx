@@ -6,4 +6,4 @@ ReactDOM.render(
   document.getElementById('sidebar')
 );
 
-console.log("Hello, world!");
+console.log("Hello, worlds!");

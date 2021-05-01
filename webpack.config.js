@@ -5,7 +5,7 @@ module.exports = {
   mode: process.env.NODE_ENV || "development",
   entry: ['./client/sidebar.jsx', './client/styles.css'],
   output: {
-    filename: 'sidebar.js',
+    filename: 'index.js',
     path: path.resolve(__dirname, 'public'),
   },
   module: {
@@ -34,7 +34,7 @@ module.exports = {
   plugins: [
     new HtmlWebpackPlugin({
       template: path.resolve(__dirname, 'client', 'sidebar.html'),
-      filename: 'sidebar.html'
+      filename: 'index.html'
     })
   ],
   devServer: {
