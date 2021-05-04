@@ -65,7 +65,6 @@ const populateDatabase = async (numberOfRecords) => {
 }
 
 const generatePriceData = (index) => {
-  console.log("index: " + index);
   const basePrice = createBasePrice();
   const discountPercentage = 84;
   const saleEndDate = new Date();
@@ -77,6 +76,7 @@ const generatePriceData = (index) => {
     saleEndDate: saleEndDate.setDate(saleEndDate.getDate() + 3),
     saleOngoing: randomDecider(30)
   });
+
   return priceData;
 }
 
@@ -101,7 +101,7 @@ const createBasePrice = () => {
   basePrice = Math.round(basePrice * 100) / 100;
 
   // 20-ish% of the time we'll add $5, so we get the occasional $54.99 or whatever
-  if (Math.random() < 0.2) {
+  if (randomDecider(20)) {
     basePrice = basePrice + 5;
   }
 
