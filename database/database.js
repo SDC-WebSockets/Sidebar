@@ -13,9 +13,26 @@ const priceSchema = new mongoose.Schema({
   discountedPrice: Number,
   saleEndDate: Date,
   saleOngoing: Boolean
-})
+});
 
 const Price = mongoose.model('Price', priceSchema);
+
+const previewVideoSchema = new mongoose.Schema({
+  courseID: Number,
+  previewVideoUrl: String,
+});
+
+const PreviewVideo = mongoose.model('PreviewVideo', previewVideoSchema);
+
+const sidebarSchema = new mongoose.Schema({
+  courseID: Number,
+  fullLifetimeAccess: String,
+  accessTypes: String,
+  assignments: Boolean,
+  certificateOfCompletion: Boolean
+})
+
+const Sidebar = mongoose.model('Sidebar', sidebarSchema);
 
 const populateDatabase = async (numberOfRecords) => {
   // Make a list of all the collections
@@ -38,6 +55,10 @@ const populateDatabase = async (numberOfRecords) => {
       for (let i = 0; i < numberOfRecords; i++) {
         const newPrice = generatePriceData(i + 1);
         await newPrice.save().then((result) => console.log(result));
+        const newPreviewVideo = generatePreviewVideoData(i + 1);
+        await newPreviewVideo.save().then((result) => console.log(result));
+        const newSidebar = generateSidebarData(i + 1);
+        await newSidebar.save().then((result) => console.log(result));
       }
     }
   });
@@ -54,7 +75,7 @@ const generatePriceData = (index) => {
     discountPercentage: discountPercentage,
     discountedPrice: Math.round(Math.floor(basePrice * (discountPercentage / 100)) * 100) / 100,
     saleEndDate: saleEndDate.setDate(saleEndDate.getDate() + 3),
-    saleOngoing: Math.random() * 100 > 30 ? false : true
+    saleOngoing: randomDecider(30)
   });
   return priceData;
 }
@@ -85,6 +106,39 @@ const createBasePrice = () => {
   }
 
   return basePrice;
+}
+
+const generatePreviewVideoData = (index) => {
+
+  const videoIndex = Math.floor(Math.random() * 10);
+
+  const previewVideoData = new PreviewVideo({
+    courseID: index,
+    previewVideoUrl: "https://example.com/previewVideo" + videoIndex + ".mp4",
+  });
+
+  return previewVideoData;
+}
+
+const generateSidebarData = (index) => {
+
+  const sidebarData = new Sidebar({
+    courseID: index,
+    fullLifetimeAccess: randomDecider(70) ? "Full lifetime access" : "Full access during subscription term",
+    accessTypes: "Access on mobile and TV",
+    assignments: randomDecider(70),
+    certificateOfCompletion: randomDecider(90)
+  });
+
+  return sidebarData;
+}
+
+const randomDecider = (percentageChance) => {
+  if (Math.random() * 100 < percentageChance) {
+    return true;
+  } else {
+    return false;
+  }
 }
 
 exports.populateDatabase = populateDatabase;
