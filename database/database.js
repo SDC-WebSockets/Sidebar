@@ -1,11 +1,14 @@
 const mongoose = require('mongoose');
 
+// Actually connecting to the database
 mongoose.connect('mongodb://localhost:27017/sidebar?gssapiServiceName=mongodb', {useNewUrlParser: true, useUnifiedTopology: true})
 .then(() => console.log("Connected to database."))
 .catch( error => console.log("Connection error: ", error));
 
 const connection = mongoose.connection;
 
+// ------------------------------------------------------------------
+// Setting up schemas and models
 const priceSchema = new mongoose.Schema({
   courseID: Number,
   basePrice: Number,
@@ -34,6 +37,22 @@ const sidebarSchema = new mongoose.Schema({
 
 const Sidebar = mongoose.model('Sidebar', sidebarSchema);
 
+// ------------------------------------------------------------------
+// Functions that retrieve information from the database
+const getPrice = (query, callback) => {
+  return Price.find(query, callback);
+}
+
+const getPreviewVideo = (query, callback) => {
+  return PreviewVideo.find(query, callback);
+}
+
+const getSidebar = (query, callback) => {
+  return Sidebar.find(query, callback);
+}
+
+// ------------------------------------------------------------------
+// Functions that create data and add it to the database
 const populateDatabase = async (numberOfRecords) => {
   // Make a list of all the collections
   await connection.db.listCollections().toArray( async (err, collections) => {
@@ -141,4 +160,9 @@ const randomDecider = (percentageChance) => {
   }
 }
 
+// ------------------------------------------------------------------
+// Exports
 exports.populateDatabase = populateDatabase;
+exports.getPrice = getPrice;
+exports.getSidebar = getSidebar;
+exports.getPreviewVideo = getPreviewVideo;
