@@ -1,9 +1,8 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
+import { Sidebar } from './components/sidebar';
 
 ReactDOM.render(
-  <h1>Hello, world!</h1>,
+  <Sidebar />,
   document.getElementById('sidebar')
 );
-
-console.log("Hello, worlds!");
