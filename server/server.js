@@ -11,12 +11,6 @@ app.listen(port, () => {
   console.log(`Listening at http://localhost:${port}`)
 });
 
-app.get('/populate', (req, res) => {
-  console.log("GET request received at /populate.");
-  db.populateDatabase(100);
-  res.send("Database cleared and re-populated.");
-});
-
 app.get('/price', (req, res) => {
   console.log("GET request received at /price.");
   db.getPrice(req.query, (err, docs) => {
