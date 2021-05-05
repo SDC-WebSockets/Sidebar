@@ -3,7 +3,7 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 module.exports = {
   mode: process.env.NODE_ENV || "development",
-  entry: ['./client/sidebar.jsx', './client/styles.css'],
+  entry: ['./client/index.jsx', './client/styles.css'],
   output: {
     filename: 'index.js',
     path: path.resolve(__dirname, 'public'),
@@ -33,7 +33,7 @@ module.exports = {
   },
   plugins: [
     new HtmlWebpackPlugin({
-      template: path.resolve(__dirname, 'client', 'sidebar.html'),
+      template: path.resolve(__dirname, 'client', 'index.html'),
       filename: 'index.html'
     })
   ],

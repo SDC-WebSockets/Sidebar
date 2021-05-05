@@ -84,14 +84,15 @@ const populateDatabase = async (numberOfRecords) => {
 }
 
 const generatePriceData = (index) => {
+  const baseDiscountPercentage = 84;
   const basePrice = createBasePrice();
-  const discountPercentage = 84;
+  const discountedPrice = (Math.round(Math.floor(basePrice * ((100 - baseDiscountPercentage) / 100)) * 100) / 100) + 0.99
   const saleEndDate = new Date();
   const priceData = new Price({
     courseID: index,
     basePrice: basePrice,
-    discountPercentage: discountPercentage,
-    discountedPrice: Math.round(Math.floor(basePrice * (discountPercentage / 100)) * 100) / 100,
+    discountPercentage: Math.round((1 - (discountedPrice / basePrice)) * 100),
+    discountedPrice: discountedPrice,
     saleEndDate: saleEndDate.setDate(saleEndDate.getDate() + 3),
     saleOngoing: randomDecider(30)
   });
@@ -114,15 +115,15 @@ const createBasePrice = () => {
   range = range / 10;
 
   // Construct basePrice
-  let basePrice = (Math.floor(Math.random() * range) * 10 + minPrice);
-
-  // Get rid of anything after 2 decimal places (cleaning up after floating-point issues)
-  basePrice = Math.round(basePrice * 100) / 100;
+  let basePrice = (Math.floor(Math.random() * range) * 10 + Math.floor(minPrice) + 0.99);
 
   // 20-ish% of the time we'll add $5, so we get the occasional $54.99 or whatever
   if (randomDecider(20)) {
     basePrice = basePrice + 5;
   }
+
+  // Get rid of anything after 2 decimal places (cleaning up after floating-point issues)
+  basePrice = Math.round(basePrice * 100) / 100;
 
   return basePrice;
 }
