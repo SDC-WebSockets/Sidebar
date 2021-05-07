@@ -7,7 +7,7 @@ const db = require('../database/database.js');
 app.use(express.static('public'));
 app.use(express.json());
 
-app.listen(port, () => {
+const serverInstance = app.listen(port, () => {
   console.log(`Listening at http://localhost:${port}`)
 });
 
@@ -15,6 +15,7 @@ app.get('/price', (req, res) => {
   console.log("GET request received at /price.");
   db.getPrice(req.query, (err, docs) => {
     if (err) {
+      console.log(err);
       res.send(err);
     } else {
       res.send(docs[0]);
@@ -43,3 +44,9 @@ app.get('/sidebar', (req, res) => {
     }
   });
 });
+
+const closeServer = () => {
+  serverInstance.close();
+}
+
+exports.closeServer = closeServer;
