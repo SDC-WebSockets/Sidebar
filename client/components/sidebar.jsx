@@ -8,7 +8,7 @@ export const Sidebar = () => {
   // Gets course ID from the current page URL, assuming the only number in
   // that URL's pathname is the course ID (e.g.:
   // localhost:3000/course/99 or localhost:3000/course/99/ will return '99')
-  const currentCourse = window.location.pathname.match(regex)[0];
+  const currentCourse = window.location.pathname.match(regex) === null ? 1 : window.location.pathname.match(regex)[0];
 
   const [ courseID, setCourseID ] = useState(currentCourse);
   const [ priceData, setPriceData ] = useState();
@@ -50,6 +50,10 @@ export const Sidebar = () => {
     }
 
   }, []);
+
+  useEffect(() => {
+    console.log(priceData !== undefined ? priceData.basePrice : "whoops");
+  });
 
   let basePrice;
   let discountPercentage;
