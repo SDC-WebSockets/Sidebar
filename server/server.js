@@ -1,4 +1,5 @@
 const express = require('express');
+const serveStatic = require('serve-static');
 const app = express();
 const path = require('path');
 const db = require('../database/database.js');
@@ -43,6 +44,10 @@ app.get('/sidebar', (req, res) => {
       res.send(docs[0]);
     }
   });
+});
+
+app.use('/course', (req, res) => {
+  res.sendFile('index.html', {root: 'client'});
 });
 
 module.exports = app;
