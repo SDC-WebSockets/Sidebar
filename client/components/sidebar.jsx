@@ -62,11 +62,7 @@ export const Sidebar = () => {
   let saleOngoing;
 
   if (priceData !== undefined) {
-    basePrice = priceData.basePrice;
-    discountPercentage = priceData.discountPercentage;
-    discountedPrice = priceData.discountedPrice;
-    saleEndDate = priceData.saleEndDate;
-    saleOngoing = priceData.saleOngoing;
+    ({basePrice, discountPercentage, discountedPrice, saleEndDate, saleOngoing} = priceData);
   }
 
   let previewVideoUrl;
@@ -81,10 +77,7 @@ export const Sidebar = () => {
   let certificateOfCompletion;
 
   if (sidebarData !== undefined) {
-    fullLifetimeAccess = sidebarData.fullLifetimeAccess;
-    accessTypes = sidebarData.accessTypes;
-    assignments = sidebarData.assignments;
-    certificateOfCompletion = sidebarData.certificateOfCompletion;
+    ({fullLifetimeAccess, accessTypes, assignments, certificateOfCompletion} = sidebarData);
   }
 
   let priceInfo = saleOngoing ? <div className="price-info">${discountedPrice} $<s>{basePrice}</s> {discountPercentage}% off!</div> : <div>{basePrice}</div>;
