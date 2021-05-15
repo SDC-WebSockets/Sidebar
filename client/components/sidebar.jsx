@@ -62,7 +62,7 @@ export const Sidebar = () => {
   let saleOngoing;
 
   if (priceData !== undefined) {
-    ({basePrice, discountPercentage, discountedPrice, saleEndDate, saleOngoing} = priceData);
+     ({basePrice, discountPercentage, discountedPrice, saleEndDate, saleOngoing} = priceData);
   }
 
   let previewVideoUrl;
