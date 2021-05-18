@@ -2,7 +2,6 @@
   "name": "sidebar",
   "version": "1.0.0",
   "description": "Sidebar for Udemy clone website",
-  "main": "/client/sidebar.js",
   "scripts": {
     "test": "jest --detectOpenHandles",
     "start": "nodemon server/start.js",

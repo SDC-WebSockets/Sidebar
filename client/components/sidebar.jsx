@@ -5,10 +5,19 @@ export const Sidebar = () => {
   // Will match only numbers
   const regex = /\d+/;
 
+  console.log("hi there!");
+
   // Gets course ID from the current page URL, assuming the only number in
   // that URL's pathname is the course ID (e.g.:
   // localhost:3000/course/99 or localhost:3000/course/99/ will return '99')
-  const currentCourse = window.location.pathname.match(regex) === null ? 1 : window.location.pathname.match(regex)[0];
+  let currentCourse;
+  // let query = Number(querystring.parse(window.location.search)['?courseId']);
+console.log(window.location.search);
+  // if (window.location.pathname.match(regex) === null) {
+  //   currentCourse = (query === null) ? 1 : query;
+  // } else {
+  //   currentCourse = window.location.pathname.match(regex)[0];
+  // }
 
   const [ courseID, setCourseID ] = useState(currentCourse);
   const [ priceData, setPriceData ] = useState();
@@ -50,10 +59,6 @@ export const Sidebar = () => {
     }
 
   }, []);
-
-  useEffect(() => {
-    console.log(priceData !== undefined ? priceData.basePrice : "whoops");
-  });
 
   let basePrice;
   let discountPercentage;
