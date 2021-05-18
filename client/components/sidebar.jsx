@@ -6,18 +6,26 @@ export const Sidebar = () => {
   const regex = /\d+/;
 
   console.log("hi there!");
+  console.log(window.location.pathname);
+  console.log(window.location.search);
 
-  // Gets course ID from the current page URL, assuming the only number in
-  // that URL's pathname is the course ID (e.g.:
-  // localhost:3000/course/99 or localhost:3000/course/99/ will return '99')
+  // First, attempts to get the course ID from the URL's pathname. Will match the
+  // first number (though only will display something to /course/<number> because
+  // also needs the server to be willing to send a file.)
+  // If that doesn't work, attempts to match a search in the url (so format e.g.
+  // localhost:3004/?courseId=27). Will take the first number it finds after the ?
+
   let currentCourse;
-  // let query = Number(querystring.parse(window.location.search)['?courseId']);
-console.log(window.location.search);
-  // if (window.location.pathname.match(regex) === null) {
-  //   currentCourse = (query === null) ? 1 : query;
-  // } else {
-  //   currentCourse = window.location.pathname.match(regex)[0];
-  // }
+  if (window.location.pathname.match(regex) === null) {
+    if (window.location.search.match(regex) === null) {
+      currentCourse = 1;
+    }
+    else {
+      currentCourse = window.location.search.match(regex)[0];
+    }
+  } else {
+    currentCourse = window.location.pathname.match(regex)[0];
+  }
 
   const [ courseID, setCourseID ] = useState(currentCourse);
   const [ priceData, setPriceData ] = useState();
