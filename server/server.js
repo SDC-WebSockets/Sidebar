@@ -3,12 +3,15 @@ const serveStatic = require('serve-static');
 const app = express();
 const path = require('path');
 const db = require('../database/database.js');
+const cors = require('cors');
 
 app.use(express.static('public'));
 app.use(express.json());
+app.use(cors());
 
 app.get('/price', (req, res) => {
   console.log("GET request received at /price.");
+  console.log(req.headers);
   db.getPrice(req.query, (err, docs) => {
     if (err) {
       res.send(err);

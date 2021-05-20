@@ -4,9 +4,7 @@ export const Sidebar = () => {
 
   // Will match only numbers
   const regex = /\d+/;
-
-  console.log("hi there!");
-  console.log(window.location.pathname);
+  
   console.log(window.location.search);
 
   // First, attempts to get the course ID from the URL's pathname. Will match the
