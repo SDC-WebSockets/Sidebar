@@ -5,7 +5,7 @@ module.exports = {
   mode: process.env.NODE_ENV || "development",
   entry: ['./client/index.jsx', './client/styles.css'],
   output: {
-    filename: 'index.js',
+    filename: 'sidebar.js',
     path: path.resolve(__dirname, 'public'),
   },
   module: {

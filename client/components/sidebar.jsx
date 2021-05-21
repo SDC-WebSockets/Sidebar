@@ -4,7 +4,7 @@ export const Sidebar = () => {
 
   // Will match only numbers
   const regex = /\d+/;
-  
+
   console.log(window.location.search);
 
   // First, attempts to get the course ID from the URL's pathname. Will match the
@@ -25,15 +25,16 @@ export const Sidebar = () => {
     currentCourse = window.location.pathname.match(regex)[0];
   }
 
-  const [ courseID, setCourseID ] = useState(currentCourse);
+  const [ courseId, setCourseId ] = useState(currentCourse);
   const [ priceData, setPriceData ] = useState();
   const [ previewVideoData, setPreviewVideoData ] = useState();
   const [ sidebarData, setSidebarData ] = useState();
+  const [ courseData, setCourseData ] = useState();
 
   useEffect(() => {
     let mounted = true;
 
-    fetch('http://localhost:3004/price?courseID=' + courseID)
+    fetch('http://localhost:3004/price?courseId=' + courseId)
     .then(response => response.json())
     .then(data => {
       if (mounted) {
@@ -42,7 +43,7 @@ export const Sidebar = () => {
     })
     .catch(error => console.warn("Error: " + error.message));
 
-    fetch('http://localhost:3004/previewVideo?courseID=' + courseID)
+    fetch('http://localhost:3004/previewVideo?courseId=' + courseId)
     .then(response => response.json())
     .then(data => {
       if (mounted) {
@@ -51,11 +52,20 @@ export const Sidebar = () => {
     })
     .catch(error => console.warn("Error: " + error.message));
 
-    fetch('http://localhost:3004/sidebar?courseID=' + courseID)
+    fetch('http://localhost:3004/sidebar?courseId=' + courseId)
     .then(response => response.json())
     .then(data => {
       if (mounted) {
         setSidebarData(data);
+      }
+    })
+    .catch(error => console.warn("Error: " + error.message));
+
+    fetch('http://localhost:9800/course/item/?courseId=' + courseId)
+    .then(response => response.json())
+    .then(data => {
+      if (mounted) {
+        setCourseData(data);
       }
     })
     .catch(error => console.warn("Error: " + error.message));
@@ -91,6 +101,17 @@ export const Sidebar = () => {
     ({fullLifetimeAccess, accessTypes, assignments, certificateOfCompletion} = sidebarData);
   }
 
+  let totalArticles;
+  let totalLectures;
+  let totalQuizzes;
+  let totalExercises;
+  let courseLength;
+
+  if (courseData !== undefined) {
+    ({totalArticles, totalLectures, totalQuizzes, totalExercises, courseLength} = courseData);
+  }
+
+
   let priceInfo = saleOngoing ? <div className="price-info">${discountedPrice} $<s>{basePrice}</s> {discountPercentage}% off!</div> : <div>{basePrice}</div>;
 
   return (
@@ -111,6 +132,8 @@ export const Sidebar = () => {
           <li>{accessTypes}</li>
           {assignments ? <li>Assignments</li> : <div></div>}
           {certificateOfCompletion ? <li>Certificate of Completion</li> : <div></div>}
+          {totalArticles > 0 ? <li>{totalArticles} articles</li> : <div></div>}
+          {courseLength}
         </ul>
       </div>
       <div className="coupon">

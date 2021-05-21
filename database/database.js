@@ -10,7 +10,7 @@ const connection = mongoose.connection;
 // ------------------------------------------------------------------
 // Setting up schemas and models
 const priceSchema = new mongoose.Schema({
-  courseID: Number,
+  courseId: Number,
   basePrice: Number,
   discountPercentage: Number,
   discountedPrice: Number,
@@ -21,14 +21,14 @@ const priceSchema = new mongoose.Schema({
 const Price = mongoose.model('Price', priceSchema);
 
 const previewVideoSchema = new mongoose.Schema({
-  courseID: Number,
+  courseId: Number,
   previewVideoUrl: String,
 });
 
 const PreviewVideo = mongoose.model('PreviewVideo', previewVideoSchema);
 
 const sidebarSchema = new mongoose.Schema({
-  courseID: Number,
+  courseId: Number,
   fullLifetimeAccess: String,
   accessTypes: String,
   assignments: Boolean,
