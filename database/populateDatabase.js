@@ -46,7 +46,7 @@ const generatePriceData = (index) => {
   const discountedPrice = (Math.round(Math.floor(basePrice * ((100 - baseDiscountPercentage) / 100)) * 100) / 100) + 0.99
   const saleEndDate = new Date();
   const priceData = new database.Price({
-    courseID: index,
+    courseId: index,
     basePrice: basePrice,
     discountPercentage: Math.round((1 - (discountedPrice / basePrice)) * 100),
     discountedPrice: discountedPrice,
@@ -90,7 +90,7 @@ const generatePreviewVideoData = (index) => {
   const videoIndex = Math.floor(Math.random() * 10);
 
   const previewVideoData = new database.PreviewVideo({
-    courseID: index,
+    courseId: index,
     previewVideoUrl: "https://example.com/previewVideo" + videoIndex + ".mp4",
   });
 
@@ -100,11 +100,12 @@ const generatePreviewVideoData = (index) => {
 const generateSidebarData = (index) => {
 
   const sidebarData = new database.Sidebar({
-    courseID: index,
+    courseId: index,
     fullLifetimeAccess: randomDecider(70) ? "Full lifetime access" : "Full access during subscription term",
     accessTypes: "Access on mobile and TV",
     assignments: randomDecider(70),
-    certificateOfCompletion: randomDecider(90)
+    certificateOfCompletion: randomDecider(90),
+    downloadableResources: randomDecider(90) ? Math.round(Math.random() * 25) : 0,
   });
 
   return sidebarData;
