@@ -104,7 +104,8 @@ const generateSidebarData = (index) => {
     fullLifetimeAccess: randomDecider(70) ? "Full lifetime access" : "Full access during subscription term",
     accessTypes: "Access on mobile and TV",
     assignments: randomDecider(70),
-    certificateOfCompletion: randomDecider(90)
+    certificateOfCompletion: randomDecider(90),
+    downloadableResources: randomDecider(90) ? Math.round(Math.random() * 25) : 0,
   });
 
   return sidebarData;

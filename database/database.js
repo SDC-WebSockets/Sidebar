@@ -32,7 +32,8 @@ const sidebarSchema = new mongoose.Schema({
   fullLifetimeAccess: String,
   accessTypes: String,
   assignments: Boolean,
-  certificateOfCompletion: Boolean
+  certificateOfCompletion: Boolean,
+  downloadableResources: Number
 })
 
 const Sidebar = mongoose.model('Sidebar', sidebarSchema);

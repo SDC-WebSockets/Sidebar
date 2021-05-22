@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { DateTime } from 'luxon';
 
 export const Sidebar = () => {
 
@@ -96,21 +97,24 @@ export const Sidebar = () => {
   let accessTypes;
   let assignments;
   let certificateOfCompletion;
+  let downloadableResources;
 
   if (sidebarData !== undefined) {
-    ({fullLifetimeAccess, accessTypes, assignments, certificateOfCompletion} = sidebarData);
+    ({fullLifetimeAccess, accessTypes, assignments, certificateOfCompletion, downloadableResources} = sidebarData);
   }
 
+  let courseLength;
   let totalArticles;
   let totalLectures;
   let totalQuizzes;
   let totalExercises;
-  let courseLength;
 
   if (courseData !== undefined) {
     ({totalArticles, totalLectures, totalQuizzes, totalExercises, courseLength} = courseData);
+    console.log("courseLength: " + courseLength);
+    courseLength = DateTime.fromISO(courseLength).toSeconds();
+    courseLength = Math.round((courseLength / 3600) * 2) / 2;
   }
-
 
   let priceInfo = saleOngoing ? <div className="price-info">${discountedPrice} $<s>{basePrice}</s> {discountPercentage}% off!</div> : <div>{basePrice}</div>;
 
@@ -128,12 +132,16 @@ export const Sidebar = () => {
       <div className="course-includes">
         <b>This course includes:</b>
         <ul>
+          {courseLength > 0 ? <li>{courseLength} hours on-demand video</li> : <div></div>}
+          {totalArticles > 0 ? <li>{totalArticles} articles</li> : <div></div>}
+          {totalLectures > 0 ? <li>{totalLectures} lectures</li> : <div></div>}
+          {totalQuizzes > 0 ? <li>{totalQuizzes} quizzes</li> : <div></div>}
+          {totalExercises > 0 ? <li>{totalExercises} exercises</li> : <div></div>}
+          {downloadableResources > 0 ? <li>{downloadableResources} downloadable resources</li> : <div></div>}
           <li>{fullLifetimeAccess}</li>
           <li>{accessTypes}</li>
           {assignments ? <li>Assignments</li> : <div></div>}
           {certificateOfCompletion ? <li>Certificate of Completion</li> : <div></div>}
-          {totalArticles > 0 ? <li>{totalArticles} articles</li> : <div></div>}
-          {courseLength}
         </ul>
       </div>
       <div className="coupon">
