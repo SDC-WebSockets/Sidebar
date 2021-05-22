@@ -132,16 +132,16 @@ export const Sidebar = () => {
       <div className="course-includes">
         <b>This course includes:</b>
         <ul>
-          {courseLength > 0 ? <li>{courseLength} hours on-demand video</li> : <div></div>}
-          {totalArticles > 0 ? <li>{totalArticles} articles</li> : <div></div>}
-          {totalLectures > 0 ? <li>{totalLectures} lectures</li> : <div></div>}
-          {totalQuizzes > 0 ? <li>{totalQuizzes} quizzes</li> : <div></div>}
-          {totalExercises > 0 ? <li>{totalExercises} exercises</li> : <div></div>}
-          {downloadableResources > 0 ? <li>{downloadableResources} downloadable resources</li> : <div></div>}
+          {courseLength > 0 && <li>{courseLength} hours on-demand video</li>}
+          {totalArticles > 0 && <li>{totalArticles} articles</li>}
+          {totalLectures > 0 && <li>{totalLectures} lectures</li>}
+          {totalQuizzes > 0 && <li>{totalQuizzes} quizzes</li>}
+          {totalExercises > 0 && <li>{totalExercises} exercises</li>}
+          {downloadableResources > 0 && <li>{downloadableResources} downloadable resources</li>}
           <li>{fullLifetimeAccess}</li>
           <li>{accessTypes}</li>
-          {assignments ? <li>Assignments</li> : <div></div>}
-          {certificateOfCompletion ? <li>Certificate of Completion</li> : <div></div>}
+          {assignments && <li>Assignments</li>}
+          {certificateOfCompletion && <li>Certificate of Completion</li>}
         </ul>
       </div>
       <div className="coupon">
