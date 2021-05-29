@@ -7,7 +7,8 @@
     "start": "nodemon server/start.js",
     "build": "webpack",
     "dev": "webpack --watch",
-    "pop": "node database/populateDatabase.js"
+    "pop": "node database/populateDatabase.js",
+    "ec2": "ssh -i cb-sidebar-aws-key.pem ubuntu@ec2-54-219-249-204.us-west-1.compute.amazonaws.com"
   },
   "repository": {
     "type": "git",
@@ -52,6 +53,7 @@
     "cors": "^2.8.5",
     "luxon": "^1.27.0",
     "mongoose": "^5.12.7",
+    "nginx": "^1.0.3",
     "nodemon": "^2.0.7",
     "react": "^17.0.2",
     "react-dom": "^17.0.2"

@@ -15,7 +15,7 @@ describe('database methods work right, and database content exists', () => {
   test('database returns price information for ids 1-100', async done => {
     let result = [];
     for (let i = 0; i < 100; i++) {
-      await database.getPrice({courseID: i}, (err, docs) => {
+      await database.getPrice({courseId: i}, (err, docs) => {
         result.push(docs[0]);
       });
     }
@@ -26,7 +26,7 @@ describe('database methods work right, and database content exists', () => {
   test('database returns previewVideo information for ids 1-100', async done => {
     let result = [];
     for (let i = 0; i < 100; i++) {
-      await database.getPreviewVideo({courseID: i}, (err, docs) => {
+      await database.getPreviewVideo({courseId: i}, (err, docs) => {
         result.push(docs[0]);
       });
     }
@@ -37,7 +37,7 @@ describe('database methods work right, and database content exists', () => {
   test('database returns sidebar information for ids 1-100', async done => {
     let result = [];
     for (let i = 0; i < 100; i++) {
-      await database.getSidebar({courseID: i}, (err, docs) => {
+      await database.getSidebar({courseId: i}, (err, docs) => {
         result.push(docs[0]);
       });
     }
@@ -66,38 +66,38 @@ describe('server methods work right', () => {
     done();
   });
 
-  test('/price route works for existing courseID', async done => {
-    request.get('/price?courseID=10')
+  test('/price route works for existing courseId', async done => {
+    request.get('/price?courseId=10')
       .expect('Content-Type', 'application/json; charset=utf-8')
       .expect(200, done);
   });
 
-  test('/previewVideo route works for existing courseID', async done => {
-    request.get('/previewVideo?courseID=10')
+  test('/previewVideo route works for existing courseId', async done => {
+    request.get('/previewVideo?courseId=10')
       .expect('Content-Type', 'application/json; charset=utf-8')
       .expect(200, done);
   });
 
-  test('/sidebar route works for existing courseID', async done => {
-    request.get('/sidebar?courseID=10')
+  test('/sidebar route works for existing courseId', async done => {
+    request.get('/sidebar?courseId=10')
       .expect('Content-Type', 'application/json; charset=utf-8')
       .expect(200, done);
   });
 
   test('/price responds appropriately if document not found', async done => {
-    const response = await request.get('/price?courseID=5000');
+    const response = await request.get('/price?courseId=5000');
     expect(response.status).toBe(404);
     done();
   });
 
   test('/previewVideo responds appropriately if document not found', async done => {
-    const response = await request.get('/previewVideo?courseID=5000');
+    const response = await request.get('/previewVideo?courseId=5000');
     expect(response.status).toBe(404);
     done();
   });
 
   test('/sidebar responds appropriately if document not found', async done => {
-    const response = await request.get('/sidebar?courseID=5000');
+    const response = await request.get('/sidebar?courseId=5000');
     expect(response.status).toBe(404);
     done();
   });
