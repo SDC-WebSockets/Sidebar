@@ -1,9 +1,12 @@
 const express = require('express');
+const path = require('path');
 const app = express();
 const db = require('../database/database.js');
 const cors = require('cors');
 
-app.use(express.static('public'));
+console.log(__dirname);
+
+app.use(express.static(path.join(__dirname, '..', 'public')));
 app.use(express.json());
 app.use(cors());
 
@@ -48,7 +51,7 @@ app.get('/sidebar', (req, res) => {
 });
 
 app.use('/course', (req, res) => {
-  res.sendFile('index.html', {root: 'client'});
+  res.sendFile('index.html', {root: 'public'});
 });
 
 module.exports = app;
