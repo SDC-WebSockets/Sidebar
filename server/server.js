@@ -1,7 +1,5 @@
 const express = require('express');
-const serveStatic = require('serve-static');
 const app = express();
-const path = require('path');
 const db = require('../database/database.js');
 const cors = require('cors');
 

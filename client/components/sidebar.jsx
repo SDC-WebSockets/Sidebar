@@ -1,12 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { DateTime } from 'luxon';
 
+const host = process.env.HOST || 'localhost';
+const port = process.env.PORT || 3004;
+const courseContentURL = process.env.COURSE_CONTENT_URL || 'localhost:9800';
+
 export const Sidebar = () => {
 
   // Will match only numbers
   const regex = /\d+/;
-
-  console.log(window.location.search);
 
   // First, attempts to get the course ID from the URL's pathname. Will match the
   // first number (though only will display something to /course/<number> because
@@ -35,7 +37,7 @@ export const Sidebar = () => {
   useEffect(() => {
     let mounted = true;
 
-    fetch('http://localhost:3004/price?courseId=' + courseId)
+    fetch(`http://${host}:${port}/price?courseId=${courseId}`)
     .then(response => response.json())
     .then(data => {
       if (mounted) {
@@ -44,7 +46,7 @@ export const Sidebar = () => {
     })
     .catch(error => console.warn("Error: " + error.message));
 
-    fetch('http://localhost:3004/previewVideo?courseId=' + courseId)
+    fetch(`http://${host}:${port}/previewVideo?courseId=${courseId}`)
     .then(response => response.json())
     .then(data => {
       if (mounted) {
@@ -53,7 +55,7 @@ export const Sidebar = () => {
     })
     .catch(error => console.warn("Error: " + error.message));
 
-    fetch('http://localhost:3004/sidebar?courseId=' + courseId)
+    fetch(`http://${host}:${port}/sidebar?courseId=${courseId}`)
     .then(response => response.json())
     .then(data => {
       if (mounted) {
@@ -62,7 +64,7 @@ export const Sidebar = () => {
     })
     .catch(error => console.warn("Error: " + error.message));
 
-    fetch('http://localhost:9800/course/item/?courseId=' + courseId)
+    fetch(`http://${courseContentURL}/course/item?courseId=${courseId}`)
     .then(response => response.json())
     .then(data => {
       if (mounted) {
@@ -80,11 +82,10 @@ export const Sidebar = () => {
   let basePrice;
   let discountPercentage;
   let discountedPrice;
-  let saleEndDate;
   let saleOngoing;
 
   if (priceData !== undefined) {
-     ({basePrice, discountPercentage, discountedPrice, saleEndDate, saleOngoing} = priceData);
+     ({basePrice, discountPercentage, discountedPrice, saleOngoing} = priceData);
   }
 
   let previewVideoUrl;
@@ -111,7 +112,6 @@ export const Sidebar = () => {
 
   if (courseData !== undefined) {
     ({totalArticles, totalLectures, totalQuizzes, totalExercises, courseLength} = courseData);
-    console.log("courseLength: " + courseLength);
     courseLength = DateTime.fromISO(courseLength).toSeconds();
     courseLength = Math.round((courseLength / 3600) * 2) / 2;
   }
