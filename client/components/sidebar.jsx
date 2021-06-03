@@ -39,7 +39,7 @@ export const Sidebar = () => {
   useEffect(() => {
     let mounted = true;
 
-    fetch(`http://${host}:${port}/price?courseId=${courseId}`)
+    fetch(`http://13.57.183.76:3004/price?courseId=${courseId}`)
     .then(response => response.json())
     .then(data => {
       if (mounted) {
@@ -48,7 +48,7 @@ export const Sidebar = () => {
     })
     .catch(error => console.warn("Error: " + error.message));
 
-    fetch(`http://${host}:${port}/previewVideo?courseId=${courseId}`)
+    fetch(`http://13.57.183.76:3004/previewVideo?courseId=${courseId}`)
     .then(response => response.json())
     .then(data => {
       if (mounted) {
@@ -57,7 +57,7 @@ export const Sidebar = () => {
     })
     .catch(error => console.warn("Error: " + error.message));
 
-    fetch(`http://${host}:${port}/sidebar?courseId=${courseId}`)
+    fetch(`http://13.57.183.76:3004/sidebar?courseId=${courseId}`)
     .then(response => response.json())
     .then(data => {
       if (mounted) {
