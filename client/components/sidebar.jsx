@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { DateTime } from 'luxon';
 
-const host = process.env.HOST || 'localhost';
+const host = process.env.PUBLIC_HOST || 'localhost';
 const port = process.env.PORT || 3004;
 const courseContentURL = process.env.COURSE_CONTENT_URL || 'localhost:9800';
 console.log('host: ', host);
@@ -39,7 +39,7 @@ export const Sidebar = () => {
   useEffect(() => {
     let mounted = true;
 
-    fetch(`http://13.57.183.76:3004/price?courseId=${courseId}`)
+    fetch(`http://${host}:${port}/price?courseId=${courseId}`)
     .then(response => response.json())
     .then(data => {
       if (mounted) {
@@ -48,7 +48,7 @@ export const Sidebar = () => {
     })
     .catch(error => console.warn("Error: " + error.message));
 
-    fetch(`http://13.57.183.76:3004/previewVideo?courseId=${courseId}`)
+    fetch(`http://${host}:${port}/previewVideo?courseId=${courseId}`)
     .then(response => response.json())
     .then(data => {
       if (mounted) {
@@ -57,7 +57,7 @@ export const Sidebar = () => {
     })
     .catch(error => console.warn("Error: " + error.message));
 
-    fetch(`http://13.57.183.76:3004/sidebar?courseId=${courseId}`)
+    fetch(`http://${host}:${port}/sidebar?courseId=${courseId}`)
     .then(response => response.json())
     .then(data => {
       if (mounted) {
