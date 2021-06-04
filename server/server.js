@@ -4,8 +4,6 @@ const app = express();
 const db = require('../database/database.js');
 const cors = require('cors');
 
-console.log(__dirname);
-
 app.use(express.static(path.join(__dirname, '..', 'public')));
 app.use(express.json());
 app.use(cors());
