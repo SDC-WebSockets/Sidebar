@@ -118,41 +118,62 @@ export const Sidebar = () => {
     courseLength = Math.round((courseLength / 3600) * 2) / 2;
   }
 
-  let priceInfo = saleOngoing ? <div className="price-info">${discountedPrice} $<s>{basePrice}</s> {discountPercentage}% off!</div> : <div>{basePrice}</div>;
+  let priceInfo = saleOngoing ?
+    <div className="sidebar-price-info">
+      <div className="sidebar-big-price">
+        ${discountedPrice}
+      </div>
+      <div className="sidebar-discount-info">
+        $<s>{basePrice}</s> {discountPercentage}% off!
+      </div>
+    </div> :
+    <div className="sidebar-big-price">${basePrice}</div>;
 
   return (
     <div className="sidebar-container">
-      <div className="preview-video">
-      This will be a video from {previewVideoUrl}
-      </div>
-      {priceInfo}
-      <div className="button-container">
-        <button className="add-to-cart">Add to cart</button>
-        <button className="buy-now">Buy now</button>
-        <p>30-Day Money-Back Guarantee</p>
-      </div>
-      <div className="course-includes">
-        <b>This course includes:</b>
-        <ul>
-          {courseLength > 0 && <li>{courseLength} hours on-demand video</li>}
-          {totalArticles > 0 && <li>{totalArticles} articles</li>}
-          {totalLectures > 0 && <li>{totalLectures} lectures</li>}
-          {totalQuizzes > 0 && <li>{totalQuizzes} quizzes</li>}
-          {totalExercises > 0 && <li>{totalExercises} exercises</li>}
-          {downloadableResources > 0 && <li>{downloadableResources} downloadable resources</li>}
-          <li>{fullLifetimeAccess}</li>
-          <li>{accessTypes}</li>
-          {assignments && <li>Assignments</li>}
-          {certificateOfCompletion && <li>Certificate of Completion</li>}
-        </ul>
-      </div>
-      <div className="coupon">
-        Apply Coupon
-      </div>
-      <div className="for-business">
-        <h2>Training 5 or more people?</h2>
-        <p>Get your team access to 5,500+ top Udemy courses anytime, anywhere.</p>
-        <button>Try Udemy for Business</button>
+      <div className="sidebar-container-content">
+        <button className="sidebar-preview-video">
+          <img src={previewVideoUrl} alt="Preview video image for this class." ></img>
+          <span className="sidebar-preview-video-overlay-gradient"></span>
+          <svg xmlns="http://www.w3.org/2000/svg">
+            <g>
+              <title>Layer 1</title>
+              <ellipse ry="10" rx="10" id="svg_1" cy="219.5" cx="317" stroke="#000" fill="#fff"/>
+              <ellipse stroke="#000" strokeWidth="0" ry="32" rx="31.50001" id="svg_2" cy="96" cx="170.37736" fill="#ffffff"/>
+              <path transform="rotate(90 172.951 96)" stroke="#000" id="svg_9" d="m161.10466,107.73892l11.84616,-23.47785l11.84616,23.47785l-23.69232,0z" fill="#000000"/>
+            </g>
+          </svg>
+          <span className="sidebar-preview-video-overlay-text">Preview this course</span>
+        </button>
+        <div className="sidebar-main-content">
+          {priceInfo}
+          <div className="sidebar-button-container">
+            <button className="sidebar-add-to-cart-button">Add to cart</button>
+            <button className="sidebar-buy-now-button">Buy now</button>
+            <p>30-Day Money-Back Guarantee</p>
+          </div>
+          <div className="sidebar-course-includes">
+            <b>This course includes:</b>
+            {courseLength > 0 && <div>{courseLength} hours on-demand video</div>}
+            {totalArticles > 0 && <div>{totalArticles} articles</div>}
+            {totalLectures > 0 && <div>{totalLectures} lectures</div>}
+            {totalQuizzes > 0 && <div>{totalQuizzes} quizzes</div>}
+            {totalExercises > 0 && <div>{totalExercises} exercises</div>}
+            {downloadableResources > 0 && <div>{downloadableResources} downloadable resources</div>}
+            <div>{fullLifetimeAccess}</div>
+            <div>{accessTypes}</div>
+            {assignments && <div>Assignments</div>}
+            {certificateOfCompletion && <div>Certificate of Completion</div>}
+          </div>
+          <div className="sidebar-coupon">
+            Apply Coupon
+          </div>
+          <div className="sidebar-for-business">
+            <h2>Training 5 or more people?</h2>
+            <p>Get your team access to 5,500+ top Udemy courses anytime, anywhere.</p>
+            <button>Try Udemy for Business</button>
+          </div>
+        </div>
       </div>
     </div>
   )

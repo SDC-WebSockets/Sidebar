@@ -1,3 +1,136 @@
-h1 {
-  color: orange;
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: sf pro display,-apple-system,BlinkMacSystemFont,Roboto,segoe ui,Helvetica,Arial,sans-serif,apple color emoji,segoe ui emoji,segoe ui symbol;
+  color: #3c3b37
+}
+
+.sidebar-container {
+  width: 344px;
+  border-radius: 4px;
+  margin-top: 30px;
+  margin-left: 750px;
+}
+
+.sidebar-container-content {
+  border-radius: 4px;
+  width: 344px;
+  box-shadow: 0 2px 4px rgb(0 0 0 / 8%), 0 4px 12px rgb(0 0 0 / 8%);
+}
+
+.sidebar-preview-video {
+  position: relative;
+  display: inline-block;
+  border: 0;
+  border-radius: 4px;
+  width: 340px;
+  margin: 1px;
+  height: 192px;
+}
+
+.sidebar-preview-video svg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 100;
+  width: 340px;
+  height: 192px;
+  margin: 1px;
+}
+
+.sidebar-preview-video img {
+  border-radius: 4px;
+  width: 340px;
+  height: 192px;
+}
+
+.sidebar-preview-video-overlay-text {
+  position: absolute;
+  bottom: 8px;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: white;
+  font-size: 15px;
+  font-weight: 700;
+  line-height: 1.2;
+  z-index: 100;
+}
+
+.sidebar-preview-video-overlay-gradient {
+  position: absolute;
+  top: 0;
+  left: 0;
+  background: linear-gradient(180deg, rgba(30, 30, 30, 0) 0%, rgba(30, 30, 30, 0.9) 100%);
+  z-index: 50;
+  width: 340px;
+  height: 192px;
+  border-radius: 4px;
+}
+
+.sidebar-main-content {
+  margin-top: 24px;
+  margin-left: 24px;
+  margin-right: 24px;
+}
+
+.sidebar-button-container button {
+  width: 100%;
+  height: 48px;
+  font-size: 15px;
+  font-weight: 700;
+  border-radius: 4px;
+}
+
+.sidebar-add-to-cart-button {
+  background-color:#ec5252;
+  color:white;
+  border: none;
+}
+
+.sidebar-add-to-cart-button:hover {
+  background-color:#eb2525;
+}
+
+.sidebar-buy-now-button {
+  margin-top: 8px;
+  margin-bottom: 20px;
+  background-color: transparent;
+  color:#0f7c90;
+  border: 1px solid #2896a9;
+}
+
+.sidebar-button-container p {
+  margin-bottom: 12px;
+  font-size: 12px;
+  text-align: center;
+}
+
+.sidebar-price-info {
+  display: flex;
+  flex-wrap: nowrap;
+  align-items: center;
+}
+
+.sidebar-big-price {
+  font-size: 30px;
+  font-weight: 700;
+  margin-bottom: 12px;
+}
+
+.sidebar-discount-info {
+  margin-bottom: 16px;
+  margin-left: 6px;
+}
+
+.sidebar-discount-info s {
+  color: gray;
+}
+
+.sidebar-course-includes {
+  margin-top: 6px;
+  margin-bottom: 6px;
 }
