@@ -97,7 +97,7 @@ body {
 
 .sidebar-buy-now-button {
   margin-top: 8px;
-  margin-bottom: 20px;
+  margin-bottom: 16px;
   background-color: transparent;
   color:#0f7c90;
   border: 1px solid #2896a9;
@@ -133,4 +133,101 @@ body {
 .sidebar-course-includes {
   margin-top: 6px;
   margin-bottom: 6px;
+  font-size: 14px;
+  display: flex;
+  flex-direction: column;
 }
+
+.sidebar-course-includes b {
+  font-size: 16px;
+}
+
+.sidebar-course-includes-item {
+  margin-top: 6px;
+  height: 20px;
+  display: flex;
+}
+
+.sidebar-course-includes-text {
+  margin-left: 12px;
+}
+
+.sidebar-coupon {
+  text-align: center;
+  color: #0f7c90;
+  font-weight: 700;
+  font-size: 14px;
+  margin-top: 24px;
+  margin-bottom: 40px;
+}
+
+.sidebar-coupon textarea, input, input:focus {
+  outline: none;
+  border: 1px solid #81807a;
+}
+
+.sidebar-coupon-input {
+  height: 40px;
+  border-top-left-radius: 4px;
+  border-bottom-left-radius: 4px;
+  background-color: transparent;
+  padding-left: 16px;
+  margin-top: 6px;
+  margin-bottom: 31px;
+}
+
+.sidebar-coupon-submit-button {
+  height: 40px;
+  width: 99px;
+  border-top-right-radius: 4px;
+  border-bottom-right-radius: 4px;
+  border: 0;
+  background-color: #0f7c90;
+  color: white;
+  font-weight: 700;
+}
+
+.sidebar-cursor-pointer {
+  cursor: pointer;
+}
+
+.sidebar-for-business {
+  border-top: 1px solid #dcdacb;
+}
+
+.sidebar-for-business p {
+  font-size: 14px;
+  margin-top: 6px;
+}
+
+.sidebar-for-business button {
+  margin-top: 8px;
+  margin-bottom: 24px;
+  background-color: transparent;
+  color:#0f7c90;
+  border: 1px solid #2896a9;
+  font-size: 14px;
+  font-weight: 700;
+  width: 100%;
+  height: 42px;
+  border-radius: 4px;
+}
+
+.sidebar-tight-letters {
+  letter-spacing: -0.02em;
+}
+
+.sidebar-small-icon {
+  width: 16px;
+  height: 16px;
+  margin-top: 2px;
+}
+
+.sidebar-small-icon svg {
+  fill: #81807a;
+}
+
+
+
+
+
