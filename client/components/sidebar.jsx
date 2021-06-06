@@ -92,9 +92,11 @@ export const Sidebar = () => {
   }
 
   let previewVideoUrl;
+  let previewVideoImgUrl;
 
   if (previewVideoData !== undefined) {
     previewVideoUrl = previewVideoData.previewVideoUrl;
+    previewVideoImgUrl = previewVideoData.previewVideoImgUrl;
   }
 
   let fullLifetimeAccess;
@@ -134,27 +136,29 @@ export const Sidebar = () => {
     <div className="sidebar-coupon sidebar-cursor-pointer sidebar-tight-letters" onClick={() => setCouponMenuOpen(true)}>
       Apply Coupon
     </div> :
-    <form>
-      <input class="sidebar-coupon-input" placeholder="Enter Coupon" type="text"></input>
-      <button type="submit" class="sidebar-coupon-submit-button sidebar-tight-letters">Apply</button>
+    <form onSubmit={(e) => e.preventDefault()}>
+      <input className="sidebar-coupon-input" placeholder="Enter Coupon" type="text"></input>
+      <button type="submit" className="sidebar-coupon-submit-button sidebar-tight-letters">Apply</button>
     </form>;
 
   return (
     <div className="sidebar-container">
       <div className="sidebar-container-content">
-        <button className="sidebar-preview-video sidebar-cursor-pointer">
-          <img src={previewVideoUrl} alt="Preview video image for this class." ></img>
-          <span className="sidebar-preview-video-overlay-gradient"></span>
-          <svg xmlns="http://www.w3.org/2000/svg">
-            <g>
-              <title>Layer 1</title>
-              <ellipse ry="10" rx="10" id="svg_1" cy="219.5" cx="317" stroke="#000" fill="#fff"/>
-              <ellipse stroke="#000" strokeWidth="0" ry="32" rx="31.50001" id="svg_2" cy="96" cx="170.37736" fill="#ffffff"/>
-              <path transform="rotate(90 172.951 96)" stroke="#000" id="svg_9" d="m161.10466,107.73892l11.84616,-23.47785l11.84616,23.47785l-23.69232,0z" fill="#000000"/>
-            </g>
-          </svg>
-          <span className="sidebar-preview-video-overlay-text sidebar-tight-letters">Preview this course</span>
-        </button>
+        <a href={previewVideoUrl}>
+          <button className="sidebar-preview-video sidebar-cursor-pointer">
+            <img src={previewVideoImgUrl} alt="Preview video image for this class."></img>
+            <span className="sidebar-preview-video-overlay-gradient"></span>
+            <svg xmlns="http://www.w3.org/2000/svg">
+              <g>
+                <title>Layer 1</title>
+                <ellipse ry="10" rx="10" id="svg_1" cy="219.5" cx="317" stroke="#000" fill="#fff"/>
+                <ellipse stroke="#000" strokeWidth="0" ry="32" rx="31.50001" id="svg_2" cy="96" cx="170.37736" fill="#ffffff"/>
+                <path transform="rotate(90 172.951 96)" stroke="#000" id="svg_9" d="m161.10466,107.73892l11.84616,-23.47785l11.84616,23.47785l-23.69232,0z" fill="#000000"/>
+              </g>
+            </svg>
+            <span className="sidebar-preview-video-overlay-text sidebar-tight-letters">Preview this course</span>
+          </button>
+        </a>
         <div className="sidebar-main-content">
           {priceInfo}
           <div className="sidebar-button-container">

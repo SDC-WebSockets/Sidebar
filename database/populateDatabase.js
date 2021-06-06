@@ -93,7 +93,8 @@ const generatePreviewVideoData = (index) => {
 
   const previewVideoData = new database.PreviewVideo({
     courseId: index,
-    previewVideoUrl: `${process.env.ASSET_URL}/previewVideoImg${videoIndex}.jpg`,
+    previewVideoImgUrl: `${process.env.ASSET_URL}/previewVideoImg${videoIndex}.jpg`,
+    previewVideoUrl: `${process.env.ASSET_URL}/previewVideo${videoIndex}.mp4`
   });
 
   return previewVideoData;

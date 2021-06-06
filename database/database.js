@@ -25,6 +25,7 @@ const Price = mongoose.model('Price', priceSchema);
 const previewVideoSchema = new mongoose.Schema({
   courseId: Number,
   previewVideoUrl: String,
+  previewVideoImgUrl: String
 });
 
 const PreviewVideo = mongoose.model('PreviewVideo', previewVideoSchema);
