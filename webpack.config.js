@@ -2,6 +2,7 @@ const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const Dotenv = require('dotenv-webpack');
 const BrotliPlugin = require('brotli-webpack-plugin');
+const CompressionPlugin = require("compression-webpack-plugin");
 
 module.exports = {
   mode: process.env.NODE_ENV || "development",
@@ -41,6 +42,10 @@ module.exports = {
     new Dotenv(),
     new BrotliPlugin({
       asset: 'sidebar.js.br',
+      test: /\.(js)$/
+      
+    }),
+    new CompressionPlugin({
       test: /\.(js)$/
     }),
   ],

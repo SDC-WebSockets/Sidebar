@@ -16,6 +16,11 @@ app.get('*.js', (req, res, next) => {
     console.log(req.header('Accept-Encoding'));
     res.set('Content-Encoding', 'br');
     res.set('Content-Type', 'application/javascript; charset=UTF-8');
+  } else if (req.header('Accept-Encoding').includes('gzip')) {
+    req.url = req.url + '.gz';
+    console.log(req.header('Accept-Encoding'));
+    res.set('Content-Encoding', 'gzip');
+    res.set('Content-Type', 'application/javascript; charset=UTF-8');
   }
   next();
 });
