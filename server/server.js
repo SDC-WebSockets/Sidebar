@@ -3,10 +3,12 @@ const path = require('path');
 const app = express();
 const db = require('../database/database.js');
 const cors = require('cors');
+const shrinkRay = require('shrink-ray-current');
 
 app.use(express.static(path.join(__dirname, '..', 'public')));
 app.use(express.json());
 app.use(cors());
+app.use(shrinkRay());
 
 app.get('/price', (req, res) => {
   console.log("GET request received at /price.");

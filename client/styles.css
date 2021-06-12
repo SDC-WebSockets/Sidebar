@@ -5,7 +5,8 @@
   margin: 0;
   padding: 0;
   font-family: sf pro display,-apple-system,BlinkMacSystemFont,Roboto,segoe ui,Helvetica,Arial,sans-serif,apple color emoji,segoe ui emoji,segoe ui symbol;
-  color: #3c3b37
+  color: #3c3b37;
+  background-color: white;
 }
 
 .sidebar-container-content {
