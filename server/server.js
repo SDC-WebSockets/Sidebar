@@ -1,14 +1,24 @@
+const shrinkRay = require('shrink-ray-current');
 const express = require('express');
 const path = require('path');
 const app = express();
 const db = require('../database/database.js');
 const cors = require('cors');
-const shrinkRay = require('shrink-ray-current');
 
+app.use(shrinkRay());
 app.use(express.static(path.join(__dirname, '..', 'public')));
 app.use(express.json());
 app.use(cors());
-app.use(shrinkRay());
+
+app.get('*.js', (req, res, next) => {
+  if (req.header('Accept-Encoding').includes('br')) {
+    req.url = req.url + '.br';
+    console.log(req.header('Accept-Encoding'));
+    res.set('Content-Encoding', 'br');
+    res.set('Content-Type', 'application/javascript; charset=UTF-8');
+  }
+  next();
+});
 
 app.get('/price', (req, res) => {
   console.log("GET request received at /price.");

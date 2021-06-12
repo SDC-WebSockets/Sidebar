@@ -1,6 +1,7 @@
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const Dotenv = require('dotenv-webpack');
+const BrotliPlugin = require('brotli-webpack-plugin');
 
 module.exports = {
   mode: process.env.NODE_ENV || "development",
@@ -37,7 +38,11 @@ module.exports = {
       template: path.resolve(__dirname, 'client', 'index.html'),
       filename: 'index.html'
     }),
-    new Dotenv()
+    new Dotenv(),
+    new BrotliPlugin({
+      asset: 'sidebar.js.br',
+      test: /\.(js)$/
+    }),
   ],
   devServer: {
     contentBase: path.join(__dirname, 'public'),
