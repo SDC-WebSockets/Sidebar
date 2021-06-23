@@ -17,7 +17,7 @@ This is the Sidebar service for a Udemy clone. It is part of a group project on 
 
 The Sidebar API provides price information (including information related to discounts and sales), video and preview image information, and information related to access, assignments, certificates of completion, and downloadable resources. In rendering the Sidebar, the service pulls information about hours of video, number of articles, coding exercises, lectures, and quizzes from the related Course-Content API.
 
-![Sidebar alone](/readme_assets/sidebar_alone.png)
+![Sidebar alone](/readme_assets/sidebar_alone.gif)
 
 ### Technologies
 
