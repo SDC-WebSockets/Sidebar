@@ -37,6 +37,9 @@ The Sidebar API provides price information (including information related to dis
   * Joins fixed overview bar as user scrolls down  
   * Attaches to other content behind fixed overview bar as user reaches the end of the page 
 
+![Sidebar top transition](/readme_assets/sidebar_top_transition.gif)
+![Sidebar bottom transition](/readme_assets/sidebar_bottom_transition.gif)
+
 ## Installation and Start
 
 1. From root directory: `npm install`.
