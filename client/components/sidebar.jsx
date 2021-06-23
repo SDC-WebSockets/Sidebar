@@ -36,6 +36,7 @@ export const Sidebar = () => {
   const [ sidebarData, setSidebarData ] = useState();
   const [ courseData, setCourseData ] = useState();
   const [ couponMenuOpen, setCouponMenuOpen ] = useState(false);
+  const [ offset, setOffset ] = useState(0);
 
   useEffect(() => {
     let mounted = true;
@@ -82,6 +83,14 @@ export const Sidebar = () => {
 
   }, []);
 
+  useEffect(() => {
+    window.addEventListener('scroll', handleScroll);
+  }, [offset]);
+
+  const handleScroll = () => {
+    setOffset(document.documentElement.scrollTop);
+  }
+
   let basePrice;
   let discountPercentage;
   let discountedPrice;
@@ -122,14 +131,22 @@ export const Sidebar = () => {
   }
 
   let priceInfo = saleOngoing ?
-    <div className="sidebar-price-info">
-      <div className="sidebar-big-price sidebar-tight-letters">
-        ${discountedPrice}
+    <div>
+      <div className="sidebar-price-info">
+        <div className="sidebar-big-price sidebar-tight-letters">
+          ${discountedPrice}
+        </div>
+        <div className="sidebar-discount-info">
+          $<s>{basePrice}</s> {discountPercentage}% off!
+        </div>
       </div>
-      <div className="sidebar-discount-info">
-        $<s>{basePrice}</s> {discountPercentage}% off!
+      <div className="sidebar-discount-red-text">
+        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" height="16px" width="16px" fill="#b32929">
+          <path d="M22 5.72l-4.6-3.86-1.29 1.53 4.6 3.86L22 5.72zM7.88 3.39L6.6 1.86 2 5.71l1.29 1.53 4.59-3.85zM12.5 8H11v6l4.75 2.85.75-1.23-4-2.37V8zM12 4c-4.97 0-9 4.03-9 9s4.02 9 9 9a9 9 0 000-18zm0 16c-3.87 0-7-3.13-7-7s3.13-7 7-7 7 3.13 7 7-3.13 7-7 7z"></path>
+        </svg>
+        <div><span> 4 hours </span> left at this price!</div>
       </div>
-    </div> :
+    </div>:
     <div className="sidebar-big-price sidebar-tight-letters">${basePrice}</div>;
 
   let applyCoupon = !couponMenuOpen ?
@@ -141,25 +158,47 @@ export const Sidebar = () => {
       <button type="submit" className="sidebar-coupon-submit-button sidebar-tight-letters">Apply</button>
     </form>;
 
+  let previewVideoElement;
+  let positionClass;
+  let paddingClass = "";
+  let marginClass = "sidebar-default-margin";
+
+  if (offset > 420 && offset < document.documentElement.getBoundingClientRect().height - 1300) {
+    positionClass = "sidebar-sticky-position";
+    previewVideoElement = <div></div>;
+    paddingClass = "sidebar-add-padding-top";
+    marginClass = "sidebar-sticky-margin";
+  } else {
+    marginClass = "sidebar-default-margin";
+    paddingClass = "";
+    previewVideoElement =
+    <a href={previewVideoUrl}>
+      <button className="sidebar-preview-video sidebar-cursor-pointer">
+        <img src={previewVideoImgUrl} alt="Preview video image for this class."></img>
+        <span className="sidebar-preview-video-overlay-gradient"></span>
+        <svg xmlns="http://www.w3.org/2000/svg">
+          <g>
+            <title>Layer 1</title>
+            <ellipse ry="10" rx="10" id="svg_1" cy="219.5" cx="317" stroke="#000" fill="#fff"/>
+            <ellipse stroke="#000" strokeWidth="0" ry="32" rx="31.50001" id="svg_2" cy="96" cx="170.37736" fill="#ffffff"/>
+            <path transform="rotate(90 172.951 96)" stroke="#000" id="svg_9" d="m161.10466,107.73892l11.84616,-23.47785l11.84616,23.47785l-23.69232,0z" fill="#000000"/>
+          </g>
+        </svg>
+        <span className="sidebar-preview-video-overlay-text sidebar-tight-letters">Preview this course</span>
+      </button>
+    </a>;
+    if (offset < 420) {
+      positionClass = "sidebar-default-position";
+    } else {
+      positionClass = "sidebar-final-position";
+    }
+  }
+
   return (
-    <div className="sidebar-container">
-      <div className="sidebar-container-content">
-        <a href={previewVideoUrl}>
-          <button className="sidebar-preview-video sidebar-cursor-pointer">
-            <img src={previewVideoImgUrl} alt="Preview video image for this class."></img>
-            <span className="sidebar-preview-video-overlay-gradient"></span>
-            <svg xmlns="http://www.w3.org/2000/svg">
-              <g>
-                <title>Layer 1</title>
-                <ellipse ry="10" rx="10" id="svg_1" cy="219.5" cx="317" stroke="#000" fill="#fff"/>
-                <ellipse stroke="#000" strokeWidth="0" ry="32" rx="31.50001" id="svg_2" cy="96" cx="170.37736" fill="#ffffff"/>
-                <path transform="rotate(90 172.951 96)" stroke="#000" id="svg_9" d="m161.10466,107.73892l11.84616,-23.47785l11.84616,23.47785l-23.69232,0z" fill="#000000"/>
-              </g>
-            </svg>
-            <span className="sidebar-preview-video-overlay-text sidebar-tight-letters">Preview this course</span>
-          </button>
-        </a>
-        <div className="sidebar-main-content">
+    <div className={`sidebar-container ${positionClass}`}>
+      <div className={`sidebar-container-content ${paddingClass}`}>
+        {previewVideoElement}
+        <div className={`sidebar-main-content ${marginClass}`}>
           {priceInfo}
           <div className="sidebar-button-container">
             <button className="sidebar-add-to-cart-button sidebar-cursor-pointer sidebar-tight-letters">Add to cart</button>
@@ -258,7 +297,7 @@ export const Sidebar = () => {
           {applyCoupon}
         </div>
         <div className="sidebar-for-business">
-          <div className="sidebar-main-content">
+          <div className="sidebar-main-content sidebar-default-margin">
             <h3 className="sidebar-tight-letters">Training 5 or more people?</h3>
             <p>Get your team access to 5,500+ top Udemy courses anytime, anywhere.</p>
             <button>Try Udemy for Business</button>
