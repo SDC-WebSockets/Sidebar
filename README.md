@@ -8,7 +8,6 @@
 2. Installation
 3. Database
 4. API
-5. Testing
 
 ## Overview
 
@@ -49,4 +48,66 @@ The Sidebar API provides price information (including information related to dis
 5. Build the client with `npm run build` or (if you want to put in in watch mode) `npm run dev`.
 6. Start the server with `npm start`.
 7. Navigate to localhost:3004 (or whatever URL and port you specified in `.env`).
-8. `npm run ec2` will log you in to an EC2 instance, but you'll need to modify the ec2 script in `package.json` to add a path to your .pem file and EC2 instance.
+8. Add `?courseId=` and then a number between 1 and 100, inclusive, to see it render with information from the different records in the database.
+9. `npm run ec2` will log you in to an EC2 instance, but you'll need to modify the ec2 script in `package.json` to add a path to your .pem file and EC2 instance.
+
+## Database
+
+Populate the database with `npm run pop`; this will create 100 records in three tables: 'Price', 'PreviewVideo', and 'Sidebar'.
+
+Price Schema:
+
+  courseId: Number,
+  basePrice: Number,
+  discountPercentage: Number,
+  discountedPrice: Number,
+  saleEndDate: Date,
+  saleOngoing: Boolean
+  
+PreviewVideo Schema:
+
+  courseId: Number,
+  previewVideoUrl: String,
+  previewVideoImgUrl: String
+  
+Sidebar Schema:
+
+  courseId: Number,
+  fullLifetimeAccess: String,
+  accessTypes: String,
+  assignments: Boolean,
+  certificateOfCompletion: Boolean,
+  downloadableResources: Number
+  
+## API
+
+The API has three routes (the numbers can be replaced with any integer between 1 and 100, inclusive):
+
+/price?courseId=27
+
+	{
+  "courseId": Number,
+  “basePrice”: Number,
+  “discountPercentage”: Number,
+  “discountedPrice”: Number,
+  “saleEndDate”: Date,
+  “saleOngoing”: Boolean
+}
+
+/previewVideo?courseId=42
+
+ {
+  "courseId": Number,
+  “previewVideoURL”: String,
+  “previewVideoImgURL”: String
+ }
+
+
+/sidebar?courseId=98
+
+ {
+  “fullLifetimeAccess”: String,
+  “accessTypes”: String,
+  “certificateOfCompletion”: Boolean
+ }
+
