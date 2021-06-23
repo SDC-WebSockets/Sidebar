@@ -4,10 +4,10 @@
 
 ## Table of Contents
 
-1. Overview
-2. Installation
-3. Database
-4. API
+1. [Overview](-overview)
+2. [Installation](-installation)
+3. [Database](-database)
+4. [API](-api)
 
 ## Overview
 
@@ -56,9 +56,9 @@ The Sidebar API provides price information (including information related to dis
 ## Database
 
 Populate the database with `npm run pop`; this will create 100 records in three tables: 'Price', 'PreviewVideo', and 'Sidebar'.
-
+```
 Price Schema:
-
+   
   courseId: Number,
   basePrice: Number,
   discountPercentage: Number,
@@ -80,14 +80,15 @@ Sidebar Schema:
   assignments: Boolean,
   certificateOfCompletion: Boolean,
   downloadableResources: Number
-  
+```
+
 ## API
 
 The API has three routes (the numbers can be replaced with any integer between 1 and 100, inclusive):
-
+```
 /price?courseId=27
 
-	{
+{
   "courseId": Number,
   “basePrice”: Number,
   “discountPercentage”: Number,
@@ -112,4 +113,4 @@ The API has three routes (the numbers can be replaced with any integer between 1
   “accessTypes”: String,
   “certificateOfCompletion”: Boolean
  }
-
+```
