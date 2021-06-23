@@ -9,13 +9,37 @@
   background-color: white;
 }
 
+.sidebar-default-position {
+  position: relative;
+  z-index: 3000;
+}
+
+.sidebar-final-position {
+  z-index: 0;
+}
+
+.sidebar-add-padding-top {
+  padding-top: 20px;
+}
+
+.sidebar-no-padding {
+  padding: 0;
+}
+
+.sidebar-sticky-margin {
+  margin-top: 0;
+}
+
+.sidebar-default-margin {
+  margin-top: 24px;
+}
+
 .sidebar-container-content {
   border-radius: 4px;
   width: 344px;
   box-shadow: 0 2px 4px rgb(0 0 0 / 8%), 0 4px 12px rgb(0 0 0 / 8%);
   box-sizing: border-box;
   margin: 0;
-  padding: 0;
 }
 
 .sidebar-preview-video {
@@ -23,8 +47,8 @@
   display: inline-block;
   border: 0;
   border-radius: 4px;
-  width: 340px;
-  margin: 2px;
+  width: 342px;
+  margin: 1px;
   height: 192px;
   box-sizing: border-box;
   padding: 0;
@@ -35,7 +59,7 @@
   top: 0;
   left: 0;
   z-index: 100;
-  width: 340px;
+  width: 342px;
   height: 192px;
   margin: 1px;
   box-sizing: border-box;
@@ -44,7 +68,7 @@
 
 .sidebar-preview-video img {
   border-radius: 4px;
-  width: 340px;
+  width: 342px;
   height: 192px;
   box-sizing: border-box;
   margin: 0;
@@ -72,7 +96,7 @@
   left: 0;
   background: linear-gradient(180deg, rgba(30, 30, 30, 0) 0%, rgba(30, 30, 30, 0.9) 100%);
   z-index: 50;
-  width: 340px;
+  width: 342px;
   height: 192px;
   border-radius: 4px;
   box-sizing: border-box;
@@ -81,7 +105,7 @@
 }
 
 .sidebar-main-content {
-  margin-top: 24px;
+  /* margin-top: 24px; */
   margin-left: 24px;
   margin-right: 24px;
   box-sizing: border-box;
@@ -157,6 +181,18 @@
   box-sizing: border-box;
   margin: 0;
   padding: 0;
+}
+
+.sidebar-discount-red-text {
+  color: #b32929;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.sidebar-discount-red-text span{
+  font-weight: 700;
 }
 
 .sidebar-course-includes {
