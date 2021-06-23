@@ -1,5 +1,7 @@
 const mongoose = require('mongoose');
 const database = require('./database.js');
+const dotenv = require('dotenv');
+dotenv.config();
 
 const populateDatabase = async (numberOfRecords) => {
   // Make a list of all the collections
@@ -91,7 +93,8 @@ const generatePreviewVideoData = (index) => {
 
   const previewVideoData = new database.PreviewVideo({
     courseId: index,
-    previewVideoUrl: "https://example.com/previewVideo" + videoIndex + ".mp4",
+    previewVideoImgUrl: `${process.env.ASSET_URL}/previewVideoImg${videoIndex}.jpg`,
+    previewVideoUrl: `${process.env.ASSET_URL}/previewVideo${videoIndex}.mp4`
   });
 
   return previewVideoData;

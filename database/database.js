@@ -1,7 +1,9 @@
 const mongoose = require('mongoose');
+const dotenv = require('dotenv');
+dotenv.config();
 
 // Connecting to the database
-mongoose.connect('mongodb://localhost:27017/sidebar?gssapiServiceName=mongodb', {useNewUrlParser: true, useUnifiedTopology: true})
+mongoose.connect(`mongodb://localhost:27017/sidebar?gssapiServiceName=mongodb`, {useNewUrlParser: true, useUnifiedTopology: true})
 .then(() => console.log("Connected to database."))
 .catch( error => console.log("Connection error: ", error));
 
@@ -23,6 +25,7 @@ const Price = mongoose.model('Price', priceSchema);
 const previewVideoSchema = new mongoose.Schema({
   courseId: Number,
   previewVideoUrl: String,
+  previewVideoImgUrl: String
 });
 
 const PreviewVideo = mongoose.model('PreviewVideo', previewVideoSchema);

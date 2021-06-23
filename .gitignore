@@ -28,3 +28,6 @@ public/
 # AWS token
 aws.js
 cb-sidebar-aws-key.pem
+
+# Environment variables
+.env

@@ -1,13 +1,29 @@
+const shrinkRay = require('shrink-ray-current');
 const express = require('express');
-const serveStatic = require('serve-static');
-const app = express();
 const path = require('path');
+const app = express();
 const db = require('../database/database.js');
 const cors = require('cors');
 
-app.use(express.static('public'));
+app.use(shrinkRay());
+app.use(express.static(path.join(__dirname, '..', 'public')));
 app.use(express.json());
 app.use(cors());
+
+app.get('*.js', (req, res, next) => {
+  if (req.header('Accept-Encoding').includes('br')) {
+    req.url = req.url + '.br';
+    console.log(req.header('Accept-Encoding'));
+    res.set('Content-Encoding', 'br');
+    res.set('Content-Type', 'application/javascript; charset=UTF-8');
+  } else if (req.header('Accept-Encoding').includes('gzip')) {
+    req.url = req.url + '.gz';
+    console.log(req.header('Accept-Encoding'));
+    res.set('Content-Encoding', 'gzip');
+    res.set('Content-Type', 'application/javascript; charset=UTF-8');
+  }
+  next();
+});
 
 app.get('/price', (req, res) => {
   console.log("GET request received at /price.");
@@ -50,7 +66,7 @@ app.get('/sidebar', (req, res) => {
 });
 
 app.use('/course', (req, res) => {
-  res.sendFile('index.html', {root: 'client'});
+  res.sendFile('index.html', {root: 'public'});
 });
 
 module.exports = app;

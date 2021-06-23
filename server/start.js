@@ -1,12 +1,15 @@
 const app = require('./server.js');
-const port = 3004;
+const dotenv = require('dotenv');
+dotenv.config();
+const port = process.env.PORT || 3004;
+const host = process.env.PRIVATE_HOST || 'localhost'
 
-const serverInstance = app.listen(port, () => {
-  console.log(`Listening at http://localhost:${port}`)
+const serverInstance = app.listen(port, host, () => {
+  console.log(`Listening at ${host}:${port}`)
 });
 
 const closeServer = () => {
   serverInstance.close();
-}
+};
 
 exports.closeServer = closeServer;

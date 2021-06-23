@@ -1,3 +1,290 @@
-h1 {
-  color: orange;
+.sidebar-container {
+  width: 344px;
+  border-radius: 4px;
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: sf pro display,-apple-system,BlinkMacSystemFont,Roboto,segoe ui,Helvetica,Arial,sans-serif,apple color emoji,segoe ui emoji,segoe ui symbol;
+  color: #3c3b37;
+  background-color: white;
 }
+
+.sidebar-container-content {
+  border-radius: 4px;
+  width: 344px;
+  box-shadow: 0 2px 4px rgb(0 0 0 / 8%), 0 4px 12px rgb(0 0 0 / 8%);
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+.sidebar-preview-video {
+  position: relative;
+  display: inline-block;
+  border: 0;
+  border-radius: 4px;
+  width: 340px;
+  margin: 2px;
+  height: 192px;
+  box-sizing: border-box;
+  padding: 0;
+}
+
+.sidebar-preview-video svg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 100;
+  width: 340px;
+  height: 192px;
+  margin: 1px;
+  box-sizing: border-box;
+  padding: 0;
+}
+
+.sidebar-preview-video img {
+  border-radius: 4px;
+  width: 340px;
+  height: 192px;
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+.sidebar-preview-video-overlay-text {
+  position: absolute;
+  bottom: 8px;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: white;
+  font-size: 15px;
+  font-weight: 700;
+  line-height: 1.2;
+  z-index: 100;
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+.sidebar-preview-video-overlay-gradient {
+  position: absolute;
+  top: 0;
+  left: 0;
+  background: linear-gradient(180deg, rgba(30, 30, 30, 0) 0%, rgba(30, 30, 30, 0.9) 100%);
+  z-index: 50;
+  width: 340px;
+  height: 192px;
+  border-radius: 4px;
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+.sidebar-main-content {
+  margin-top: 24px;
+  margin-left: 24px;
+  margin-right: 24px;
+  box-sizing: border-box;
+  padding: 0;
+}
+
+.sidebar-button-container button {
+  width: 100%;
+  height: 48px;
+  font-size: 15px;
+  font-weight: 700;
+  border-radius: 4px;
+  box-sizing: border-box;
+}
+
+.sidebar-add-to-cart-button {
+  background-color:#ec5252;
+  color:white;
+  border: none;
+  box-sizing: border-box;
+  margin-bottom: 6px;
+  padding: 0;
+}
+
+.sidebar-add-to-cart-button:hover {
+  background-color:#eb2525;
+  box-sizing: border-box;
+  padding: 0;
+}
+
+.sidebar-buy-now-button {
+  margin-top: 8px;
+  margin-bottom: 6px;
+  background-color: transparent;
+  color:#0f7c90;
+  border: 1px solid #2896a9;
+  padding: 0;
+}
+
+.sidebar-button-container p {
+  margin-bottom: 12px;
+  font-size: 12px;
+  text-align: center;
+  padding: 0;
+}
+
+.sidebar-price-info {
+  display: flex;
+  flex-wrap: nowrap;
+  align-items: center;
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+.sidebar-big-price {
+  font-size: 30px;
+  font-weight: 700;
+  margin-bottom: 12px;
+  box-sizing: border-box;
+  padding: 0;
+}
+
+.sidebar-discount-info {
+  margin-bottom: 16px;
+  margin-left: 6px;
+  box-sizing: border-box;
+  padding: 0;
+}
+
+.sidebar-discount-info s {
+  color: gray;
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+.sidebar-course-includes {
+  margin-top: 6px;
+  margin-bottom: 6px;
+  font-size: 14px;
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+  padding: 0;
+}
+
+.sidebar-course-includes b {
+  font-size: 16px;
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+.sidebar-course-includes-item {
+  margin-top: 6px;
+  height: 20px;
+  display: flex;
+  box-sizing: border-box;
+  padding: 0;
+}
+
+.sidebar-course-includes-text {
+  margin-left: 12px;
+  box-sizing: border-box;
+  padding: 0;
+}
+
+.sidebar-coupon {
+  text-align: center;
+  color: #0f7c90;
+  font-weight: 700;
+  font-size: 14px;
+  margin-top: 24px;
+  margin-bottom: 40px;
+  box-sizing: border-box;
+  padding: 0;
+}
+
+.sidebar-coupon-input:focus {
+  outline: none;
+}
+
+.sidebar-coupon-input {
+  height: 40px;
+  border-top-left-radius: 4px;
+  border-bottom-left-radius: 4px;
+  background-color: transparent;
+  padding-left: 16px;
+  margin-top: 6px;
+  margin-bottom: 31px;
+  box-sizing: border-box;
+  border: 1px solid #81807a;
+}
+
+.sidebar-coupon-submit-button {
+  height: 40px;
+  width: 99px;
+  border-top-right-radius: 4px;
+  border-bottom-right-radius: 4px;
+  border: 0;
+  background-color: #0f7c90;
+  color: white;
+  font-weight: 700;
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+.sidebar-coupon-submit-button:hover {
+  background-color: #0e5f6d;
+}
+
+.sidebar-cursor-pointer {
+  cursor: pointer;
+}
+
+.sidebar-for-business {
+  border-top: 1px solid #dcdacb;
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+.sidebar-for-business p {
+  font-size: 14px;
+  margin-top: 6px;
+  box-sizing: border-box;
+  padding: 0;
+}
+
+.sidebar-for-business button {
+  margin-top: 8px;
+  margin-bottom: 24px;
+  background-color: transparent;
+  color:#0f7c90;
+  border: 1px solid #2896a9;
+  font-size: 14px;
+  font-weight: 700;
+  width: 100%;
+  height: 42px;
+  border-radius: 4px;
+  box-sizing: border-box;
+  padding: 0;
+}
+
+.sidebar-tight-letters {
+  letter-spacing: -0.02em;
+}
+
+.sidebar-small-icon {
+  width: 16px;
+  height: 16px;
+  margin-top: 2px;
+  box-sizing: border-box;
+  padding: 0;
+}
+
+.sidebar-small-icon svg {
+  fill: #81807a;
+}
+
+
+
+
+
