@@ -4,10 +4,10 @@
 
 ## Table of Contents
 
-1. [Overview](-overview)
-2. [Installation](-installation)
-3. [Database](-database)
-4. [API](-api)
+1. [Overview](#overview)
+2. [Installation](#installation-and-start)
+3. [Database](#database)
+4. [API](#api)
 
 ## Overview
 
