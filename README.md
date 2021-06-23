@@ -48,5 +48,5 @@ The Sidebar API provides price information (including information related to dis
 4. `npm run pop` to populate the database.
 5. Build the client with `npm run build` or (if you want to put in in watch mode) `npm run dev`.
 6. Start the server with `npm start`.
-7. Navigate to localhost:3004 or whatever URL and port you specified in `.env`.
+7. Navigate to localhost:3004 (or whatever URL and port you specified in `.env`).
 8. `npm run ec2` will log you in to an EC2 instance, but you'll need to modify the ec2 script in `package.json` to add a path to your .pem file and EC2 instance.
