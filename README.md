@@ -40,10 +40,10 @@ The Sidebar API provides price information (including information related to dis
 
 1. From root directory: `npm install`.
 2. Create file named `.env`, using the template provided at `.env-sample`.
-  * NODE_ENV defaults to "development"; "production" is the other possible choice (which will tell Webpack to build a more efficent client, at the expense of some helpful development features).
-  * Sidebar will assume PUBLIC_HOST and PRIVATE_HOST are both localhost, if those aren't provided.
-  * Database population will only work if ASSET_URL exists. Sample images and videos provided at /public/assets for your convenience.
-  * COURSE_CONTENT_URL needs to point to that API, if you want the full experience. The Course Content service must therefore be running somewhere (which may require you to install and run that too; see: https://github.com/Charlotte-Badger/Course-Content).
+   * NODE_ENV defaults to "development"; "production" is the other possible choice (which will tell Webpack to build a more efficent client, at the expense of some helpful development features).
+   * Sidebar will assume PUBLIC_HOST and PRIVATE_HOST are both localhost, if those aren't provided.
+   * Database population will only work if ASSET_URL exists. Sample images and videos provided at /public/assets for your convenience.
+   * COURSE_CONTENT_URL needs to point to that API, if you want the full experience. The Course Content service must therefore be running somewhere (which may require you to install and run that too; see: https://github.com/Charlotte-Badger/Course-Content).
 3. Install and run MongoDB (see: https://docs.mongodb.com/manual/installation/).
 4. `npm run pop` to populate the database.
 5. Build the client with `npm run build` or (if you want to put in in watch mode) `npm run dev`.
