@@ -1,13 +1,15 @@
+/* eslint-disable no-console */
 const mongoose = require('mongoose');
 const dotenv = require('dotenv');
+
 dotenv.config();
 
 // Connecting to the database
-mongoose.connect(`mongodb://localhost:27017/sidebar?gssapiServiceName=mongodb`, {useNewUrlParser: true, useUnifiedTopology: true})
-.then(() => console.log("Connected to database."))
-.catch( error => console.log("Connection error: ", error));
+mongoose.connect('mongodb://localhost:27017/sidebar?gssapiServiceName=mongodb', { useNewUrlParser: true, useUnifiedTopology: true })
+  .then(() => console.log('Connected to database.'))
+  .catch((error) => console.log('Connection error: ', error));
 
-const connection = mongoose.connection;
+const { connection } = mongoose;
 
 // ------------------------------------------------------------------
 // Setting up schemas and models
@@ -17,7 +19,7 @@ const priceSchema = new mongoose.Schema({
   discountPercentage: Number,
   discountedPrice: Number,
   saleEndDate: Date,
-  saleOngoing: Boolean
+  saleOngoing: Boolean,
 });
 
 const Price = mongoose.model('Price', priceSchema);
@@ -25,7 +27,7 @@ const Price = mongoose.model('Price', priceSchema);
 const previewVideoSchema = new mongoose.Schema({
   courseId: Number,
   previewVideoUrl: String,
-  previewVideoImgUrl: String
+  previewVideoImgUrl: String,
 });
 
 const PreviewVideo = mongoose.model('PreviewVideo', previewVideoSchema);
@@ -36,24 +38,18 @@ const sidebarSchema = new mongoose.Schema({
   accessTypes: String,
   assignments: Boolean,
   certificateOfCompletion: Boolean,
-  downloadableResources: Number
-})
+  downloadableResources: Number,
+});
 
 const Sidebar = mongoose.model('Sidebar', sidebarSchema);
 
 // ------------------------------------------------------------------
 // Functions that retrieve information from the database
-const getPrice = (query, callback) => {
-  return Price.find(query, callback);
-}
+const getPrice = (query, callback) => Price.find(query, callback);
 
-const getPreviewVideo = (query, callback) => {
-  return PreviewVideo.find(query, callback);
-}
+const getPreviewVideo = (query, callback) => PreviewVideo.find(query, callback);
 
-const getSidebar = (query, callback) => {
-  return Sidebar.find(query, callback);
-}
+const getSidebar = (query, callback) => Sidebar.find(query, callback);
 
 // ------------------------------------------------------------------
 // Exports
