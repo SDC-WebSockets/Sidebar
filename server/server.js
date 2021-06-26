@@ -75,25 +75,33 @@ app.use('/course', (req, res) => {
 app.get('/sidebar/all', (req, res) => {
   console.log('GET request received at /sidebar/all.');
   const fullResponse = {};
-  db.getSidebar(req.query, (err, docs) => {
+  db.getPrice(req.query, (err, docs) => {
     if (err) {
       res.send(err);
     } else if (docs[0] === undefined) {
-      // res.status(404).send('Database does not contain requested record.');
-      fullResponse.sidebar({ notFound: true });
+      fullResponse.price = { notFound: true };
     } else {
-      fullResponse.sidebar(docs[0]);
+      [fullResponse.price] = docs;
     }
-  });
-  db.getPreviewVideo(req.query, (err, docs) => {
-    if (err) {
-      res.send(err);
-    } else if (docs[0] === undefined) {
-      // res.status(404).send('Database does not contain requested record.');
-      fullResponse.previewVideo({ notFound: true });
-    } else {
-      fullResponse.previewVideo(docs[0]);
-    }
+    db.getSidebar(req.query, (error, sbDocs) => {
+      if (error) {
+        res.send(error);
+      } else if (sbDocs[0] === undefined) {
+        fullResponse.sidebar = { notFound: true };
+      } else {
+        [fullResponse.sidebar] = sbDocs;
+      }
+      db.getPreviewVideo(req.query, (errorr, pvDocs) => {
+        if (errorr) {
+          res.send(errorr);
+        } else if (pvDocs[0] === undefined) {
+          fullResponse.previewVideo = { notFound: true };
+        } else {
+          [fullResponse.previewVideo] = pvDocs;
+          res.send(fullResponse);
+        }
+      });
+    });
   });
 });
 
