@@ -4,6 +4,7 @@
   "description": "Sidebar for Udemy clone website",
   "scripts": {
     "test": "jest --detectOpenHandles",
+    "sdc-tests": "jest --detectOpenHandles -- test/sdc-api.spec.js",
     "start": "nodemon server/start.js",
     "build": "webpack",
     "dev": "webpack --watch",

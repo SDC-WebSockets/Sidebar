@@ -81,7 +81,7 @@ app.get('/sidebar/all', (req, res) => {
     } else if (docs[0] === undefined) {
       fullResponse.price = { notFound: true };
     } else {
-      [fullResponse.price] = docs;
+      const { basePrice, discountPercentage, discountedPrice, saleEndDate, saleOngoing } = docs[0];
     }
     db.getSidebar(req.query, (error, sbDocs) => {
       if (error) {
@@ -89,7 +89,7 @@ app.get('/sidebar/all', (req, res) => {
       } else if (sbDocs[0] === undefined) {
         fullResponse.sidebar = { notFound: true };
       } else {
-        [fullResponse.sidebar] = sbDocs;
+        const {fullLifetimeAccess, accessTypes, assignments, certificateOfCompletion, downloadableResources} = sbDocs[0];
       }
       db.getPreviewVideo(req.query, (errorr, pvDocs) => {
         if (errorr) {
@@ -97,7 +97,7 @@ app.get('/sidebar/all', (req, res) => {
         } else if (pvDocs[0] === undefined) {
           fullResponse.previewVideo = { notFound: true };
         } else {
-          [fullResponse.previewVideo] = pvDocs;
+          const { previewVideoImgUrl, previewVideoUrl } = pvDocs[0];
           res.send(fullResponse);
         }
       });
