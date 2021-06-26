@@ -87,7 +87,9 @@ Sidebar Schema:
 
 ## API
 
-The API has three routes (the numbers can be replaced with any integer between 1 and 100, inclusive):
+The API has the following routes (the numbers can be replaced with any integer between 1 and 100, inclusive):
+
+### GET Requests:
 ```
 /price?courseId=27
 
@@ -116,4 +118,40 @@ The API has three routes (the numbers can be replaced with any integer between 1
   “accessTypes”: String,
   “certificateOfCompletion”: Boolean
  }
+ 
+/sidebar/all?courseId=22
+{
+    "price": {
+        "basePrice": 99.99,
+        "discountPercentage": 84,
+        "discountedPrice": 15.99,
+        "saleEndDate": "2021-06-29T20:14:35.238Z",
+        "saleOngoing": false
+    },
+    "sidebar": {
+        "fullLifetimeAccess": "Full lifetime access",
+        "accessTypes": "Access on mobile and TV",
+        "assignments": true,
+        "certificateOfCompletion": true,
+        "downloadableResources": 20
+    },
+    "previewVideo": {
+        "previewVideoImgUrl": "http://localhost:3004/assets/previewVideoImg6.jpg",
+        "previewVideoUrl": "http://localhost:3004/assets/previewVideo6.mp4"
+    }
+}
 ```
+
+### POST Requests:
+```
+/sidebar/all?courseId
+```
+### PUT Requests:
+```
+/sidebar/all?courseId
+```
+### DELETE Requests:
+```
+/sidebar/all?courseId
+```
+
