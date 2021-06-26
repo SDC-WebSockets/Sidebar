@@ -169,4 +169,22 @@ app.post('/sidebar/all', async (req, res) => {
   }
 });
 
+// Create
+app.post('/sidebar', async (req, res) => {
+  const newSidebar = req.body;
+  const newCourseId = newSidebar.courseId;
+
+  if (typeof newCourseId !== 'number') {
+    res.status(400).send('Sorry, invalid request: courseId is not a number');
+  } else {
+    await db.postSidebar(newSidebar)
+      .then((result) => {
+        if (result) {
+
+        }
+      })
+  }
+
+});
+
 module.exports = app;
