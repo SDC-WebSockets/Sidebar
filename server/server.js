@@ -189,7 +189,7 @@ app.post('/sidebar', async (req, res) => {
 
 // Create
 app.post('/sidebar/all', async (req, res) => {
-  console.log('POST request to /sidebar/all')
+  console.log('POST request to /sidebar/all');
   const newDocument = req.body;
   const newCourseId = newDocument.courseId;
   console.log(newDocument);
@@ -208,8 +208,11 @@ app.post('/sidebar/all', async (req, res) => {
         await db.postAll(newDocument)
           .then((result) => {
             console.log(result);
-            res.send(result)
+            res.status(201).send(result);
           })
+          .catch((error) => {
+            console.warn('Error occured during create (server side): ', error);
+          });
       } else {
         res.status(400).send('Sorry, courseId already exists.');
       }
