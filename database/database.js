@@ -67,7 +67,6 @@ const postAll = async (newDoc) => {
   const newPrice = newDoc.price;
   const newPreviewVideo = newDoc.previewVideo;
   const newSidebar = newDoc.sidebar;
-  const createPromises = [];
 
   if (newPrice.courseId === undefined) {
     newPrice.courseId = courseId;
@@ -98,7 +97,6 @@ const postAll = async (newDoc) => {
       return { error: `Price ${schemaPath} does not exist.` };
     }
   }
-  createPromises.push(Price.create(newPrice));
 
   for (const schemaPath in sidebarSchema.obj) {
     if (newSidebar[schemaPath] !== undefined) {
@@ -111,7 +109,6 @@ const postAll = async (newDoc) => {
       return { error: `Sidebar ${schemaPath} does not exist.` };
     }
   }
-  createPromises.push(Sidebar.create(newSidebar));
 
   for (const schemaPath in previewVideoSchema.obj) {
     if (newPreviewVideo[schemaPath] !== undefined) {
@@ -124,9 +121,7 @@ const postAll = async (newDoc) => {
       return { error: `Preview video ${schemaPath} does not exist.` };
     }
   }
-  createPromises.push(PreviewVideo.create(newPreviewVideo));
 
-  console.log(createPromises);
   return Price.create(newPrice)
     .then((result) => {
       console.log(result);
