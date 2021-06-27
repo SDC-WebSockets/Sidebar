@@ -136,6 +136,10 @@ const postAll = async (newDoc) => {
       console.log(result);
       return PreviewVideo.create(newPreviewVideo);
     })
+    .then((result) => {
+      console.log(result);
+      return 'Success in creating new data!';
+    })
     .catch((error) => {
       console.warn('Error occured during create: ', error);
     });
