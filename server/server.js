@@ -136,6 +136,34 @@ app.get('/sidebar/all', (req, res) => {
       });
     });
   });
+// Create
+app.post('/sidebar/all', async (req, res) => {
+  console.log('POST request to /sidebar/all')
+  const newDocument = req.body;
+  const newCourseId = newDocument.courseId;
+  console.log(newDocument);
+  // change string date to date type
+  newDocument.price.saleEndDate = new Date(newDocument.price.saleEndDate);
+
+  if (typeof newCourseId !== 'number') {
+    res.status(400).send('Sorry, invalid request: courseId is not a number');
+  } else {
+    db.getSidebar({ courseId: newCourseId }, async (err, docs) => {
+      console.log('return from courseId query:', docs);
+      if (err) {
+        console.warn('Error Occured :', err);
+      } else if (docs[0] === undefined) {
+        console.log('courseId is available!');
+        await db.postAll(newDocument)
+          .then((result) => {
+            console.log(result);
+            res.send(result)
+          })
+      } else {
+        res.status(400).send('Sorry, courseId already exists.');
+      }
+    });
+  }
 });
 
 module.exports = app;
