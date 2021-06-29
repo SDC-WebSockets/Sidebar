@@ -81,7 +81,20 @@ app.get('/sidebar/all', (req, res) => {
     } else if (docs[0] === undefined) {
       fullResponse.price = { notFound: true };
     } else {
-      const { basePrice, discountPercentage, discountedPrice, saleEndDate, saleOngoing } = docs[0];
+      const {
+        basePrice,
+        discountPercentage,
+        discountedPrice,
+        saleEndDate,
+        saleOngoing,
+      } = docs[0];
+      fullResponse.price = {
+        basePrice,
+        discountPercentage,
+        discountedPrice,
+        saleEndDate,
+        saleOngoing,
+      };
     }
     db.getSidebar(req.query, (error, sbDocs) => {
       if (error) {
@@ -89,7 +102,20 @@ app.get('/sidebar/all', (req, res) => {
       } else if (sbDocs[0] === undefined) {
         fullResponse.sidebar = { notFound: true };
       } else {
-        const {fullLifetimeAccess, accessTypes, assignments, certificateOfCompletion, downloadableResources} = sbDocs[0];
+        const {
+          fullLifetimeAccess,
+          accessTypes,
+          assignments,
+          certificateOfCompletion,
+          downloadableResources,
+        } = sbDocs[0];
+        fullResponse.sidebar = {
+          fullLifetimeAccess,
+          accessTypes,
+          assignments,
+          certificateOfCompletion,
+          downloadableResources,
+        };
       }
       db.getPreviewVideo(req.query, (errorr, pvDocs) => {
         if (errorr) {
@@ -97,7 +123,14 @@ app.get('/sidebar/all', (req, res) => {
         } else if (pvDocs[0] === undefined) {
           fullResponse.previewVideo = { notFound: true };
         } else {
-          const { previewVideoImgUrl, previewVideoUrl } = pvDocs[0];
+          const {
+            previewVideoImgUrl,
+            previewVideoUrl,
+          } = pvDocs[0];
+          fullResponse.previewVideo = {
+            previewVideoImgUrl,
+            previewVideoUrl,
+          };
           res.send(fullResponse);
         }
       });
