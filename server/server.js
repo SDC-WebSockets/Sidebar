@@ -181,13 +181,13 @@ app.delete('/sidebar/all', async (req, res) => {
       } else {
         throw Error('Check DB side');
       }
+      res.end();
     })
     .catch((error) => {
       console.warn('Error occured during delete', error);
       res.status(400).send('Sorry, Error in deleting occured.');
+      res.end();
     });
-
-  res.end();
 });
 
 module.exports = app;

@@ -61,7 +61,7 @@ const postPreviewVideo = (query, callback) => PreviewVideo.find(query, callback)
 const postSidebar = (query, callback) => PreviewVideo.find(query, callback);
 
 const postAll = async (newDoc) => {
-  console.log('NewDoc in db: ', newDoc);
+  // console.log('NewDoc in db: ', newDoc);
   const { courseId } = newDoc;
   // create a new objects
   const newPrice = newDoc.price;
@@ -124,16 +124,22 @@ const postAll = async (newDoc) => {
 
   return Price.create(newPrice)
     .then((result) => {
-      console.log(result);
-      return Sidebar.create(newSidebar);
+      if (result) {
+        return Sidebar.create(newSidebar);
+      }
+      throw Error('Problem creating new Price');
     })
     .then((result) => {
-      console.log(result);
-      return PreviewVideo.create(newPreviewVideo);
+      if (result) {
+        return PreviewVideo.create(newPreviewVideo);
+      }
+      throw Error('Problem creating new Sidebar');
     })
     .then((result) => {
-      console.log(result);
-      return 'Success in creating new data!';
+      if (result) {
+        return 'Success in creating new data!';
+      }
+      throw Error('Problem creating new Preview Video');
     })
     .catch((error) => {
       console.warn('Error occured during create: ', error);
@@ -145,21 +151,21 @@ const deleteAll = async (courseId) => {
   return Price.deleteOne(courseId)
     .then((result) => {
       if (result.deletedCount === 1) {
-        console.log(`Success in deleting Price for courseId: ${courseId.courseId}`);
+        // console.log(`Success in deleting Price for courseId: ${courseId.courseId}`);
         return Sidebar.deleteOne(courseId);
       }
       throw new Error(`Could not find document to delete in Price for courseId: ${courseId.courseId}`);
     })
     .then((result) => {
       if (result.deletedCount === 1) {
-        console.log(`Success in deleting Sidebar for courseId: ${courseId.courseId}`);
+        // console.log(`Success in deleting Sidebar for courseId: ${courseId.courseId}`);
         return PreviewVideo.deleteOne(courseId);
       }
       throw new Error(`Could not find document to delete in Sidebar for courseId: ${courseId.courseId}`);
     })
     .then((result) => {
       if (result.deletedCount === 1) {
-        console.log(`Success in deleting Preview Video for courseId: ${courseId.courseId}`);
+        // console.log(`Success in deleting Preview Video for courseId: ${courseId.courseId}`);
         console.log(`Success in deleting all data from courseId = ${courseId.courseId}!`);
         return true;
       }
