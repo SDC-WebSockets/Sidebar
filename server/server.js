@@ -135,55 +135,6 @@ app.get('/sidebar/all', (req, res) => {
       });
     });
   });
-// Create
-app.post('/sidebar/all', async (req, res) => {
-  console.log('POST request to /sidebar/all');
-  const newDocument = req.body;
-  const newCourseId = newDocument.courseId;
-  console.log(newDocument);
-  // change string date to date type
-  newDocument.price.saleEndDate = new Date(newDocument.price.saleEndDate);
-
-  if (typeof newCourseId !== 'number') {
-    res.status(400).send('Sorry, invalid request: courseId is not a number');
-  } else {
-    db.getSidebar({ courseId: newCourseId }, async (err, docs) => {
-      console.log('return from courseId query:', docs);
-      if (err) {
-        console.warn('Error Occured :', err);
-      } else if (docs[0] === undefined) {
-        console.log('courseId is available!');
-        await db.postAll(newDocument)
-          .then((result) => {
-            console.log(result);
-            res.status(201).send(result);
-          })
-          .catch((error) => {
-            console.warn('Error occured during create (server side): ', error);
-          });
-      } else {
-        res.status(400).send('Sorry, courseId already exists.');
-      }
-    });
-  }
-});
-
-// Create
-app.post('/sidebar', async (req, res) => {
-  const newSidebar = req.body;
-  const newCourseId = newSidebar.courseId;
-
-  if (typeof newCourseId !== 'number') {
-    res.status(400).send('Sorry, invalid request: courseId is not a number');
-  } else {
-    await db.postSidebar(newSidebar)
-      .then((result) => {
-        if (result) {
-
-        }
-      })
-  }
-
 });
 
 // Create
@@ -233,6 +184,7 @@ app.delete('/sidebar/all', async (req, res) => {
       console.warn('Error occured during delete (server side): ', error);
       res.status(400).send('Sorry, Error in deleting occured.');
     });
+
   res.end();
 });
 
