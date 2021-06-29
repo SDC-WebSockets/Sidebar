@@ -29,7 +29,6 @@ app.get('*.js', (req, res, next) => {
 
 app.get('/price', (req, res) => {
   console.log('GET request received at /price.');
-  console.log(req.headers);
   db.getPrice(req.query, (err, docs) => {
     if (err) {
       res.send(err);
@@ -55,7 +54,7 @@ app.get('/previewVideo', (req, res) => {
 });
 
 app.get('/sidebar', (req, res) => {
-  console.log('GET request received at /sidebar.');
+  console.log('GET request received at /sidebar ', req.query);
   db.getSidebar(req.query, (err, docs) => {
     if (err) {
       res.send(err);
@@ -218,6 +217,23 @@ app.post('/sidebar/all', async (req, res) => {
       }
     });
   }
+});
+
+// Delete
+app.delete('/sidebar/all', async (req, res) => {
+  console.log('DELETE request to /sidebar/all', req.query);
+  const courseId = req.query;
+  await db.deleteAll(courseId)
+    .then((result) => {
+      console.log('Result from delete: ');
+      console.log(result);
+      res.status(204);
+    })
+    .catch((error) => {
+      console.warn('Error occured during delete (server side): ', error);
+      res.status(400).send('Sorry, Error in deleting occured.');
+    });
+  res.end();
 });
 
 module.exports = app;

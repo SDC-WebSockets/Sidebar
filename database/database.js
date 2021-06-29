@@ -140,6 +140,22 @@ const postAll = async (newDoc) => {
     });
 };
 
+const deleteAll = async (courseId) => Price.deleteOne(courseId)
+  .then((result) => {
+    console.log(result);
+    return Sidebar.deleteOne(courseId);
+  })
+  .then((result) => {
+    console.log(result);
+    return PreviewVideo.deleteOne(courseId);
+  })
+  .then((result) => {
+    console.log(result);
+    return `Success in deleting all data from courseId = ${courseId.courseId}!`;
+  })
+  .catch((error) => {
+    console.warn('Error occured during delete: ', error);
+  });
 // ------------------------------------------------------------------
 // Exports
 exports.getPrice = getPrice;
@@ -149,6 +165,7 @@ exports.postPrice = postPrice;
 exports.postSidebar = postSidebar;
 exports.postPreviewVideo = postPreviewVideo;
 exports.postAll = postAll;
+exports.deleteAll = deleteAll;
 exports.Price = Price;
 exports.PreviewVideo = PreviewVideo;
 exports.Sidebar = Sidebar;
