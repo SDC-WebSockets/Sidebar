@@ -190,4 +190,39 @@ app.delete('/sidebar/all', async (req, res) => {
     });
 });
 
+// Update
+app.put('/sidebar/all', async (req, res) => {
+  const updateDoc = req.body;
+  const { courseId } = updateDoc;
+  console.log('PUT request to /sidebar/all { courseId: ', courseId, ' }');
+  const updating = [];
+  if (updateDoc.price !== undefined) {
+    updating.push('price');
+  }
+  if (updateDoc.sidebar !== undefined) {
+    updating.push('sidebar');
+  }
+  if (updateDoc.previewVideo !== undefined) {
+    updating.push('previewVideo');
+  }
+
+  if (typeof courseId !== 'number') {
+    res.status(400).send('Sorry, invalid request: courseId is not a number');
+  } else {
+    await db.update({ courseId }, updateDoc)
+      .then((result) => {
+        console.log(result);
+        for (let i = 0; i < updating.length; i += 1) {
+          if (!result[updating[i]]) {
+            throw Error(`Error on DB side for ${updating[i]}`);
+          }
+        }
+        res.status(204);
+        res.end();
+      })
+      .catch((error) => {
+        console.warn('Error occured during update (server side): ', error);
+      });
+  }
+});
 module.exports = app;

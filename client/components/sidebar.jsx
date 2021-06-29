@@ -64,7 +64,7 @@ export const Sidebar = () => {
     fetch(`http://${host}:${port}/sidebar/all?courseId=${courseId}`)
       .then((response) => response.json())
       .then((data) => {
-        console.log(data)
+        console.log(data);
         const priceResponse = data.price;
         const previewVideoResponse = data.previewVideo;
         const sidebarResponse = data.sidebar;

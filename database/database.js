@@ -176,6 +176,51 @@ const deleteAll = async (courseId) => {
       return false;
     });
 };
+
+const update = async (courseId, updateDoc) => {
+  console.log(`Request to update courseId: ${updateDoc.courseId} in DB.`);
+  const updateOpts = {
+    new: true,
+    omitUndefined: true,
+  };
+  const updated = {};
+
+  if (updateDoc.price !== undefined) {
+    await Price.findOneAndUpdate(courseId, updateDoc.price, updateOpts)
+      .then((result) => {
+        console.log(result);
+        updated.price = true;
+      })
+      .catch((error) => {
+        console.warn('Error occured during update for price: ', error);
+        updated.price = false;
+      });
+  }
+  if (updateDoc.sidebar !== undefined) {
+    await Sidebar.findOneAndUpdate(courseId, updateDoc.sidebar, updateOpts)
+      .then((result) => {
+        console.log(result);
+        updated.sidebar = true;
+      })
+      .catch((error) => {
+        console.warn('Error occured during update for sidebar: ', error);
+        updated.sidebar = false;
+      });
+  }
+  if (updateDoc.previewVideo !== undefined) {
+    await PreviewVideo.findOneAndUpdate(courseId, updateDoc.previewVideo, updateOpts)
+      .then((result) => {
+        console.log(result);
+        updated.previewVideo = true;
+      })
+      .catch((error) => {
+        console.warn('Error occured during update for preview video: ', error);
+        updated.previewVideo = false;
+      });
+  }
+
+  return updated;
+};
 // ------------------------------------------------------------------
 // Exports
 exports.getPrice = getPrice;
@@ -186,6 +231,7 @@ exports.postSidebar = postSidebar;
 exports.postPreviewVideo = postPreviewVideo;
 exports.postAll = postAll;
 exports.deleteAll = deleteAll;
+exports.update = update;
 exports.Price = Price;
 exports.PreviewVideo = PreviewVideo;
 exports.Sidebar = Sidebar;
