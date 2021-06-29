@@ -144,7 +144,7 @@ The API has the following routes (the numbers can be replaced with any integer b
 
 ### POST Requests:
 ```
-/sidebar/all?courseId
+/sidebar/all
 ```
 ### PUT Requests:
 ```
