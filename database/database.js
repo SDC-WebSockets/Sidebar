@@ -82,9 +82,9 @@ const postAll = async (newDoc) => {
   for (const schemaPath in priceSchema.obj) {
     if (newPrice[schemaPath] !== undefined) {
       const schemaTypeOf = priceSchema.path(schemaPath).instance.toLowerCase();
-      console.log('schema path:', schemaPath, ' type: ', schemaTypeOf);
+      // console.log('schema path:', schemaPath, ' type: ', schemaTypeOf);
       const keyType = typeof newPrice[schemaPath];
-      console.log('newPrice key: ', newPrice[schemaPath], ' type: ', keyType);
+      // console.log('newPrice key: ', newPrice[schemaPath], ' type: ', keyType);
       if (keyType !== schemaTypeOf) {
         if (keyType === 'object' && schemaTypeOf === 'date') {
           // eslint-disable-next-line no-continue
@@ -101,9 +101,9 @@ const postAll = async (newDoc) => {
   for (const schemaPath in sidebarSchema.obj) {
     if (newSidebar[schemaPath] !== undefined) {
       const schemaTypeOf = sidebarSchema.path(schemaPath).instance.toLowerCase();
-      console.log('schema path:', schemaPath, ' type: ', schemaTypeOf);
+      // console.log('schema path:', schemaPath, ' type: ', schemaTypeOf);
       const keyType = typeof newSidebar[schemaPath];
-      console.log('newSidebar key: ', newSidebar[schemaPath], ' type: ', keyType);
+      // console.log('newSidebar key: ', newSidebar[schemaPath], ' type: ', keyType);
       if (keyType !== schemaTypeOf) { return { error: `Sidebar ${schemaPath} type is ${schemaTypeOf} and does not match ${keyType}.` }; }
     } else {
       return { error: `Sidebar ${schemaPath} does not exist.` };
@@ -113,9 +113,9 @@ const postAll = async (newDoc) => {
   for (const schemaPath in previewVideoSchema.obj) {
     if (newPreviewVideo[schemaPath] !== undefined) {
       const schemaTypeOf = previewVideoSchema.path(schemaPath).instance.toLowerCase();
-      console.log('schema path:', schemaPath, ' type: ', schemaTypeOf);
+      // console.log('schema path:', schemaPath, ' type: ', schemaTypeOf);
       const keyType = typeof newPreviewVideo[schemaPath];
-      console.log('newPreviewVideo key: ', newPreviewVideo[schemaPath], ' type: ', keyType);
+      // console.log('newPreviewVideo key: ', newPreviewVideo[schemaPath], ' type: ', keyType);
       if (keyType !== schemaTypeOf) { return { error: `Preview video ${schemaPath} type is ${schemaTypeOf} and does not match ${keyType}.` }; }
     } else {
       return { error: `Preview video ${schemaPath} does not exist.` };
@@ -140,22 +140,36 @@ const postAll = async (newDoc) => {
     });
 };
 
-const deleteAll = async (courseId) => Price.deleteOne(courseId)
-  .then((result) => {
-    console.log(result);
-    return Sidebar.deleteOne(courseId);
-  })
-  .then((result) => {
-    console.log(result);
-    return PreviewVideo.deleteOne(courseId);
-  })
-  .then((result) => {
-    console.log(result);
-    return `Success in deleting all data from courseId = ${courseId.courseId}!`;
-  })
-  .catch((error) => {
-    console.warn('Error occured during delete: ', error);
-  });
+const deleteAll = async (courseId) => {
+  console.log(`Request to delete courseId: ${courseId.courseId} in DB.`);
+  return Price.deleteOne(courseId)
+    .then((result) => {
+      if (result.deletedCount === 1) {
+        console.log(`Success in deleting Price for courseId: ${courseId.courseId}`);
+        return Sidebar.deleteOne(courseId);
+      }
+      throw new Error(`Could not find document to delete in Price for courseId: ${courseId.courseId}`);
+    })
+    .then((result) => {
+      if (result.deletedCount === 1) {
+        console.log(`Success in deleting Sidebar for courseId: ${courseId.courseId}`);
+        return PreviewVideo.deleteOne(courseId);
+      }
+      throw new Error(`Could not find document to delete in Sidebar for courseId: ${courseId.courseId}`);
+    })
+    .then((result) => {
+      if (result.deletedCount === 1) {
+        console.log(`Success in deleting Preview Video for courseId: ${courseId.courseId}`);
+        console.log(`Success in deleting all data from courseId = ${courseId.courseId}!`);
+        return true;
+      }
+      throw new Error(`Could not find document to delete in Preview Video for courseId: ${courseId.courseId}`);
+    })
+    .catch((error) => {
+      console.warn('Error occured during delete: ', error);
+      return false;
+    });
+};
 // ------------------------------------------------------------------
 // Exports
 exports.getPrice = getPrice;

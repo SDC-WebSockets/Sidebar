@@ -176,12 +176,14 @@ app.delete('/sidebar/all', async (req, res) => {
   const courseId = req.query;
   await db.deleteAll(courseId)
     .then((result) => {
-      console.log('Result from delete: ');
-      console.log(result);
-      res.status(204);
+      if (result) {
+        res.status(204);
+      } else {
+        throw Error('Check DB side');
+      }
     })
     .catch((error) => {
-      console.warn('Error occured during delete (server side): ', error);
+      console.warn('Error occured during delete', error);
       res.status(400).send('Sorry, Error in deleting occured.');
     });
 
