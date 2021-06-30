@@ -22,7 +22,7 @@ describe('API calls', () => {
       .catch((err) => done(err));
   });
 
-  test('POST /sidebar/all route works for existing courseId', async (done) => {
+  test('POST /sidebar/all route works for new courseId', async (done) => {
     const testData = {
       courseId: 101,
       price: {
