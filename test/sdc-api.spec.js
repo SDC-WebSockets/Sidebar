@@ -22,7 +22,7 @@ describe('API calls', () => {
       .catch((err) => done(err));
   });
 
-  xtest('POST /sidebar/all route works for existing courseId', async (done) => {
+  test('POST /sidebar/all route works for existing courseId', async (done) => {
     const testData = {
       courseId: 101,
       price: {
@@ -49,6 +49,32 @@ describe('API calls', () => {
       .send(testData)
       .then((result) => {
         expect(result.status).toBe(201);
+        done();
+      })
+      .catch((err) => done(err));
+  });
+
+  test('PUT /sidebar/all route works for existing courseId', async (done) => {
+    const testData = {
+      courseId: 101,
+      price: {
+        basePrice: 89.99,
+        discountPercentage: 50,
+        saleOngoing: true,
+      },
+      sidebar: {
+        assignments: false,
+        downloadableResources: 12,
+      },
+      previewVideo: {
+        previewVideoImgUrl: 'http://localhost:3004/assets/previewVideoImg5.jpg',
+      },
+    };
+    expect.assertions(1);
+    await request.put('/sidebar/all')
+      .send(testData)
+      .then((result) => {
+        expect(result.status).toBe(204);
         done();
       })
       .catch((err) => done(err));

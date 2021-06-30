@@ -31,6 +31,3 @@ cb-sidebar-aws-key.pem
 
 # Environment variables
 .env
-
-# Global Config file
-globalConfig.json
