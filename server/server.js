@@ -1,9 +1,11 @@
+/* eslint-disable no-console */
 const shrinkRay = require('shrink-ray-current');
 const express = require('express');
 const path = require('path');
-const app = express();
-const db = require('../database/database.js');
 const cors = require('cors');
+const db = require('../database/database.js');
+
+const app = express();
 
 app.use(shrinkRay());
 app.use(express.static(path.join(__dirname, '..', 'public')));
@@ -12,12 +14,12 @@ app.use(cors());
 
 app.get('*.js', (req, res, next) => {
   if (req.header('Accept-Encoding').includes('br')) {
-    req.url = req.url + '.br';
+    req.url += '.br';
     console.log(req.header('Accept-Encoding'));
     res.set('Content-Encoding', 'br');
     res.set('Content-Type', 'application/javascript; charset=UTF-8');
   } else if (req.header('Accept-Encoding').includes('gzip')) {
-    req.url = req.url + '.gz';
+    req.url += '.gz';
     console.log(req.header('Accept-Encoding'));
     res.set('Content-Encoding', 'gzip');
     res.set('Content-Type', 'application/javascript; charset=UTF-8');
@@ -26,13 +28,13 @@ app.get('*.js', (req, res, next) => {
 });
 
 app.get('/price', (req, res) => {
-  console.log("GET request received at /price.");
+  console.log('GET request received at /price.');
   console.log(req.headers);
   db.getPrice(req.query, (err, docs) => {
     if (err) {
       res.send(err);
     } else if (docs[0] === undefined) {
-      res.status(404).send("Database does not contain requested record.");
+      res.status(404).send('Database does not contain requested record.');
     } else {
       res.send(docs[0]);
     }
@@ -40,12 +42,12 @@ app.get('/price', (req, res) => {
 });
 
 app.get('/previewVideo', (req, res) => {
-  console.log("GET request received at /previewVideo.");
+  console.log('GET request received at /previewVideo.');
   db.getPreviewVideo(req.query, (err, docs) => {
     if (err) {
       res.send(err);
     } else if (docs[0] === undefined) {
-      res.status(404).send("Database does not contain requested record.");
+      res.status(404).send('Database does not contain requested record.');
     } else {
       res.send(docs[0]);
     }
@@ -53,12 +55,12 @@ app.get('/previewVideo', (req, res) => {
 });
 
 app.get('/sidebar', (req, res) => {
-  console.log("GET request received at /sidebar.");
+  console.log('GET request received at /sidebar.');
   db.getSidebar(req.query, (err, docs) => {
     if (err) {
       res.send(err);
     } else if (docs[0] === undefined) {
-      res.status(404).send("Database does not contain requested record.");
+      res.status(404).send('Database does not contain requested record.');
     } else {
       res.send(docs[0]);
     }
@@ -66,7 +68,74 @@ app.get('/sidebar', (req, res) => {
 });
 
 app.use('/course', (req, res) => {
-  res.sendFile('index.html', {root: 'public'});
+  res.sendFile('index.html', { root: 'public' });
+});
+
+// Read
+app.get('/sidebar/all', (req, res) => {
+  console.log('GET request received at /sidebar/all.');
+  const fullResponse = {};
+  db.getPrice(req.query, (err, docs) => {
+    if (err) {
+      res.send(err);
+    } else if (docs[0] === undefined) {
+      fullResponse.price = { notFound: true };
+    } else {
+      const {
+        basePrice,
+        discountPercentage,
+        discountedPrice,
+        saleEndDate,
+        saleOngoing,
+      } = docs[0];
+      fullResponse.price = {
+        basePrice,
+        discountPercentage,
+        discountedPrice,
+        saleEndDate,
+        saleOngoing,
+      };
+    }
+    db.getSidebar(req.query, (error, sbDocs) => {
+      if (error) {
+        res.send(error);
+      } else if (sbDocs[0] === undefined) {
+        fullResponse.sidebar = { notFound: true };
+      } else {
+        const {
+          fullLifetimeAccess,
+          accessTypes,
+          assignments,
+          certificateOfCompletion,
+          downloadableResources,
+        } = sbDocs[0];
+        fullResponse.sidebar = {
+          fullLifetimeAccess,
+          accessTypes,
+          assignments,
+          certificateOfCompletion,
+          downloadableResources,
+        };
+      }
+      db.getPreviewVideo(req.query, (errorr, pvDocs) => {
+        if (errorr) {
+          res.send(errorr);
+        } else if (pvDocs[0] === undefined) {
+          fullResponse.previewVideo = { notFound: true };
+        } else {
+          const {
+            previewVideoImgUrl,
+            previewVideoUrl,
+          } = pvDocs[0];
+          fullResponse.previewVideo = {
+            previewVideoImgUrl,
+            previewVideoUrl,
+          };
+          res.send(fullResponse);
+        }
+      });
+    });
+  });
 });
 
 module.exports = app;
