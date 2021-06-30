@@ -53,12 +53,7 @@ const getPreviewVideo = (query, callback) => PreviewVideo.find(query, callback);
 const getSidebar = (query, callback) => Sidebar.find(query, callback);
 
 // ------------------------------------------------------------------
-// Functions that create information to the database
-const postPrice = (query, callback) => Price.find(query, callback);
-
-const postPreviewVideo = (query, callback) => PreviewVideo.find(query, callback);
-
-const postSidebar = (query, callback) => PreviewVideo.find(query, callback);
+// Function that creates information to the database
 
 const postAll = async (newDoc) => {
   // console.log('NewDoc in db: ', newDoc);
@@ -146,6 +141,9 @@ const postAll = async (newDoc) => {
     });
 };
 
+// ------------------------------------------------------------------
+// Function that deletes information on the database
+
 const deleteAll = async (courseId) => {
   console.log(`Request to delete courseId: ${courseId.courseId} in DB.`);
   return Price.deleteOne(courseId)
@@ -176,6 +174,9 @@ const deleteAll = async (courseId) => {
       return false;
     });
 };
+
+// ------------------------------------------------------------------
+// Function that updates information on the database
 
 const update = async (courseId, updateDoc) => {
   console.log(`Request to update courseId: ${updateDoc.courseId} in DB.`);
@@ -226,9 +227,6 @@ const update = async (courseId, updateDoc) => {
 exports.getPrice = getPrice;
 exports.getSidebar = getSidebar;
 exports.getPreviewVideo = getPreviewVideo;
-exports.postPrice = postPrice;
-exports.postSidebar = postSidebar;
-exports.postPreviewVideo = postPreviewVideo;
 exports.postAll = postAll;
 exports.deleteAll = deleteAll;
 exports.update = update;
