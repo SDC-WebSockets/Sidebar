@@ -83,10 +83,10 @@ app.get('/sidebar/all', (req, res) => {
       const {
         basePrice,
         discountPercentage,
-        discountedPrice,
         saleEndDate,
         saleOngoing,
       } = docs[0];
+      const discountedPrice = Math.floor(basePrice * (1 - discountPercentage / 100)) + 0.99;
       fullResponse.price = {
         basePrice,
         discountPercentage,
