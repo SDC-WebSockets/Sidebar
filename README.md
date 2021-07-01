@@ -120,6 +120,9 @@ The API has the following routes (the numbers can be replaced with any integer b
  }
  
 /sidebar/all?courseId=22
+```
+Returns the following JSON
+```
 {
     "price": {
         "basePrice": 99.99,
@@ -146,12 +149,49 @@ The API has the following routes (the numbers can be replaced with any integer b
 ```
 /sidebar/all
 ```
+wants an object as follows:
+```
+{
+      courseId: 101,
+      price: {
+        basePrice: 99.99,
+        discountPercentage: 84,
+        discountedPrice: 15.99,
+        saleEndDate: '2021-06-29T20:14:35.238Z',
+        saleOngoing: false,
+      },
+      sidebar: {
+        fullLifetimeAccess: 'Full lifetime access',
+        accessTypes: 'Access on mobile and TV',
+        assignments: true,
+        certificateOfCompletion: true,
+        downloadableResources: 20,
+      },
+      previewVideo: {
+        previewVideoImgUrl: 'http://localhost:3004/assets/previewVideoImg6.jpg',
+        previewVideoUrl: 'http://localhost:3004/assets/previewVideo6.mp4',
+      },
+}
+```
 ### PUT Requests:
 ```
 /sidebar/all?courseId
+```
+send a JSON object, example as follows, that updates the courseId sent as specified. 
+```
+{
+    "courseId": 1,
+    "price": {
+        "basePrice": 89.99
+    },
+    "sidebar": {
+        "fullLifetimeAccess": "Full lifetime access"
+    }
+}
 ```
 ### DELETE Requests:
 ```
 /sidebar/all?courseId
 ```
+send the courseId requested to be deleted as a query parameter
 
