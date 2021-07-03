@@ -28,7 +28,7 @@ const client = createClient(pexelsAuth);
 const getVideoLinks = async (page) => {
   const videoURLArray = [];
   await client.videos.search({
-    query: 'cats',
+    query: 'dog',
     orientation: 'landscape',
     size: 'small',
     locale: 'en-US',
@@ -68,16 +68,40 @@ const writeVideoUrlsToFile = async () => {
   const allLinks = currArray.concat(links);
   console.log('currArray length: ', currArray.length);
   console.log('allLinks length: ', allLinks.length);
-  fs.writeFile(videoTxtPath, JSON.stringify(allLinks), (err) => {
-    if (err) {
-      console.log('Writing of Video URLs to File FAILED');
-    } else {
-      console.log('Writing of Video URLs to File SUCCESS');
-    }
+  return new Promise((resolve, reject) => {
+    fs.writeFile(videoTxtPath, JSON.stringify(allLinks), (err) => {
+      if (err) {
+        console.log('Writing of Video URLs to File FAILED');
+        reject(err);
+      } else {
+        console.log('Writing of Video URLs to File SUCCESS');
+        resolve();
+      }
+    });
   });
 };
 
-// writeVideoUrlsToFile();
+const checkUniqueURLs = async () => writeVideoUrlsToFile()
+  .then(() => {
+    const videosFile = fs.readFileSync(videoTxtPath);
+    const videos = JSON.parse(videosFile);
+    const videoSet = new Set(videos);
+    console.log(videoSet.size);
+    const videoArray = Array.from(videoSet);
+    fs.writeFile(videoTxtPath, JSON.stringify(videoArray), (err) => {
+      if (err) {
+        console.log('Writing of Video Set to File FAILED');
+      } else {
+        console.log('Writing of Video Set to File SUCCESS');
+      }
+    });
+  })
+  .catch((error) => {
+    console.log('Error in checking uniqueness of video URLs!');
+    console.log(error);
+  });
+
+checkUniqueURLs();
 
 const download = async (url, i, type) => {
   const dlPath = path.join(`${__dirname}/${type}`);
@@ -122,7 +146,7 @@ const videoToS3 = (video, i) => {
 };
 
 const seedPhotos = async () => {
-  for (let i = 1000; i <= numSeededFiles; i += 1) {
+  for (let i = 1; i <= numSeededFiles; i += 1) {
     const width = 342;
     const height = 192;
     const image = `http://placecorgi.com/${width}/${height}`;
@@ -155,7 +179,7 @@ const seedVideos = async () => {
   const videosFile = fs.readFileSync(videoTxtPath);
   const videos = JSON.parse(videosFile);
   console.log('Number of Videos on File: ', videos.length);
-  for (let i = 201; i <= numSeededFiles; i += 1) {
+  for (let i = 551; i <= numSeededFiles; i += 1) {
     const video = videos[i];
     let videoFilePath;
 
@@ -183,19 +207,4 @@ const seedVideos = async () => {
 };
 
 // seedPhotos();
-seedVideos();
-
-// (function () {
-//   const videosFile = fs.readFileSync(videoTxtPath);
-//   const videos = JSON.parse(videosFile);
-//   const videoSet = new Set(videos);
-//   console.log(videoSet.size);
-//   const videoArray = Array.from(videoSet);
-//   fs.writeFile(videoTxtPath, JSON.stringify(videoArray), (err) => {
-//     if (err) {
-//       console.log('Writing of Video Set to File FAILED');
-//     } else {
-//       console.log('Writing of Video Set to File SUCCESS');
-//     }
-//   });
-// }());
+// seedVideos();
