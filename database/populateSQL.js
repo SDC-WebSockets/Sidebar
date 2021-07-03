@@ -1,7 +1,7 @@
+/* eslint-disable no-await-in-loop */
 /* eslint-disable max-classes-per-file */
 /* eslint-disable no-console */
-const { Sequelize, Model, DataTypes } = require('sequelize');
-const dotenv = require('dotenv');
+// const { Sequelize, Model, DataTypes } = require('sequelize');
 const {
   Price,
   PreviewVideo,
@@ -10,9 +10,9 @@ const {
   closeConn,
 } = require('./pSQLdatabase.js');
 
-dotenv.config();
-
 const weightedTrueGenerator = (percentageChance) => Math.random() * 100 < percentageChance;
+
+const randomFragmentGen = () => Math.floor(Math.random() * 10000);
 
 const createPricing = (courseId) => {
   const minPrice = 50;
@@ -41,12 +41,12 @@ const createPricing = (courseId) => {
 };
 
 const createPreviewVideoData = (courseId) => {
-  const videoIndex = Math.floor(Math.random() * 10);
-
+  const fragment = randomFragmentGen();
+  const s3Url = 'https://sdc-websockets-sidebar.s3-us-west-2.amazonaws.com/';
   const previewVideoData = {
     courseId,
-    previewVideoImgUrl: `${process.env.ASSET_URL}/previewVideoImg${videoIndex}.jpg`,
-    previewVideoUrl: `${process.env.ASSET_URL}/previewVideo${videoIndex}.mp4`,
+    previewVideoImgUrl: `${s3Url}videoImg/${courseId % 1000}.jpg#${fragment}`,
+    previewVideoUrl: `${s3Url}video/${courseId % 1000}.mp4#${fragment}`,
   };
 
   return previewVideoData;
@@ -55,11 +55,11 @@ const createPreviewVideoData = (courseId) => {
 const createSidebarData = (courseId) => {
   const sidebarData = {
     courseId,
-    fullLifetimeAccess: randomDecider(70) ? 'Full lifetime access' : 'Full access during subscription term',
+    fullLifetimeAccess: weightedTrueGenerator(70) ? 'Full lifetime access' : 'Full access during subscription term',
     accessTypes: 'Access on mobile and TV',
-    assignments: randomDecider(70),
-    certificateOfCompletion: randomDecider(90),
-    downloadableResources: randomDecider(90) ? Math.round(Math.random() * 25) : 0,
+    assignments: weightedTrueGenerator(70),
+    certificateOfCompletion: weightedTrueGenerator(90),
+    downloadableResources: weightedTrueGenerator(90) ? Math.round(Math.random() * 25) : 0,
   };
 
   return sidebarData;
@@ -67,28 +67,44 @@ const createSidebarData = (courseId) => {
 
 const postgresDataGen = async (numberOfCourses) => {
   console.log(`Populating DB with ${numberOfCourses} records`);
-  const bulkPriceData = [];
-  const bulkPreviewVideoData = [];
-  const bulkSideBarData = [];
   for (let i = 1; i <= numberOfCourses; i += 1) {
     const newPrice = createPricing(i);
-    bulkPriceData.push(newPrice);
-
     const newPreviewVideo = createPreviewVideoData(i);
-    bulkPreviewVideoData.push(newPreviewVideo);
-
-    const newSidebarData = createSidebarData(i);
-    bulkSideBarData.push(newSidebarData);
+    const newSidebar = createSidebarData(i);
+    // console.log(newPrice, newSidebar, newPreviewVideo);
+    await Price.create(newPrice)
+      .then((result) => {
+        console.log('Price saved successfully');
+        // console.log(result);
+        return PreviewVideo.create(newPreviewVideo);
+      })
+      .then((result) => {
+        console.log('Preview Video saved successfully');
+        // console.log(result);
+        return Sidebar.create(newSidebar);
+      })
+      .then((result) => {
+        console.log('Preview Video saved successfully');
+        // console.log(result);
+      })
+      .catch((error) => {
+        console.warn('Error in saving instance: \n', error);
+      });
   }
-
-  console.log(bulkPriceData.length, bulkPreviewVideoData.length, bulkSideBarData.length);
 };
 
-(async () => openConn()
-  .then(() => {
-    postgresDataGen(10 ** 7);
+const numRecsGenerating = 10 ** 7;
+(async () => Promise.resolve(openConn())
+  .then(async () => {
+    await postgresDataGen(numRecsGenerating);
+    return Promise.all([Price.findAll(), PreviewVideo.findAll(), Sidebar.findAll()]);
   })
-  .then(() => {
+  .then((results) => {
+    console.log('Requested', numRecsGenerating, 'records to be genereated.');
+    console.log('Price, Preview Video, Sidebar DB sizes respectively.');
+    results.forEach((result) => {
+      console.log(result.length);
+    });
     closeConn();
   })
   .catch((error) => {

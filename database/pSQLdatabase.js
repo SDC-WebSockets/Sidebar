@@ -13,9 +13,8 @@ Price.init({
     unique: true,
     primaryKey: true,
   },
-  basePrice: DataTypes.INTEGER,
+  basePrice: DataTypes.DECIMAL,
   discountPercentage: DataTypes.INTEGER,
-  discountedPrice: DataTypes.INTEGER,
   saleEndDate: DataTypes.DATE,
   saleOngoing: {
     type: DataTypes.BOOLEAN,
@@ -64,7 +63,6 @@ const openConn = async () => {
     console.log('The table for the Preview Video model was just (re)created!');
     await Sidebar.sync({ force: true });
     console.log('The table for the Sidebar model was just (re)created!');
-    await sequelize.close();
   } catch (error) {
     console.error('Unable to connect to the database:', error);
   }
