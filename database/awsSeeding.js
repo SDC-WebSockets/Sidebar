@@ -9,7 +9,7 @@ const { AWSAccessKeyId, AWSSecretKey } = require('./aws.config.js');
 const { pexelsAuth } = require('./pexels.config.js');
 // const faker = require('faker');
 
-const numSeededFiles = 200;
+const numSeededFiles = 1000;
 
 AWS.config.update({
   accessKeyId: AWSAccessKeyId,
@@ -62,7 +62,7 @@ const generateVideoURLs = async (totalVideoUrls, currPage = 1, allVideoURLs = []
 const videoTxtPath = path.join(`${__dirname}/videoURLs.txt`);
 
 const writeVideoUrlsToFile = async () => {
-  const links = await generateVideoURLs(200);
+  const links = await generateVideoURLs(500);
   const currFile = fs.readFileSync(videoTxtPath);
   const currArray = JSON.parse(currFile);
   const allLinks = currArray.concat(links);
@@ -155,7 +155,7 @@ const seedVideos = async () => {
   const videosFile = fs.readFileSync(videoTxtPath);
   const videos = JSON.parse(videosFile);
   console.log('Number of Videos on File: ', videos.length);
-  for (let i = 1; i <= numSeededFiles; i += 1) {
+  for (let i = 201; i <= numSeededFiles; i += 1) {
     const video = videos[i];
     let videoFilePath;
 
@@ -184,3 +184,18 @@ const seedVideos = async () => {
 
 // seedPhotos();
 seedVideos();
+
+// (function () {
+//   const videosFile = fs.readFileSync(videoTxtPath);
+//   const videos = JSON.parse(videosFile);
+//   const videoSet = new Set(videos);
+//   console.log(videoSet.size);
+//   const videoArray = Array.from(videoSet);
+//   fs.writeFile(videoTxtPath, JSON.stringify(videoArray), (err) => {
+//     if (err) {
+//       console.log('Writing of Video Set to File FAILED');
+//     } else {
+//       console.log('Writing of Video Set to File SUCCESS');
+//     }
+//   });
+// }());
