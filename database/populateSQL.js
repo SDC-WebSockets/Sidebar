@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 /* eslint-disable no-await-in-loop */
 /* eslint-disable max-classes-per-file */
 /* eslint-disable no-console */
@@ -12,8 +11,6 @@ const {
 } = require('./pSQLdatabase.js');
 
 const weightedTrueGenerator = (percentageChance) => Math.random() * 100 < percentageChance;
-
-const randomFragmentGen = () => Math.floor(Math.random() * 10000);
 
 const createPricing = (courseId) => {
   const minPrice = 50;
@@ -42,7 +39,7 @@ const createPricing = (courseId) => {
 };
 
 const createPreviewVideoData = (courseId) => {
-  const fragment = randomFragmentGen();
+  const fragment = Math.floor(Math.random() * 888888);
   const s3Url = 'https://sdc-websockets-sidebar.s3-us-west-2.amazonaws.com/';
   const previewVideoData = {
     courseId,
@@ -74,19 +71,10 @@ const postgresDataGen = async (numberOfCourses) => {
     const newSidebar = createSidebarData(i);
     // console.log(newPrice, newSidebar, newPreviewVideo);
     await Price.create(newPrice)
-      .then((result) => {
-        console.log('Price saved successfully');
-        // console.log(result);
-        return PreviewVideo.create(newPreviewVideo);
-      })
-      .then((result) => {
-        console.log('Preview Video saved successfully');
-        // console.log(result);
-        return Sidebar.create(newSidebar);
-      })
-      .then((result) => {
-        console.log('Preview Video saved successfully');
-        // console.log(result);
+      .then(PreviewVideo.create(newPreviewVideo))
+      .then(Sidebar.create(newSidebar))
+      .then(() => {
+        console.log('Saved ', i, ' record successfully');
       })
       .catch((error) => {
         console.warn('Error in saving instance: \n', error);
