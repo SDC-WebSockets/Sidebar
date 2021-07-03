@@ -24,9 +24,9 @@ const s3Bucket = new AWS.S3({
 const s3Url = 'https://sdc-websockets-sidebar.s3-us-west-2.amazonaws.com/';
 
 const client = createClient(pexelsAuth);
+
 const getVideoLinks = async (page) => {
   const videoURLArray = [];
-
   await client.videos.search({
     query: 'cats',
     orientation: 'landscape',
@@ -46,24 +46,44 @@ const getVideoLinks = async (page) => {
   return videoURLArray;
 };
 
-const generateNumOfVideoLinks = async (numVideosRequested) => {
-  const allVideoURLs = [];
-  const callsToAPI = Math.ceil(numVideosRequested / 80);
-  for (let i = 1; i <= callsToAPI; i += 1) {
-    const moreVideoURLs = await getVideoLinks(i);
-    allVideoUrls = allVideoURLs.concat(moreVideoURLs);
+const generateVideoURLs = async (totalVideoUrls, currPage = 1, allVideoURLs = []) => {
+  const callsToAPI = Math.ceil(totalVideoUrls / 80);
+  if (callsToAPI === currPage) {
+    const moreVideoURLs = await getVideoLinks(currPage);
+    const totalLength = allVideoURLs.concat(moreVideoURLs).length;
+    console.log(totalLength);
+    return allVideoURLs.concat(moreVideoURLs);
   }
-  console.log(allVideoURLs, allVideoURLs.length);
 
+  const moreVideoURLs = await getVideoLinks(currPage);
+  return generateVideoURLs(totalVideoUrls, currPage += 1, allVideoURLs.concat(moreVideoURLs));
 };
 
-generateNumOfVideoLinks(numSeededFiles);
+const videoTxtPath = path.join(`${__dirname}/videoURLs.txt`);
+
+const writeVideoUrlsToFile = async () => {
+  const links = await generateVideoURLs(200);
+  const currFile = fs.readFileSync(videoTxtPath);
+  const currArray = JSON.parse(currFile);
+  const allLinks = currArray.concat(links);
+  console.log('currArray length: ', currArray.length);
+  console.log('allLinks length: ', allLinks.length);
+  fs.writeFile(videoTxtPath, JSON.stringify(allLinks), (err) => {
+    if (err) {
+      console.log('Writing of Video URLs to File FAILED');
+    } else {
+      console.log('Writing of Video URLs to File SUCCESS');
+    }
+  });
+};
+
+// writeVideoUrlsToFile();
 
 const download = async (url, i, type) => {
   const dlPath = path.join(`${__dirname}/${type}`);
   const response = await fetch(url);
   const buffer = await response.buffer();
-  const dlPathName = `${dlPath}/${i.toString()}.jpg`;
+  const dlPathName = `${dlPath}/${i.toString()}.${type === 'videos' ? 'mp4' : 'jpg'}`;
   return new Promise((resolve, reject) => {
     fs.writeFile(dlPathName, buffer, (err) => {
       err ? reject(err) : resolve(dlPathName);
@@ -132,17 +152,28 @@ const seedPhotos = async () => {
 };
 
 const seedVideos = async () => {
+  const videosFile = fs.readFileSync(videoTxtPath);
+  const videos = JSON.parse(videosFile);
+  console.log('Number of Videos on File: ', videos.length);
   for (let i = 1; i <= numSeededFiles; i += 1) {
-    const video = `http://placecorgi.com/v/${width}/${height}`;
+    const video = videos[i];
+    let videoFilePath;
 
     await download(video, i, 'videos')
       .then((result) => {
         console.log('Success! video at: ', result);
+        videoFilePath = result;
         const videoFile = fs.readFileSync(result);
         return videoToS3(videoFile, i);
       })
       .then((result) => {
         console.log('Success! video at: ', result);
+        return fs.unlink(videoFilePath, (err) => {
+          if (err) throw Error('Cannot delete local file');
+        });
+      })
+      .then(() => {
+        console.log('Video removed locally');
       })
       .catch((error) => {
         console.log('Error in Seeding!');
@@ -152,4 +183,4 @@ const seedVideos = async () => {
 };
 
 // seedPhotos();
-// seedVideos();
+seedVideos();
