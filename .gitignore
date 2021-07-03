@@ -36,3 +36,6 @@ aws.config.js
 # Photos and Videos for seeding
 photos/
 videos/
+
+# Pexels API key
+pexels.config.js

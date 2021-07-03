@@ -4,9 +4,12 @@ const AWS = require('aws-sdk');
 const fetch = require('node-fetch');
 const fs = require('fs');
 const path = require('path');
+const { createClient } = require('pexels');
+const { AWSAccessKeyId, AWSSecretKey } = require('./aws.config.js');
+const { pexelsAuth } = require('./pexels.config.js');
 // const faker = require('faker');
 
-const { AWSAccessKeyId, AWSSecretKey } = require('./aws.config.js');
+const numSeededFiles = 200;
 
 AWS.config.update({
   accessKeyId: AWSAccessKeyId,
@@ -20,7 +23,41 @@ const s3Bucket = new AWS.S3({
 });
 const s3Url = 'https://sdc-websockets-sidebar.s3-us-west-2.amazonaws.com/';
 
-const numSeededFiles = 1000;
+const client = createClient(pexelsAuth);
+const getVideoLinks = async (page) => {
+  const videoURLArray = [];
+
+  await client.videos.search({
+    query: 'cats',
+    orientation: 'landscape',
+    size: 'small',
+    locale: 'en-US',
+    page,
+    per_page: 80,
+  }).then((response) => {
+    const { videos } = response;
+    for (let i = 0; i < videos.length; i += 1) {
+      const currVid = videos[i];
+      // console.log(currVid);
+      videoURLArray.push(currVid.video_files[0].link);
+    }
+  });
+  // console.log(videoURLArray);
+  return videoURLArray;
+};
+
+const generateNumOfVideoLinks = async (numVideosRequested) => {
+  const allVideoURLs = [];
+  const callsToAPI = Math.ceil(numVideosRequested / 80);
+  for (let i = 1; i <= callsToAPI; i += 1) {
+    const moreVideoURLs = await getVideoLinks(i);
+    allVideoUrls = allVideoURLs.concat(moreVideoURLs);
+  }
+  console.log(allVideoURLs, allVideoURLs.length);
+
+};
+
+generateNumOfVideoLinks(numSeededFiles);
 
 const download = async (url, i, type) => {
   const dlPath = path.join(`${__dirname}/${type}`);
@@ -65,7 +102,7 @@ const videoToS3 = (video, i) => {
 };
 
 const seedPhotos = async () => {
-  for (let i = 1; i <= numSeededFiles; i += 1) {
+  for (let i = 1000; i <= numSeededFiles; i += 1) {
     const width = 342;
     const height = 192;
     const image = `http://placecorgi.com/${width}/${height}`;
@@ -96,10 +133,8 @@ const seedPhotos = async () => {
 
 const seedVideos = async () => {
   for (let i = 1; i <= numSeededFiles; i += 1) {
-    const width = 342;
-    const height = 192;
     const video = `http://placecorgi.com/v/${width}/${height}`;
-    console.log(video);
+
     await download(video, i, 'videos')
       .then((result) => {
         console.log('Success! video at: ', result);
@@ -116,5 +151,5 @@ const seedVideos = async () => {
   }
 };
 
-seedPhotos();
+// seedPhotos();
 // seedVideos();
