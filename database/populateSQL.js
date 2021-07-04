@@ -89,7 +89,7 @@ const numRecsGenerating = 10 ** 7;
     return Promise.all([Price.findAll(), PreviewVideo.findAll(), Sidebar.findAll()]);
   })
   .then((results) => {
-    console.log('Requested', numRecsGenerating, 'records to be genereated.');
+    console.log('Requested', numRecsGenerating, 'records to be generated.');
     console.log('Price, Preview Video, Sidebar DB sizes respectively.');
     results.forEach((result) => {
       console.log(result.length);
