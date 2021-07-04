@@ -28,6 +28,14 @@ public/
 # AWS token
 aws.js
 cb-sidebar-aws-key.pem
+aws.config.js
 
 # Environment variables
 .env
+
+# Photos and Videos for seeding
+photos/
+videos/
+
+# Pexels API key
+pexels.config.js

@@ -54,13 +54,16 @@
     "webpack-dev-server": "^3.11.2"
   },
   "dependencies": {
+    "aws-sdk": "^2.938.0",
     "cors": "^2.8.5",
     "dotenv": "^10.0.0",
     "express": "^4.17.1",
     "luxon": "^1.27.0",
     "mongoose": "^5.12.7",
     "nginx": "^1.0.3",
+    "node-fetch": "^2.6.1",
     "nodemon": "^2.0.7",
+    "pexels": "^1.2.1",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
     "shrink-ray-current": "^4.1.3"
