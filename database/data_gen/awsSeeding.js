@@ -1,5 +1,6 @@
 /* eslint-disable no-await-in-loop */
 /* eslint-disable no-console */
+/* eslint no-unused-expressions: ["error", { "allowTernary": true }] */
 const AWS = require('aws-sdk');
 const fetch = require('node-fetch');
 const fs = require('fs');
@@ -56,7 +57,8 @@ const generateVideoURLs = async (totalVideoUrls, currPage = 1, allVideoURLs = []
   }
 
   const moreVideoURLs = await getVideoLinks(currPage);
-  return generateVideoURLs(totalVideoUrls, currPage += 1, allVideoURLs.concat(moreVideoURLs));
+  const nextPage = currPage + 1;
+  return generateVideoURLs(totalVideoUrls, nextPage, allVideoURLs.concat(moreVideoURLs));
 };
 
 const videoTxtPath = path.join(`${__dirname}/videoURLs.txt`);
@@ -206,5 +208,7 @@ const seedVideos = async () => {
   }
 };
 
-// seedPhotos();
-// seedVideos();
+// These do not need to be run because I've already seeded my S3
+// Additionally an error will get thrown b/c I've maxxed out my POST/PUt calls for S3 in July 2021.
+seedPhotos();
+seedVideos();
