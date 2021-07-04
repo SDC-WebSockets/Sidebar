@@ -1,7 +1,11 @@
 /* eslint-disable no-await-in-loop */
 /* eslint-disable max-classes-per-file */
 /* eslint-disable no-console */
+
 // const { Sequelize, Model, DataTypes } = require('sequelize');
+const fs = require('fs');
+const readline = require('readline');
+const path = require('path');
 const {
   Price,
   PreviewVideo,
@@ -10,91 +14,77 @@ const {
   closeConn,
 } = require('./pSQLdatabase.js');
 
-const weightedTrueGenerator = (percentageChance) => Math.random() * 100 < percentageChance;
+const pricePath = path.join(`${__dirname}/data_gen/priceData.csv`);
+const previewVideoPath = path.join(`${__dirname}/data_gen/previewVideoData.csv`);
+const sidebarPath = path.join(`${__dirname}/data_gen/sidebarData.csv`);
 
-const createPricing = (courseId) => {
-  const minPrice = 50;
-  // range * multiplesOf + minPrice would give you the maxPrice = 150
-  const range = 20;
-  const multiplesOf = 5;
-  const basePrice = Math.floor(Math.random() * range) * multiplesOf + minPrice - 0.01;
-
-  const maxDiscount = 85;
-  const minDiscount = 5;
-  const discountPercentage = Math.floor(Math.random() * (maxDiscount - minDiscount)) + minDiscount;
-
-  const maxSaleDays = 30;
-  const saleEndDate = new Date();
-  saleEndDate.setDate(Math.floor(Math.random() * maxSaleDays));
-
-  const priceData = {
-    courseId,
-    basePrice,
-    discountPercentage,
-    saleEndDate,
-    saleOngoing: weightedTrueGenerator(30),
-  };
-
-  return priceData;
+const priceObj = (keys, array) => {
+  const nums = ['courseId', 'basePrice', 'discountPercentage'];
+  const strings = [];
+  const boolean = ['saleOngoing'];
+  const date = ['saleEndDate'];
+  const newPrice = {};
+  for (let k = 0; k < keys.length; k += 1) {
+    const currKey = keys[k];
+    if (date.includes(currKey)) {
+      newPrice[currKey] = new Date(array[k]);
+    } else if (nums.includes(currKey)) {
+      newPrice[currKey] = parseFloat(array[k]);
+    } else if (array[k] === 'true') {
+      newPrice[currKey] = true;
+    } else {
+      newPrice[currKey] = false;
+    }
+  }
+  return newPrice;
 };
 
-const createPreviewVideoData = (courseId) => {
-  const fragment = Math.floor(Math.random() * 888888);
-  const s3Url = 'https://sdc-websockets-sidebar.s3-us-west-2.amazonaws.com/';
-  const previewVideoData = {
-    courseId,
-    previewVideoImgUrl: `${s3Url}videoImg/${courseId % 1000}.jpg#${fragment}`,
-    previewVideoUrl: `${s3Url}video/${courseId % 1000}.mp4#${fragment}`,
-  };
+const readCSV = (pathToRead, type) => {
+  let linesRead = 0;
+  let keys = [];
 
-  return previewVideoData;
-};
+  const stream = fs.createReadStream(pathToRead, { encoding: 'utf8' }).pause();
+  const rl = readline.createInterface({
+    input: stream,
+  });
 
-const createSidebarData = (courseId) => {
-  const sidebarData = {
-    courseId,
-    fullLifetimeAccess: weightedTrueGenerator(70) ? 'Full lifetime access' : 'Full access during subscription term',
-    accessTypes: 'Access on mobile and TV',
-    assignments: weightedTrueGenerator(70),
-    certificateOfCompletion: weightedTrueGenerator(90),
-    downloadableResources: weightedTrueGenerator(90) ? Math.round(Math.random() * 25) : 0,
-  };
-
-  return sidebarData;
+  rl.on('line', async (line) => {
+    const lineArray = line.split(',');
+    if (linesRead === 0) {
+      keys = lineArray;
+      console.log(keys);
+    } else {
+      console.log(linesRead);
+      let newData = {};
+      if (type === 'price') {
+        newData = priceObj(keys, lineArray);
+        Price.create(newData);
+      }
+    }
+    linesRead += 1;
+  });
 };
 
 const postgresDataGen = async (numberOfCourses) => {
   console.log(`Populating DB with ${numberOfCourses} records`);
-  for (let i = 1; i <= numberOfCourses; i += 1) {
-    const newPrice = createPricing(i);
-    const newPreviewVideo = createPreviewVideoData(i);
-    const newSidebar = createSidebarData(i);
-    // console.log(newPrice, newSidebar, newPreviewVideo);
-    await Price.create(newPrice)
-      .then(PreviewVideo.create(newPreviewVideo))
-      .then(Sidebar.create(newSidebar))
-      .then(() => {
-        console.log('Saved ', i, ' record successfully');
-      })
-      .catch((error) => {
-        console.warn('Error in saving instance: \n', error);
-      });
-  }
+  readCSV(pricePath, 'price');
 };
 
 const numRecsGenerating = 10 ** 7;
 (async () => Promise.resolve(openConn())
   .then(async () => {
     await postgresDataGen(numRecsGenerating);
-    return Promise.all([Price.findAll(), PreviewVideo.findAll(), Sidebar.findAll()]);
+    // return Promise.all([Price.findAll(), PreviewVideo.findAll(), Sidebar.findAll()]);
+    return Price.count();
   })
   .then((results) => {
     console.log('Requested', numRecsGenerating, 'records to be generated.');
-    console.log('Price, Preview Video, Sidebar DB sizes respectively.');
-    results.forEach((result) => {
-      console.log(result.length);
-    });
-    closeConn();
+    console.log('price count: ', results);
+    // console.log('Price, Preview Video, Sidebar DB sizes respectively.');
+    // results.forEach((result) => {
+    //   console.log(result.length);
+    // });
+    // closeConn();
   })
   .catch((error) => {
     console.warn('Error occured: ', error);

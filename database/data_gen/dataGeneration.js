@@ -57,7 +57,7 @@ const createSidebarData = (courseId) => {
 const generatePriceData = async (numberOfCourses) => {
   console.log(`Generating ${numberOfCourses} Price records`);
   const priceStream = fs.createWriteStream(pricePath);
-  const priceKeys = 'courseId, basePrice, discountPercentage, saleEndDate, saleOngoing';
+  const priceKeys = 'courseId,basePrice,discountPercentage,saleEndDate,saleOngoing';
   priceStream.write(`${priceKeys}\n`);
   for (let i = 1; i <= numberOfCourses; i += 1) {
     const newPrice = createPricing(i);
@@ -70,7 +70,7 @@ const generatePriceData = async (numberOfCourses) => {
 const generatePreviewVideoData = async (numberOfCourses) => {
   console.log(`Generating ${numberOfCourses} PreviewVideo records`);
   const previewVideoStream = fs.createWriteStream(previewVideoPath);
-  const previewVideoKeys = 'courseId, previewVideoImgUrl, previewVideoUrl';
+  const previewVideoKeys = 'courseId,previewVideoImgUrl,previewVideoUrl';
   previewVideoStream.write(`${previewVideoKeys}\n`);
   for (let i = 1; i <= numberOfCourses; i += 1) {
     const newPreviewVideo = createPreviewVideoData(i);
@@ -83,7 +83,7 @@ const generatePreviewVideoData = async (numberOfCourses) => {
 const generateSidebarData = async (numberOfCourses) => {
   console.log(`Generating ${numberOfCourses} sidebar records`);
   const sidebarStream = fs.createWriteStream(sidebarPath);
-  const sidebarKeys = 'courseId, fullLifetimeAccess, accessTypes, assignments, certificateOfCompletion, downloadableResources';
+  const sidebarKeys = 'courseId,fullLifetimeAccess,accessTypes,assignments,certificateOfCompletion,downloadableResources';
   sidebarStream.write(`${sidebarKeys}\n`);
   for (let i = 1; i <= numberOfCourses; i += 1) {
     const newSidebar = createSidebarData(i);
