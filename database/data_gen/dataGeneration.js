@@ -7,49 +7,47 @@ const fs = require('fs');
 const path = require('path');
 
 const pricePath = path.join(`${__dirname}/priceData.csv`);
-const previewVideoPath = path.join(`${__dirname}/previewVideoData.csv`);
+const videoPath = path.join(`${__dirname}/videoData.csv`);
 const sidebarPath = path.join(`${__dirname}/sidebarData.csv`);
 
 const weightedTrueGenerator = (percentageChance) => Math.random() * 100 < percentageChance;
 
 const createPricing = (courseId) => {
   const minPrice = 50;
-  // range * multiplesOf + minPrice would give you the maxPrice = 150
+  //  the calculation: (range * multiplesOf) + minPrice would give you the maxPrice = 150
   const range = 20;
   const multiplesOf = 5;
-  const basePrice = Math.floor(Math.random() * range) * multiplesOf + minPrice - 0.01;
+  const basePrice = Math.floor(Math.random() * range) * multiplesOf + minPrice;
 
   const maxDiscount = 85;
   const minDiscount = 5;
   const discountPercentage = Math.floor(Math.random() * (maxDiscount - minDiscount)) + minDiscount;
 
   const maxSaleDays = 30;
-  const saleEndDate = new Date();
-  saleEndDate.setDate(Math.floor(Math.random() * maxSaleDays));
+  const saleNumOfDays = Math.floor(Math.random() * maxSaleDays);
 
   const saleOngoing = weightedTrueGenerator(30);
 
-  const priceData = [courseId, basePrice, discountPercentage, saleEndDate, saleOngoing];
+  const priceData = [courseId, basePrice, discountPercentage, saleNumOfDays, saleOngoing];
 
   return priceData;
 };
 
-const createPreviewVideoData = (courseId) => {
+const createVideoData = (courseId) => {
   const fragment = Math.floor(Math.random() * 888888);
-  const s3Url = 'https://sdc-websockets-sidebar.s3-us-west-2.amazonaws.com/';
 
-  const previewVideoData = [courseId, `${s3Url}videoImg/${courseId % 1000}.jpg#${fragment}`, `${s3Url}video/${courseId % 1000}.mp4#${fragment}`];
+  const videoData = [courseId, `videoImg/${courseId % 1000}.jpg#${fragment}`, `video/${courseId % 1000}.mp4#${fragment}`];
 
-  return previewVideoData;
+  return videoData;
 };
 
 const createSidebarData = (courseId) => {
-  const fullLifetimeAccess = weightedTrueGenerator(70) ? 'Full lifetime access' : 'Full access during subscription term';
-  const accessTypes = 'Access on mobile and TV';
+  const fullLifetimeAccess = !!weightedTrueGenerator(70);
+  // const accessTypes = 'Access on mobile and TV';
   const assignments = weightedTrueGenerator(70);
   const certificateOfCompletion = weightedTrueGenerator(90);
   const downloadableResources = weightedTrueGenerator(90) ? Math.round(Math.random() * 25) : 0;
-  const sidebarData = [courseId, fullLifetimeAccess, accessTypes, assignments, certificateOfCompletion, downloadableResources];
+  const sidebarData = [courseId, fullLifetimeAccess, assignments, certificateOfCompletion, downloadableResources];
 
   return sidebarData;
 };
@@ -57,7 +55,7 @@ const createSidebarData = (courseId) => {
 const generatePriceData = async (numberOfCourses) => {
   console.log(`Generating ${numberOfCourses} Price records`);
   const priceStream = fs.createWriteStream(pricePath);
-  const priceKeys = 'courseId,basePrice,discountPercentage,saleEndDate,saleOngoing';
+  const priceKeys = 'courseId,basePrice,discountPercentage,saleNumOfDays,saleOngoing';
   priceStream.write(`${priceKeys}\n`);
   for (let i = 1; i <= numberOfCourses; i += 1) {
     const newPrice = createPricing(i);
@@ -67,23 +65,23 @@ const generatePriceData = async (numberOfCourses) => {
   console.log('Completed Price Writing.');
 };
 
-const generatePreviewVideoData = async (numberOfCourses) => {
-  console.log(`Generating ${numberOfCourses} PreviewVideo records`);
-  const previewVideoStream = fs.createWriteStream(previewVideoPath);
-  const previewVideoKeys = 'courseId,previewVideoImgUrl,previewVideoUrl';
-  previewVideoStream.write(`${previewVideoKeys}\n`);
+const generateVideoData = async (numberOfCourses) => {
+  console.log(`Generating ${numberOfCourses} video records`);
+  const videoStream = fs.createWriteStream(videoPath);
+  const videoKeys = 'courseId,videoImgUrl,videoUrl';
+  videoStream.write(`${videoKeys}\n`);
   for (let i = 1; i <= numberOfCourses; i += 1) {
-    const newPreviewVideo = createPreviewVideoData(i);
-    previewVideoStream.write(`${newPreviewVideo}\n`);
+    const newVideo = createVideoData(i);
+    videoStream.write(`${newVideo}\n`);
   }
-  previewVideoStream.end();
-  console.log('Completed Preview Video Writing.');
+  videoStream.end();
+  console.log('Completed Video Writing.');
 };
 
 const generateSidebarData = async (numberOfCourses) => {
   console.log(`Generating ${numberOfCourses} sidebar records`);
   const sidebarStream = fs.createWriteStream(sidebarPath);
-  const sidebarKeys = 'courseId,fullLifetimeAccess,accessTypes,assignments,certificateOfCompletion,downloadableResources';
+  const sidebarKeys = 'courseId,fullLifetimeAccess,assignments,certificateOfCompletion,downloadableResources';
   sidebarStream.write(`${sidebarKeys}\n`);
   for (let i = 1; i <= numberOfCourses; i += 1) {
     const newSidebar = createSidebarData(i);
@@ -96,7 +94,7 @@ const generateSidebarData = async (numberOfCourses) => {
 const dataGen = async (numberOfCourses) => {
   console.log(`Generating ${3 * numberOfCourses} total records of data`);
   generatePriceData(numberOfCourses);
-  generatePreviewVideoData(numberOfCourses);
+  generateVideoData(numberOfCourses);
   generateSidebarData(numberOfCourses);
 };
 
