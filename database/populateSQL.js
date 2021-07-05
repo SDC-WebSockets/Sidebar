@@ -17,31 +17,10 @@ const pricePath = path.join(`${__dirname}/data_gen/priceData.csv`);
 const videoPath = path.join(`${__dirname}/data_gen/videoData.csv`);
 const sidebarPath = path.join(`${__dirname}/data_gen/sidebarData.csv`);
 
-const priceObj = (keys, array) => {
-  const nums = ['courseId', 'basePrice', 'discountPercentage'];
-  const strings = [];
-  const boolean = ['saleOngoing'];
-  const date = ['saleEndDate'];
-  const newPrice = {};
-  for (let k = 0; k < keys.length; k += 1) {
-    const currKey = keys[k];
-    if (date.includes(currKey)) {
-      newPrice[currKey] = new Date(array[k]);
-    } else if (nums.includes(currKey)) {
-      newPrice[currKey] = parseFloat(array[k]);
-    } else if (array[k] === 'true') {
-      newPrice[currKey] = true;
-    } else {
-      newPrice[currKey] = false;
-    }
-  }
-  return newPrice;
-};
-
 const readCSV = async (pathToRead, type) => {
   let linesRead = 0;
   let keys = [];
-  try {
+  return new Promise((resolve, reject) => {
     const stream = fs.createReadStream(pathToRead, { encoding: 'utf8' }).pause();
     const rl = readline.createInterface({
       input: stream,
@@ -53,6 +32,7 @@ const readCSV = async (pathToRead, type) => {
       if (linesRead === 0) {
         keys = lineArray;
         console.log(keys);
+        linesRead += 1;
       } else {
         // console.log(linesRead);
         const db = { name: type };
@@ -69,22 +49,21 @@ const readCSV = async (pathToRead, type) => {
           db.numCols = '$1, $2, $3, $4, $5';
         }
         const insertText = `INSERT INTO ${db.name}(${db.cols}) VALUES(${db.numCols})`;
-        console.log(insertText)
         await pool.query(insertText, lineArray)
           .then(() => {
             linesRead += 1;
           })
           .catch((err) => {
             console.log(`error saving to DB at ${linesRead}:`, err);
+            reject(err);
           });
       }
+    }).on('close', () => {
+      console.log('Done Seeding ', type);
+      stream.close();
+      resolve();
     });
-    await once(rl, 'close');
-    console.log('Done Seeding ', type);
-    stream.close();
-  } catch (error) {
-    console.warn(`ERROR reading ${type}: ${error}`);
-  }
+  });
 };
 
 (async () => Promise.resolve(pool.connect())
@@ -119,8 +98,8 @@ const readCSV = async (pathToRead, type) => {
     console.log('Table Creations SUCCESS!');
     return readCSV(pricePath, 'price');
   })
-  .then(() => readCSV(videoPath, 'video'))
-  .then(() => readCSV(sidebarPath, 'sidebar'))
+  // .then(() => readCSV(videoPath, 'video'))
+  // .then(() => readCSV(sidebarPath, 'sidebar'))
   .then(() => {
     console.log('Completed All Seeding!');
     return pool.end();
