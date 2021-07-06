@@ -1,5 +1,6 @@
 /* eslint-disable no-param-reassign */
 /* eslint-disable no-console */
+const path = require('path');
 const couchbase = require('couchbase');
 const { username, password } = require('./cb.config.js');
 
@@ -9,9 +10,9 @@ const cluster = new couchbase.Cluster('couchbase://localhost', {
 });
 const bucketMgr = cluster.buckets();
 
-const price = cluster.bucket('price');
-const video = cluster.bucket('video');
-const sidebar = cluster.bucket('sidebar');
+// const price = cluster.bucket('price');
+// const video = cluster.bucket('video');
+// const sidebar = cluster.bucket('sidebar');
 
 const sdcBucketSetup = {
   flushEnabled: true,
@@ -38,21 +39,21 @@ const resetBuckets = (bucket, name) => {
           });
       }
     })
+    .then(() => {
+      const importText = `./cbimport csv -c http://127.0.0.1:8091 -u ${username} -p ${password} -b ${name} -g %courseId% -d file://${path.join(`${__dirname}/data_gen/${name}Data.csv`)}`;
+      console.log('------ navigate to /Applications/Couchbase Server.app/Contents/Resources/couchbase-core/bin  and run the following line ------');
+      console.log(importText);
+      console.log('-----------');
+    })
     .catch((error) => {
       console.warn(error);
     });
 };
 
 const populateCB = async () => {
-// resetBuckets(sdcBucketSetup, 'price')
-// .then(() =>
-  await resetBuckets(sdcBucketSetup, 'video')
+  await resetBuckets(sdcBucketSetup, 'price')
+    .then(() => resetBuckets(sdcBucketSetup, 'video'))
     .then(() => resetBuckets(sdcBucketSetup, 'sidebar'))
-    // .then(() => priceCollection.insert(key, sample.price))
-    // .then(() => videoCollection.insert(key, sample.video))
-    .then((result) => {
-      console.log(result);
-    })
     .catch((error) => {
       console.warn(error);
     });
