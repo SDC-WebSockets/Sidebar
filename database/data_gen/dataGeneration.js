@@ -12,6 +12,28 @@ const sidebarPath = path.join(`${__dirname}/sidebarData.csv`);
 
 const weightedTrueGenerator = (percentageChance) => Math.random() * 100 < percentageChance;
 
+const course1 = {
+  price: {
+    courseId: 1,
+    basePrice: 125,
+    discountPercentage: 24,
+    saleNumOfDays: 11,
+    saleOngoing: false,
+  },
+  sidebar: {
+    courseId: 1,
+    fullLifetimeAccess: true,
+    assignments: false,
+    certificateOfCompletion: true,
+    downloadableResources: 23,
+  },
+  video: {
+    courseId: 1,
+    videoImgUrl: 'videoImg/1.jpg#116378',
+    videoUrl: 'video/1.mp4#116378',
+  },
+};
+
 const createPricing = (courseId) => {
   const minPrice = 50;
   //  the calculation: (range * multiplesOf) + minPrice would give you the maxPrice = 150
@@ -57,7 +79,9 @@ const generatePriceData = async (numberOfCourses) => {
   const priceStream = fs.createWriteStream(pricePath);
   const priceKeys = 'courseId,basePrice,discountPercentage,saleNumOfDays,saleOngoing';
   priceStream.write(`${priceKeys}\n`);
-  for (let i = 1; i <= numberOfCourses; i += 1) {
+  priceStream.write(`${course1.price}\n`);
+
+  for (let i = 2; i <= numberOfCourses; i += 1) {
     const newPrice = createPricing(i);
     priceStream.write(`${newPrice}\n`);
   }
@@ -70,6 +94,8 @@ const generateVideoData = async (numberOfCourses) => {
   const videoStream = fs.createWriteStream(videoPath);
   const videoKeys = 'courseId,videoImgUrl,videoUrl';
   videoStream.write(`${videoKeys}\n`);
+  videoStream.write(`${course1.video}\n`);
+
   for (let i = 1; i <= numberOfCourses; i += 1) {
     const newVideo = createVideoData(i);
     videoStream.write(`${newVideo}\n`);
@@ -83,6 +109,8 @@ const generateSidebarData = async (numberOfCourses) => {
   const sidebarStream = fs.createWriteStream(sidebarPath);
   const sidebarKeys = 'courseId,fullLifetimeAccess,assignments,certificateOfCompletion,downloadableResources';
   sidebarStream.write(`${sidebarKeys}\n`);
+  sidebarStream.write(`${course1.sidebar}\n`);
+
   for (let i = 1; i <= numberOfCourses; i += 1) {
     const newSidebar = createSidebarData(i);
     sidebarStream.write(`${newSidebar}\n`);
