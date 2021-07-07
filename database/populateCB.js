@@ -2,6 +2,7 @@
 /* eslint-disable no-console */
 const path = require('path');
 const couchbase = require('couchbase');
+const { exec } = require('child_process');
 const { username, password } = require('./cb.config.js');
 
 const cluster = new couchbase.Cluster('couchbase://localhost', {
@@ -9,10 +10,9 @@ const cluster = new couchbase.Cluster('couchbase://localhost', {
   password,
 });
 const bucketMgr = cluster.buckets();
-
-// const price = cluster.bucket('price');
-// const video = cluster.bucket('video');
-// const sidebar = cluster.bucket('sidebar');
+const price = cluster.bucket('price');
+const video = cluster.bucket('video');
+const sidebar = cluster.bucket('sidebar');
 
 const sdcBucketSetup = {
   flushEnabled: true,
@@ -40,10 +40,16 @@ const resetBuckets = (bucket, name) => {
       }
     })
     .then(() => {
-      const importText = `./cbimport csv -c http://127.0.0.1:8091 -u ${username} -p ${password} -b ${name} -g %courseId% -d file://${path.join(`${__dirname}/data_gen/${name}Data.csv`)}`;
-      console.log('------ navigate to /Applications/Couchbase Server.app/Contents/Resources/couchbase-core/bin  and run the following line ------');
-      console.log(importText);
-      console.log('-----------');
+      const importText = `"/Applications/Couchbase Server.app/Contents/Resources/couchbase-core/bin/cbimport" csv -c http://127.0.0.1:8091 -u ${username} -p ${password} -b ${name} -g %courseId% -d file://${path.join(`${__dirname}/data_gen/${name}Data.csv`)}`;
+
+      return exec(`${importText}`, (error, stdout, stderr) => {
+        if (error) {
+          console.error(`exec error: ${error}`);
+          return;
+        }
+        console.log(`stdout: ${stdout}`);
+        console.error(`stderr: ${stderr}`);
+      });
     })
     .catch((error) => {
       console.warn(error);
