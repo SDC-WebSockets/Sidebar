@@ -1,9 +1,8 @@
+/* eslint-disable no-unused-vars */
 /* eslint-disable no-console */
 /* eslint-disable max-classes-per-file */
 const { Sequelize, Model, DataTypes } = require('sequelize');
-const dotenv = require('dotenv');
 
-dotenv.config();
 const sequelize = new Sequelize('postgres://127.0.0.1:5432/SDC');
 
 class Price extends Model { }
@@ -13,14 +12,17 @@ Price.init({
     unique: true,
     primaryKey: true,
   },
-  basePrice: DataTypes.DECIMAL,
+  basePrice: DataTypes.INTEGER,
   discountPercentage: DataTypes.INTEGER,
-  saleEndDate: DataTypes.DATE,
+  saleNumOfDays: DataTypes.INTEGER,
   saleOngoing: {
     type: DataTypes.BOOLEAN,
     defaultValue: false,
   },
-}, { sequelize });
+}, {
+  sequelize,
+  tableName: 'price',
+});
 
 class PreviewVideo extends Model { }
 PreviewVideo.init({
@@ -31,7 +33,10 @@ PreviewVideo.init({
   },
   previewVideoUrl: DataTypes.STRING,
   previewVideoImgUrl: DataTypes.STRING,
-}, { sequelize });
+}, {
+  sequelize,
+  tableName: 'video',
+});
 
 class Sidebar extends Model { }
 Sidebar.init({
@@ -40,8 +45,10 @@ Sidebar.init({
     unique: true,
     primaryKey: true,
   },
-  fullLifetimeAccess: DataTypes.STRING,
-  accessTypes: DataTypes.STRING,
+  fullLifetimeAccess: {
+    type: DataTypes.BOOLEAN,
+    defaultValue: false,
+  },
   assignments: {
     type: DataTypes.BOOLEAN,
     defaultValue: false,
@@ -51,22 +58,28 @@ Sidebar.init({
     defaultValue: true,
   },
   downloadableResources: DataTypes.INTEGER,
-}, { sequelize });
+}, {
+  sequelize,
+  tableName: 'sidebar',
+});
 
-const openConn = async () => {
-  try {
-    await sequelize.authenticate();
+const openConn = async () => sequelize.authenticate()
+  .then(() => {
     console.log('DB connection successful.');
-    await Price.sync({ force: true });
+    return Price.sync({ force: true });
+  })
     console.log('The table for the Price model was just (re)created!');
     await PreviewVideo.sync({ force: true });
     console.log('The table for the Preview Video model was just (re)created!');
     await Sidebar.sync({ force: true });
     console.log('The table for the Sidebar model was just (re)created!');
-  } catch (error) {
+  .then((result) => {
+    console.log('All models were synchronized successfully.');
+    console.log(result);
+  })
+  .catch((error) => {
     console.error('Unable to connect to the database:', error);
-  }
-};
+  });
 
 const closeConn = () => sequelize.close()
   .then(() => {
