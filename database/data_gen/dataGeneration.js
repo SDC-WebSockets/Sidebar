@@ -96,7 +96,7 @@ const generateVideoData = async (numberOfCourses) => {
   videoStream.write(`${videoKeys}\n`);
   videoStream.write(`${course1.video}\n`);
 
-  for (let i = 1; i <= numberOfCourses; i += 1) {
+  for (let i = 2; i <= numberOfCourses; i += 1) {
     const newVideo = createVideoData(i);
     videoStream.write(`${newVideo}\n`);
   }
@@ -111,7 +111,7 @@ const generateSidebarData = async (numberOfCourses) => {
   sidebarStream.write(`${sidebarKeys}\n`);
   sidebarStream.write(`${course1.sidebar}\n`);
 
-  for (let i = 1; i <= numberOfCourses; i += 1) {
+  for (let i = 2; i <= numberOfCourses; i += 1) {
     const newSidebar = createSidebarData(i);
     sidebarStream.write(`${newSidebar}\n`);
   }
