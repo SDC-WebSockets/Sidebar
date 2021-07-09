@@ -39,3 +39,12 @@ videos/
 
 # Pexels API key
 pexels.config.js
+
+# seeding file locations
+photos/
+videos/
+*.csv
+videoURLs.txt
+
+# Any config files that may have keys
+*.config.js
