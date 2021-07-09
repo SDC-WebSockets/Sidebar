@@ -3,9 +3,17 @@ const pg = require('../../database/pgDatabase');
 
 module.exports.getPrice = async (req, res) => {
   console.log('GET request received at /price.', req.query);
-  const courseid = req.query;
-  const course = await pg.Price.findAll({ where: courseid });
-  console.log(course);
+  await pg.Price.findAll({ where: { course_id: req.query.courseId } })
+    .then((result) => {
+      if (result.length > 1) {
+        throw Error('Expected 1 result, received '.result.length);
+      }
+      const dataReceived = result[0].dataValues;
+      console.log(dataReceived);
+    })
+    .catch((error) => {
+      console.warn(error);
+    });
   //   , (err, docs) => {
   //   if (err) {
   //     res.send(err);

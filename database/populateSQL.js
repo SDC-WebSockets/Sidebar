@@ -25,41 +25,41 @@ const seedPSQL = async () => Promise.resolve(pool.connect())
     console.log('DB connected at ', result.rows[0].now);
     const createTables = `DROP TABLE IF EXISTS price;
       CREATE TABLE price(
-        courseId SERIAL PRIMARY KEY,
-        basePrice INTEGER,
-        discountPercentage INTEGER,
-        saleNumOfDays INTEGER,
-        saleOngoing BOOLEAN
+        course_id SERIAL PRIMARY KEY,
+        base_price INTEGER,
+        discount_percent INTEGER,
+        sale_days INTEGER,
+        sale_ongoing BOOLEAN
       );
       DROP TABLE IF EXISTS video;
       CREATE TABLE video(
-        courseId SERIAL PRIMARY KEY,
-        videoImgUrl VARCHAR(30),
-        videoImg VARCHAR(30)
+        course_id SERIAL PRIMARY KEY,
+        videoimg_url VARCHAR(30),
+        video_url VARCHAR(30)
       );
       DROP TABLE IF EXISTS sidebar;
       CREATE TABLE sidebar(
-        courseId SERIAL PRIMARY KEY,
-        fullLifetimeAccess BOOLEAN,
+        course_id SERIAL PRIMARY KEY,
+        full_access BOOLEAN,
         assignments BOOLEAN,
-        certificateOfCompletion BOOLEAN,
-        downloadableResources INTEGER
+        completion_certificate BOOLEAN,
+        downloadable_resources INTEGER
       );`;
     return pool.query(createTables);
   })
   .then(() => {
     console.log('Table Creations SUCCESS!');
-    return copyCSV(pricePath, 'price');
+    return copyCSV(pricePath, 'Price');
   })
   .then(() => pool.query('SELECT NOW()'))
   .then((result) => {
     console.log('Finished seeding price at ', result.rows[0].now);
-    return copyCSV(videoPath, 'video');
+    return copyCSV(videoPath, 'Video');
   })
   .then(() => pool.query('SELECT NOW()'))
   .then((result) => {
     console.log('Finished seeding video at ', result.rows[0].now);
-    return copyCSV(sidebarPath, 'sidebar');
+    return copyCSV(sidebarPath, 'Sidebar');
   })
   .then(() => pool.query('SELECT NOW()'))
   .then((result) => {

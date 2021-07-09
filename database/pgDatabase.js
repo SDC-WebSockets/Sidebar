@@ -7,45 +7,49 @@ const sequelize = new Sequelize('postgres://127.0.0.1:5432/SDC');
 
 class Price extends Model { }
 Price.init({
-  courseId: {
+  course_id: {
     type: DataTypes.INTEGER,
     unique: true,
     primaryKey: true,
   },
-  basePrice: DataTypes.INTEGER,
-  discountPercentage: DataTypes.INTEGER,
-  saleNumOfDays: DataTypes.INTEGER,
-  saleOngoing: {
+  base_price: DataTypes.INTEGER,
+  discount_percent: DataTypes.INTEGER,
+  sale_days: DataTypes.INTEGER,
+  sale_ongoing: {
     type: DataTypes.BOOLEAN,
     defaultValue: false,
   },
 }, {
   sequelize,
+  createdAt: false,
+  updatedAt: false,
   tableName: 'price',
 });
 
 class PreviewVideo extends Model { }
 PreviewVideo.init({
-  courseId: {
+  course_id: {
     type: DataTypes.INTEGER,
     unique: true,
     primaryKey: true,
   },
-  previewVideoUrl: DataTypes.STRING,
-  previewVideoImgUrl: DataTypes.STRING,
+  videoimg_url: DataTypes.STRING,
+  video_url: DataTypes.STRING,
 }, {
   sequelize,
+  createdAt: false,
+  updatedAt: false,
   tableName: 'video',
 });
 
 class Sidebar extends Model { }
 Sidebar.init({
-  courseId: {
+  course_id: {
     type: DataTypes.INTEGER,
     unique: true,
     primaryKey: true,
   },
-  fullLifetimeAccess: {
+  full_access: {
     type: DataTypes.BOOLEAN,
     defaultValue: false,
   },
@@ -60,22 +64,26 @@ Sidebar.init({
   downloadableResources: DataTypes.INTEGER,
 }, {
   sequelize,
+  createdAt: false,
+  updatedAt: false,
   tableName: 'sidebar',
 });
 
 const openConn = async () => sequelize.authenticate()
   .then(() => {
     console.log('DB connection successful.');
-    return Price.sync({ force: true });
+    return Price.sync({ logging: false });
   })
-    console.log('The table for the Price model was just (re)created!');
-    await PreviewVideo.sync({ force: true });
-    console.log('The table for the Preview Video model was just (re)created!');
-    await Sidebar.sync({ force: true });
-    console.log('The table for the Sidebar model was just (re)created!');
-  .then((result) => {
+  .then(() => {
+    console.log('The table for the Price model was synced!');
+    return PreviewVideo.sync({ logging: false });
+  })
+  .then(() => {
+    console.log('The table for the Preview Video model was synced!');
+    return Sidebar.sync({ logging: false });
+  })
+  .then(() => {
     console.log('All models were synchronized successfully.');
-    console.log(result);
   })
   .catch((error) => {
     console.error('Unable to connect to the database:', error);

@@ -77,9 +77,12 @@ const createSidebarData = (courseId) => {
 const generatePriceData = async (numberOfCourses) => {
   console.log(`Generating ${numberOfCourses} Price records`);
   const priceStream = fs.createWriteStream(pricePath);
-  const priceKeys = 'courseId,basePrice,discountPercentage,saleNumOfDays,saleOngoing';
+  const priceKeys = 'course_Id,base_Price,discount_Percentage,sale_Days,sale_Ongoing';
   priceStream.write(`${priceKeys}\n`);
-  priceStream.write(`${course1.price}\n`);
+  const {
+    courseId, basePrice, discountPercentage, saleNumOfDays, saleOngoing,
+  } = course1.price;
+  priceStream.write(`${courseId},${basePrice},${discountPercentage},${saleNumOfDays},${saleOngoing}\n`);
 
   for (let i = 2; i <= numberOfCourses; i += 1) {
     const newPrice = createPricing(i);
@@ -92,9 +95,10 @@ const generatePriceData = async (numberOfCourses) => {
 const generateVideoData = async (numberOfCourses) => {
   console.log(`Generating ${numberOfCourses} video records`);
   const videoStream = fs.createWriteStream(videoPath);
-  const videoKeys = 'courseId,videoImgUrl,videoUrl';
+  const videoKeys = 'course_Id,videoimg_Url,video_Url';
   videoStream.write(`${videoKeys}\n`);
-  videoStream.write(`${course1.video}\n`);
+  const { courseId, videoImgUrl, videoUrl } = course1.video;
+  videoStream.write(`${courseId},${videoImgUrl},${videoUrl}\n`);
 
   for (let i = 2; i <= numberOfCourses; i += 1) {
     const newVideo = createVideoData(i);
@@ -107,9 +111,12 @@ const generateVideoData = async (numberOfCourses) => {
 const generateSidebarData = async (numberOfCourses) => {
   console.log(`Generating ${numberOfCourses} sidebar records`);
   const sidebarStream = fs.createWriteStream(sidebarPath);
-  const sidebarKeys = 'courseId,fullLifetimeAccess,assignments,certificateOfCompletion,downloadableResources';
+  const sidebarKeys = 'course_Id,full_Access,assignments,completion_certificate,downloadable_resources';
   sidebarStream.write(`${sidebarKeys}\n`);
-  sidebarStream.write(`${course1.sidebar}\n`);
+  const {
+    courseId, fullLifetimeAccess, assignments, certificateOfCompletion, downloadableResources,
+  } = course1.sidebar;
+  sidebarStream.write(`${courseId},${fullLifetimeAccess},${assignments},${certificateOfCompletion},${downloadableResources}\n`);
 
   for (let i = 2; i <= numberOfCourses; i += 1) {
     const newSidebar = createSidebarData(i);
