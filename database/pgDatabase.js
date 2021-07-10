@@ -33,8 +33,8 @@ PreviewVideo.init({
     unique: true,
     primaryKey: true,
   },
-  previewVideoUrl: DataTypes.STRING,
-  previewVideoImgUrl: DataTypes.STRING,
+  videoUrl: DataTypes.STRING,
+  videoImgUrl: DataTypes.STRING,
 }, {
   sequelize,
   createdAt: false,

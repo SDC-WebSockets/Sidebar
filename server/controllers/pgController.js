@@ -79,7 +79,7 @@ module.exports.getAll = async (req, res) => {
       console.log('Price: ', data);
       fullResponse.price = helper.price(data);
       return PreviewVideo.findAll({
-        where: { course_id: req.query.courseId },
+        where: { courseId },
       });
     })
     .then((result) => {
@@ -92,7 +92,7 @@ module.exports.getAll = async (req, res) => {
       console.log('Preview Video: ', data);
       fullResponse.previewVideo = helper.video(data);
       return Sidebar.findAll({
-        where: { course_id: req.query.courseId },
+        where: { courseId },
       });
     })
     .then((result) => {
@@ -150,7 +150,7 @@ module.exports.add = async (req, res) => {
 module.exports.delete = async (req, res) => {
   console.log('DELETE request to /sidebar/all', req.query);
   const course_id = req.query.courseId;
-  await Price.destroy({ where: { course_id: req.query.courseId } })
+  await Price.destroy({ where: { courseId } })
     .then((result) => {
       if (result) {
         res.status(204);

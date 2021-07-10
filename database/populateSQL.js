@@ -35,7 +35,7 @@ const seedPSQL = async () => Promise.resolve(pool.connect())
     CREATE TABLE video(
       "courseId" SERIAL PRIMARY KEY,
       "videoImgUrl" VARCHAR(30),
-      "videoImg" VARCHAR(30)
+      "videoUrl" VARCHAR(30)
     );
     DROP TABLE IF EXISTS sidebar;
     CREATE TABLE sidebar(

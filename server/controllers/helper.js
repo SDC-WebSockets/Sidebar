@@ -1,11 +1,9 @@
 module.exports.price = (dbData) => {
-  const courseId = dbData.courseId;
-  const basePrice = dbData.base_price - 0.01;
-  const discountPercentage = dbData.discount_percent;
+  const { courseId, discountPercentage, saleOngoing } = dbData;
+  const basePrice = dbData.basePrice - 0.01;
   const discountedPrice = Math.floor(basePrice * (1 - discountPercentage / 100)) + 0.99;
   const today = new Date();
-  const saleEndDate = Date(today.setDate(today.getDate() + dbData.sale_days));
-  const saleOngoing = dbData.sale_ongoing;
+  const saleEndDate = Date(today.setDate(today.getDate() + dbData.saleNumOfDays));
 
   const appData = {
     courseId,
@@ -20,9 +18,9 @@ module.exports.price = (dbData) => {
 
 module.exports.video = (dbData) => {
   const s3Url = 'https://sdc-websockets-sidebar.s3-us-west-2.amazonaws.com/';
-  const courseId = dbData.courseId;
-  const previewVideoImgUrl = s3Url + dbData.videoimg_url;
-  const previewVideoUrl = s3Url + dbData.video_url;
+  const { courseId } = dbData;
+  const previewVideoImgUrl = s3Url + dbData.videoImgUrl;
+  const previewVideoUrl = s3Url + dbData.videoUrl;
 
   const appData = {
     courseId,
@@ -34,13 +32,9 @@ module.exports.video = (dbData) => {
 };
 
 module.exports.sidebar = (dbData) => {
-  const s3Url = 'https://sdc-websockets-sidebar.s3-us-west-2.amazonaws.com/';
-  const courseId = dbData.courseId;
-  const fullLifetimeAccess = dbData.full_access ? 'Full lifetime access' : 'Full access during subscription term';
+  const { courseId, assignments, certificateOfCompletion, downloadableResources } = dbData;
+  const fullLifetimeAccess = dbData.fullLifetimeAccess ? 'Full lifetime access' : 'Full access during subscription term';
   const accessTypes = 'Access on mobile and TV';
-  const { assignments } = dbData;
-  const certificateOfCompletion = dbData.completion_certificate;
-  const downloadableResources = dbData.downloadable_resources;
 
   const appData = {
     courseId,
