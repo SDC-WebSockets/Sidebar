@@ -24,26 +24,26 @@ const seedPSQL = async () => Promise.resolve(pool.connect())
   .then((result) => {
     console.log('DB connected at ', result.rows[0].now);
     const createTables = `DROP TABLE IF EXISTS price;
-      CREATE TABLE price(
-        course_id SERIAL PRIMARY KEY,
-        base_price INTEGER,
-        discount_percent INTEGER,
-        sale_days INTEGER,
-        sale_ongoing BOOLEAN
-      );
-      DROP TABLE IF EXISTS video;
-      CREATE TABLE video(
-        course_id SERIAL PRIMARY KEY,
-        videoimg_url VARCHAR(30),
-        video_url VARCHAR(30)
-      );
-      DROP TABLE IF EXISTS sidebar;
-      CREATE TABLE sidebar(
-        course_id SERIAL PRIMARY KEY,
-        full_access BOOLEAN,
-        assignments BOOLEAN,
-        completion_certificate BOOLEAN,
-        downloadable_resources INTEGER
+    CREATE TABLE price(
+      "courseId" SERIAL PRIMARY KEY,
+      "basePrice" INTEGER,
+      "discountPercentage" INTEGER,
+      "saleNumOfDays" INTEGER,
+      "saleOngoing" BOOLEAN
+    );
+    DROP TABLE IF EXISTS video;
+    CREATE TABLE video(
+      "courseId" SERIAL PRIMARY KEY,
+      "videoImgUrl" VARCHAR(30),
+      "videoImg" VARCHAR(30)
+    );
+    DROP TABLE IF EXISTS sidebar;
+    CREATE TABLE sidebar(
+      "courseId" SERIAL PRIMARY KEY,
+      "fullLifetimeAccess" BOOLEAN,
+      "assignments" BOOLEAN,
+      "certificateOfCompletion" BOOLEAN,
+      "downloadableResources" INTEGER
       );`;
     return pool.query(createTables);
   })

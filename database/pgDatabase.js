@@ -7,15 +7,15 @@ const sequelize = new Sequelize('postgres://127.0.0.1:5432/SDC');
 
 class Price extends Model { }
 Price.init({
-  course_id: {
+  courseId: {
     type: DataTypes.INTEGER,
     unique: true,
     primaryKey: true,
   },
-  base_price: DataTypes.INTEGER,
-  discount_percent: DataTypes.INTEGER,
-  sale_days: DataTypes.INTEGER,
-  sale_ongoing: {
+  basePrice: DataTypes.INTEGER,
+  discountPercentage: DataTypes.INTEGER,
+  saleNumOfDays: DataTypes.INTEGER,
+  saleOngoing: {
     type: DataTypes.BOOLEAN,
     defaultValue: false,
   },
@@ -28,13 +28,13 @@ Price.init({
 
 class PreviewVideo extends Model { }
 PreviewVideo.init({
-  course_id: {
+  courseId: {
     type: DataTypes.INTEGER,
     unique: true,
     primaryKey: true,
   },
-  videoimg_url: DataTypes.STRING,
-  video_url: DataTypes.STRING,
+  previewVideoUrl: DataTypes.STRING,
+  previewVideoImgUrl: DataTypes.STRING,
 }, {
   sequelize,
   createdAt: false,
@@ -44,12 +44,12 @@ PreviewVideo.init({
 
 class Sidebar extends Model { }
 Sidebar.init({
-  course_id: {
+  courseId: {
     type: DataTypes.INTEGER,
     unique: true,
     primaryKey: true,
   },
-  full_access: {
+  fullLifetimeAccess: {
     type: DataTypes.BOOLEAN,
     defaultValue: false,
   },
@@ -57,11 +57,11 @@ Sidebar.init({
     type: DataTypes.BOOLEAN,
     defaultValue: false,
   },
-  completion_certificate: {
+  certificateOfCompletion: {
     type: DataTypes.BOOLEAN,
     defaultValue: true,
   },
-  downloadable_resources: DataTypes.INTEGER,
+  downloadableResources: DataTypes.INTEGER,
 }, {
   sequelize,
   createdAt: false,

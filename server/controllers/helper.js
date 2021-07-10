@@ -1,5 +1,5 @@
 module.exports.price = (dbData) => {
-  const courseId = dbData.course_id;
+  const courseId = dbData.courseId;
   const basePrice = dbData.base_price - 0.01;
   const discountPercentage = dbData.discount_percent;
   const discountedPrice = Math.floor(basePrice * (1 - discountPercentage / 100)) + 0.99;
@@ -20,7 +20,7 @@ module.exports.price = (dbData) => {
 
 module.exports.video = (dbData) => {
   const s3Url = 'https://sdc-websockets-sidebar.s3-us-west-2.amazonaws.com/';
-  const courseId = dbData.course_id;
+  const courseId = dbData.courseId;
   const previewVideoImgUrl = s3Url + dbData.videoimg_url;
   const previewVideoUrl = s3Url + dbData.video_url;
 
@@ -35,7 +35,7 @@ module.exports.video = (dbData) => {
 
 module.exports.sidebar = (dbData) => {
   const s3Url = 'https://sdc-websockets-sidebar.s3-us-west-2.amazonaws.com/';
-  const courseId = dbData.course_id;
+  const courseId = dbData.courseId;
   const fullLifetimeAccess = dbData.full_access ? 'Full lifetime access' : 'Full access during subscription term';
   const accessTypes = 'Access on mobile and TV';
   const { assignments } = dbData;
