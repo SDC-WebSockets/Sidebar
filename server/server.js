@@ -3,6 +3,7 @@ const shrinkRay = require('shrink-ray-current');
 const express = require('express');
 const path = require('path');
 const cors = require('cors');
+// eslint-disable-next-line no-unused-vars
 const db = require('../database/database');
 const controller = require('./controllers/pgController'); // postgres
 // const controller = require('./controllers/cbController'); // couchbase

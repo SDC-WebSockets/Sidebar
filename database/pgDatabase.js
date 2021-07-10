@@ -57,11 +57,11 @@ Sidebar.init({
     type: DataTypes.BOOLEAN,
     defaultValue: false,
   },
-  certificateOfCompletion: {
+  completion_certificate: {
     type: DataTypes.BOOLEAN,
     defaultValue: true,
   },
-  downloadableResources: DataTypes.INTEGER,
+  downloadable_resources: DataTypes.INTEGER,
 }, {
   sequelize,
   createdAt: false,
@@ -69,7 +69,7 @@ Sidebar.init({
   tableName: 'sidebar',
 });
 
-const openConn = async () => sequelize.authenticate()
+const openConn = () => sequelize.authenticate()
   .then(() => {
     console.log('DB connection successful.');
     return Price.sync({ logging: false });
