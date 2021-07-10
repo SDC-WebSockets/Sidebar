@@ -68,6 +68,7 @@ module.exports.getAll = async (req, res) => {
   console.log('GET request received at /sidebar/all.');
   const { courseId } = req.query;
   const fullResponse = {};
+  const start = new Date();
   await Price.findAll({ where: { courseId } })
     .then((result) => {
       if (result.length > 1) {
@@ -76,7 +77,7 @@ module.exports.getAll = async (req, res) => {
         throw Error('Database does not contain requested record.');
       }
       const data = result[0].dataValues;
-      console.log('Price: ', data);
+      // console.log('Price: ', data);
       fullResponse.price = helper.price(data);
       return PreviewVideo.findAll({
         where: { courseId },
@@ -89,7 +90,7 @@ module.exports.getAll = async (req, res) => {
         throw Error('Database does not contain requested record.');
       }
       const data = result[0].dataValues;
-      console.log('Preview Video: ', data);
+      // console.log('Preview Video: ', data);
       fullResponse.previewVideo = helper.video(data);
       return Sidebar.findAll({
         where: { courseId },
@@ -102,9 +103,12 @@ module.exports.getAll = async (req, res) => {
         throw Error('Database does not contain requested record.');
       }
       const data = result[0].dataValues;
-      console.log('Sidebar: ', data);
+      // console.log('Sidebar: ', data);
       fullResponse.sidebar = helper.sidebar(data);
-
+      const end = new Date();
+      const timeElapsed = end - start;
+      console.log('Time Elapsed: ', timeElapsed, 'ms');
+      fullResponse.millisecsElapsed = timeElapsed;
       res.send(fullResponse);
     })
     .catch((error) => {
@@ -149,15 +153,32 @@ module.exports.add = async (req, res) => {
 // Delete
 module.exports.delete = async (req, res) => {
   console.log('DELETE request to /sidebar/all', req.query);
-  const course_id = req.query.courseId;
+  const { courseId } = req.query;
+  const start = new Date();
   await Price.destroy({ where: { courseId } })
     .then((result) => {
       if (result) {
+        console.log(result);
+        return PreviewVideo.destroy({ where: { courseId } });
+      }
+      throw Error('Check Price DB side');
+    })
+    .then((result) => {
+      if (result) {
+        return Sidebar.destroy({ where: { courseId } });
+      }
+      throw Error('Check Video DB side');
+    })
+    .then((result) => {
+      if (result) {
+        const end = new Date();
+        const timeElapsed = end - start;
+        console.log('Time Elapsed: ', timeElapsed, 'ms');
         res.status(204);
+        res.end();
       } else {
         throw Error('Check DB side');
       }
-      res.end();
     })
     .catch((error) => {
       console.warn('Error occured during delete', error);

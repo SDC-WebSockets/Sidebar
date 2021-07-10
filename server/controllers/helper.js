@@ -32,7 +32,9 @@ module.exports.video = (dbData) => {
 };
 
 module.exports.sidebar = (dbData) => {
-  const { courseId, assignments, certificateOfCompletion, downloadableResources } = dbData;
+  const {
+    courseId, assignments, certificateOfCompletion, downloadableResources,
+  } = dbData;
   const fullLifetimeAccess = dbData.fullLifetimeAccess ? 'Full lifetime access' : 'Full access during subscription term';
   const accessTypes = 'Access on mobile and TV';
 
