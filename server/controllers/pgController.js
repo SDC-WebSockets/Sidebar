@@ -108,7 +108,7 @@ module.exports.getAll = async (req, res) => {
       const end = new Date();
       const timeElapsed = end - start;
       console.log('Time Elapsed: ', timeElapsed, 'ms');
-      fullResponse.millisecsElapsed = timeElapsed;
+      fullResponse.timeElapsed = timeElapsed;
       res.send(fullResponse);
     })
     .catch((error) => {
@@ -141,7 +141,10 @@ module.exports.add = async (req, res) => {
       .then(() => PreviewVideo.create(newDocument.previewVideo))
       .then(() => Sidebar.create(newDocument.sidebar))
       .then(() => {
-        res.status(201).send(`New Records created at courseId: ${newCourseId} \n`);
+        const end = new Date();
+        const timeElapsed = end - start;
+        console.log('Time Elapsed: ', timeElapsed, 'ms');
+        res.status(201).send(`New Record created at courseId: ${newCourseId} \n Time Elapsed: ${timeElapsed}`);
         res.end();
       })
       .catch((error) => {
@@ -150,9 +153,6 @@ module.exports.add = async (req, res) => {
         res.end();
       });
   }
-  const end = new Date();
-  const timeElapsed = end - start;
-  console.log('Time Elapsed: ', timeElapsed, 'ms');
 };
 
 // Delete
@@ -179,7 +179,7 @@ module.exports.delete = async (req, res) => {
         const end = new Date();
         const timeElapsed = end - start;
         console.log('Time Elapsed: ', timeElapsed, 'ms');
-        res.status(204);
+        res.send({ timeElapsed });
         res.end();
       } else {
         throw Error('Check DB side');
@@ -240,13 +240,13 @@ module.exports.update = async (req, res) => {
         errors.push(`Sidebar error: ${error.message} \n`);
       });
   }
-  if (errors.length > 0) {
-    res.status(400).send(errors);
-  } else {
-    res.status(204);
-  }
   const end = new Date();
   const timeElapsed = end - start;
   console.log('Time Elapsed: ', timeElapsed, 'ms');
+  if (errors.length > 0) {
+    res.status(400).send(errors);
+  } else {
+    res.send({ timeElapsed });
+  }
   res.end();
 };
