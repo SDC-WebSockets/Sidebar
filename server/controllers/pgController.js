@@ -120,9 +120,10 @@ module.exports.getAll = async (req, res) => {
 // Create
 module.exports.add = async (req, res) => {
   console.log('POST request to /sidebar/all');
+  const start = new Date();
   const newDocument = helper.transformToDBformat(req.body);
   const newCourseId = newDocument.courseId;
-  console.log(newDocument);
+  // console.log(newDocument);
 
   if (typeof newCourseId !== 'number') {
     res.status(400).send('Sorry, invalid request: courseId is not a number');
@@ -140,7 +141,7 @@ module.exports.add = async (req, res) => {
       .then(() => PreviewVideo.create(newDocument.previewVideo))
       .then(() => Sidebar.create(newDocument.sidebar))
       .then(() => {
-        res.status(201).send('New Records created at courseId: ', newCourseId);
+        res.status(201).send(`New Records created at courseId: ${newCourseId}`);
         res.end();
       })
       .catch((error) => {
@@ -149,14 +150,16 @@ module.exports.add = async (req, res) => {
         res.end();
       });
   }
-  // res.end();
+  const end = new Date();
+  const timeElapsed = end - start;
+  console.log('Time Elapsed: ', timeElapsed, 'ms');
 };
 
 // Delete
 module.exports.delete = async (req, res) => {
+  const start = new Date();
   console.log('DELETE request to /sidebar/all', req.query);
   const { courseId } = req.query;
-  const start = new Date();
   await Price.destroy({ where: { courseId } })
     .then((result) => {
       if (result) {
@@ -191,6 +194,7 @@ module.exports.delete = async (req, res) => {
 
 // Update
 module.exports.update = async (req, res) => {
+  const start = new Date();
   const updateDoc = req.body;
   const { courseId } = updateDoc;
   console.log('PUT request to /sidebar/all { courseId: ', courseId, ' }');
@@ -204,23 +208,45 @@ module.exports.update = async (req, res) => {
   if (updateDoc.previewVideo !== undefined) {
     updating.push('previewVideo');
   }
-
+  const errors = [];
   if (typeof courseId !== 'number') {
     res.status(400).send('Sorry, invalid request: courseId is not a number');
-  } else {
-    await update({ courseId }, updateDoc)
-      .then((result) => {
-        console.log(result);
-        for (let i = 0; i < updating.length; i += 1) {
-          if (!result[updating[i]]) {
-            throw Error(`Error on DB side for ${updating[i]}`);
-          }
-        }
-        res.status(204);
-        res.end();
-      })
+    res.end();
+  }
+  if (updating.includes('price')) {
+    const updatePrice = helper.updatePrice(updateDoc.price);
+    console.log(updatePrice);
+    await Price.update(updatePrice, { where: { courseId } })
       .catch((error) => {
         console.warn('Error occured during update (server side): ', error);
+        errors.push(`price error: ${error.message}`);
       });
   }
+  if (updating.includes('previewVideo')) {
+    const updateVideo = helper.updateVideo(updateDoc.previewVideo);
+    console.log(updateVideo);
+    await PreviewVideo.update(updateVideo, { where: { courseId } })
+      .catch((error) => {
+        console.warn('Error occured during update (server side): ', error);
+        errors.push(`PreviewVideo error: ${error.message}`);
+      });
+  }
+  if (updating.includes('sidebar')) {
+    const updateSidebar = helper.updateSidebar(updateDoc.sidebar);
+    console.log(updateSidebar);
+    await Sidebar.update(updateSidebar, { where: { courseId } })
+      .catch((error) => {
+        console.warn('Error occured during update (server side): ', error);
+        errors.push(`Sidebar error: ${error.message}`);
+      });
+  }
+  if (errors.length > 0) {
+    res.status(400).send(errors);
+  } else {
+    res.status(204);
+  }
+  const end = new Date();
+  const timeElapsed = end - start;
+  console.log('Time Elapsed: ', timeElapsed, 'ms');
+  res.end();
 };

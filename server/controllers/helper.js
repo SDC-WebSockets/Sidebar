@@ -95,7 +95,6 @@ const transformVideo = (newVideo) => {
     previewVideoImgUrl: 'string',
     previewVideoUrl: 'string',
   };
-  const dbKeys = ['videoImgUrl', 'videoUrl'];
   const videoKeys = Object.keys(inputVideoTypes);
   for (let i = 0; i < videoKeys.length; i += 1) {
     const currKey = videoKeys[i];
@@ -172,4 +171,98 @@ module.exports.transformToDBformat = (newDoc) => {
     previewVideo: dbVideo,
     sidebar: dbSidebar,
   };
+};
+
+module.exports.updatePrice = (newPrice) => {
+  const dbPrice = {};
+  const inputPriceTypes = {
+    basePrice: 'number',
+    discountPercentage: 'number',
+    saleEndDate: 'string',
+    saleOngoing: 'boolean',
+  };
+  const dbKeys = ['basePrice', 'discountPercentage', 'saleNumOfDays', 'saleOngoing'];
+  const priceKeys = Object.keys(newPrice);
+  for (let i = 0; i < priceKeys.length; i += 1) {
+    const currKey = priceKeys[i];
+    if (newPrice[currKey] === undefined) {
+      return { error: `Price ${currKey} does not exist.` };
+    }
+    const inputTypeOf = inputPriceTypes[currKey];
+    const keyType = typeof newPrice[currKey];
+    if (keyType !== inputTypeOf) {
+      return { error: `Price ${currKey} type is ${inputTypeOf} and does not match ${keyType}.` };
+    }
+    if (dbKeys.includes(currKey)) {
+      if (inputTypeOf === 'number') {
+        const value = Math.round(newPrice[currKey]);
+        dbPrice[currKey] = value;
+      } else {
+        dbPrice[currKey] = newPrice[currKey];
+      }
+    } else if (currKey === 'saleEndDate') {
+      const now = new Date();
+      const msPerDay = 24 * 60 * 60 * 1000;
+      const saleEndDate = new Date(newPrice[currKey]);
+      const saleNumOfDays = (saleEndDate - now) / msPerDay;
+      dbPrice.saleNumOfDays = Math.round(saleNumOfDays);
+    }
+  }
+  return dbPrice;
+};
+
+module.exports.updateVideo = (newVideo) => {
+  const dbVideo = {};
+  const inputVideoTypes = {
+    previewVideoImgUrl: 'string',
+    previewVideoUrl: 'string',
+  };
+  const videoKeys = Object.keys(newVideo);
+  for (let i = 0; i < videoKeys.length; i += 1) {
+    const currKey = videoKeys[i];
+    if (newVideo[currKey] === undefined) {
+      return { error: `Video ${currKey} does not exist.` };
+    }
+    const inputTypeOf = inputVideoTypes[currKey];
+    const keyType = typeof newVideo[currKey];
+    if (keyType !== inputTypeOf) {
+      return { error: `Video ${currKey} type is ${inputTypeOf} and does not match ${keyType}.` };
+    }
+    if (currKey === 'previewVideoImgUrl') {
+      dbVideo.videoImgUrl = newVideo[currKey];
+    } else if (currKey === 'previewVideoUrl') {
+      dbVideo.videoUrl = newVideo[currKey];
+    }
+  }
+  return dbVideo;
+};
+
+module.exports.updateSidebar = (newSidebar) => {
+  const dbSidebar = {};
+  const inputSidebarTypes = {
+    fullLifetimeAccess: 'string',
+    assignments: 'boolean',
+    certificateOfCompletion: 'boolean',
+    downloadableResources: 'number',
+  };
+  const dbKeys = ['fullLifetimeAccess', 'assignments', 'certificateOfCompletion', 'downloadableResources'];
+  const sidebarKeys = Object.keys(newSidebar);
+  for (let i = 0; i < sidebarKeys.length; i += 1) {
+    const currKey = sidebarKeys[i];
+    if (newSidebar[currKey] === undefined) {
+      return { error: `Sidebar ${currKey} does not exist.` };
+    }
+    const inputTypeOf = inputSidebarTypes[currKey];
+    const keyType = typeof newSidebar[currKey];
+    if (keyType !== inputTypeOf) {
+      return { error: `Sidebar ${currKey} type is ${inputTypeOf} and does not match ${keyType}.` };
+    }
+    if (dbKeys.includes(currKey)) {
+      dbSidebar[currKey] = newSidebar[currKey];
+      if (currKey === 'fullLifetimeAccess') {
+        dbSidebar[currKey] = newSidebar[currKey] === 'Full lifetime access';
+      }
+    }
+  }
+  return dbSidebar;
 };
