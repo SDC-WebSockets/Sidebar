@@ -9,6 +9,8 @@ const app = require('../server/server');
 
 const request = supertest(app);
 
+beforeAll(() => jest.setTimeout(15 * 1000));
+
 describe('API calls', () => {
   test('GET /sidebar/all route works for existing courseId', async (done) => {
     expect.assertions(3);
@@ -17,6 +19,16 @@ describe('API calls', () => {
         expect(response.status).toBe(200);
         expect(response.body.price.basePrice).toEqual(89.99);
         expect(response.body.sidebar.fullLifetimeAccess).toEqual('Full lifetime access');
+        done();
+      })
+      .catch((err) => done(err));
+  });
+
+  test('DELETE /sidebar/all route works for existing courseId', async (done) => {
+    expect.assertions(1);
+    await request.delete('/sidebar/all?courseId=101')
+      .then((result) => {
+        expect(result.status).toBe(200);
         done();
       })
       .catch((err) => done(err));
@@ -40,8 +52,8 @@ describe('API calls', () => {
         downloadableResources: 20,
       },
       previewVideo: {
-        previewVideoImgUrl: 'http://localhost:3004/assets/previewVideoImg6.jpg',
-        previewVideoUrl: 'http://localhost:3004/assets/previewVideo6.mp4',
+        previewVideoImgUrl: 'videoImg/1.jpg#116378',
+        previewVideoUrl: 'video/1.mp4#116378',
       },
     };
     expect.assertions(1);
@@ -58,7 +70,7 @@ describe('API calls', () => {
     const testData = {
       courseId: 101,
       price: {
-        basePrice: 89.99,
+        basePrice: 129.99,
         discountPercentage: 50,
         saleOngoing: true,
       },
@@ -67,24 +79,14 @@ describe('API calls', () => {
         downloadableResources: 12,
       },
       previewVideo: {
-        previewVideoImgUrl: 'http://localhost:3004/assets/previewVideoImg5.jpg',
+        previewVideoImgUrl: 'videoImg/1.jpg#116378',
       },
     };
     expect.assertions(1);
     await request.put('/sidebar/all')
       .send(testData)
       .then((result) => {
-        expect(result.status).toBe(204);
-        done();
-      })
-      .catch((err) => done(err));
-  });
-
-  test('DELETE /sidebar/all route works for existing courseId', async (done) => {
-    expect.assertions(1);
-    await request.delete('/sidebar/all?courseId=101')
-      .then((result) => {
-        expect(result.status).toBe(204);
+        expect(result.status).toBe(200);
         done();
       })
       .catch((err) => done(err));
