@@ -15,7 +15,7 @@ const weightedTrueGenerator = (percentageChance) => Math.random() * 100 < percen
 const course1 = {
   price: {
     courseId: 1,
-    basePrice: 125,
+    basePrice: 90,
     discountPercentage: 24,
     saleNumOfDays: 11,
     saleOngoing: false,
