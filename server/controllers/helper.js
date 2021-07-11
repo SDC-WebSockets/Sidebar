@@ -151,7 +151,7 @@ module.exports.transformToDBformat = (newDoc) => {
   const newPrice = newDoc.price;
   const newPreviewVideo = newDoc.previewVideo;
   const newSidebar = newDoc.sidebar;
-  console.log(courseId, newPrice, newSidebar, newPreviewVideo);
+  // console.log(courseId, newPrice, newSidebar, newPreviewVideo);
   const dbPrice = transformPrice(newPrice);
   if (dbPrice.courseId === undefined) {
     dbPrice.courseId = courseId;

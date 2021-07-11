@@ -141,12 +141,12 @@ module.exports.add = async (req, res) => {
       .then(() => PreviewVideo.create(newDocument.previewVideo))
       .then(() => Sidebar.create(newDocument.sidebar))
       .then(() => {
-        res.status(201).send(`New Records created at courseId: ${newCourseId}`);
+        res.status(201).send(`New Records created at courseId: ${newCourseId} \n`);
         res.end();
       })
       .catch((error) => {
         console.warn('Error occured during POST: ', error.message);
-        res.status(400).send(`Sorry, error occured: ${error.message}`);
+        res.status(400).send(`Sorry, error occured: ${error.message} \n`);
         res.end();
       });
   }
@@ -219,7 +219,7 @@ module.exports.update = async (req, res) => {
     await Price.update(updatePrice, { where: { courseId } })
       .catch((error) => {
         console.warn('Error occured during update (server side): ', error);
-        errors.push(`price error: ${error.message}`);
+        errors.push(`price error: ${error.message} \n`);
       });
   }
   if (updating.includes('previewVideo')) {
@@ -228,7 +228,7 @@ module.exports.update = async (req, res) => {
     await PreviewVideo.update(updateVideo, { where: { courseId } })
       .catch((error) => {
         console.warn('Error occured during update (server side): ', error);
-        errors.push(`PreviewVideo error: ${error.message}`);
+        errors.push(`PreviewVideo error: ${error.message} \n`);
       });
   }
   if (updating.includes('sidebar')) {
@@ -237,7 +237,7 @@ module.exports.update = async (req, res) => {
     await Sidebar.update(updateSidebar, { where: { courseId } })
       .catch((error) => {
         console.warn('Error occured during update (server side): ', error);
-        errors.push(`Sidebar error: ${error.message}`);
+        errors.push(`Sidebar error: ${error.message} \n`);
       });
   }
   if (errors.length > 0) {
