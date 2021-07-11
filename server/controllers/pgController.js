@@ -120,34 +120,36 @@ module.exports.getAll = async (req, res) => {
 // Create
 module.exports.add = async (req, res) => {
   console.log('POST request to /sidebar/all');
-  const newDocument = req.body;
+  const newDocument = helper.transformToDBformat(req.body);
   const newCourseId = newDocument.courseId;
   console.log(newDocument);
-  // change string date to date type
-  newDocument.price.saleEndDate = new Date(newDocument.price.saleEndDate);
 
   if (typeof newCourseId !== 'number') {
     res.status(400).send('Sorry, invalid request: courseId is not a number');
+    res.end();
   } else {
-    getSidebar({ courseId: newCourseId }, async (err, docs) => {
-      console.log('return from courseId query:', docs);
-      if (err) {
-        console.warn('Error Occured :', err);
-      } else if (docs[0] === undefined) {
+    await Price.findAll({ where: { courseId: newCourseId } })
+      .then((result) => {
+        // console.log('return from courseId query:', result);
+        if (result.length > 0) {
+          throw Error('courseId already exists.');
+        }
         console.log('courseId is available!');
-        await postAll(newDocument)
-          .then((result) => {
-            console.log(result);
-            res.status(201).send(result);
-          })
-          .catch((error) => {
-            console.warn('Error occured during create (server side): ', error);
-          });
-      } else {
-        res.status(400).send('Sorry, courseId already exists.');
-      }
-    });
+        return Price.create(newDocument.price);
+      })
+      .then(() => PreviewVideo.create(newDocument.previewVideo))
+      .then(() => Sidebar.create(newDocument.sidebar))
+      .then(() => {
+        res.status(201).send('New Records created at courseId: ', newCourseId);
+        res.end();
+      })
+      .catch((error) => {
+        console.warn('Error occured during POST: ', error.message);
+        res.status(400).send(`Sorry, error occured: ${error.message}`);
+        res.end();
+      });
   }
+  // res.end();
 };
 
 // Delete
