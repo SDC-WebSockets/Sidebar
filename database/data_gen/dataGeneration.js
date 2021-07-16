@@ -17,7 +17,7 @@ const course1 = {
     courseId: 1,
     basePrice: 90,
     discountPercentage: 24,
-    saleNumOfDays: 11,
+    saleEndDate: 950400505,
     saleOngoing: false,
   },
   sidebar: {
@@ -47,10 +47,13 @@ const createPricing = (courseId) => {
 
   const maxSaleDays = 30;
   const saleNumOfDays = Math.floor(Math.random() * maxSaleDays);
+  const now = Date.now();
+  const msPerDay = 24 * 60 * 60 * 1000;
+  const saleEndDate = now + saleNumOfDays * msPerDay;
 
   const saleOngoing = weightedTrueGenerator(30);
 
-  const priceData = [courseId, basePrice, discountPercentage, saleNumOfDays, saleOngoing];
+  const priceData = [courseId, basePrice, discountPercentage, saleEndDate, saleOngoing];
 
   return priceData;
 };
@@ -77,12 +80,12 @@ const createSidebarData = (courseId) => {
 const generatePriceData = async (numberOfCourses) => {
   console.log(`Generating ${numberOfCourses} Price records`);
   const priceStream = fs.createWriteStream(pricePath);
-  const priceKeys = 'courseId,basePrice,discountPercentage,saleNumOfDays,saleOngoing';
+  const priceKeys = 'courseId,basePrice,discountPercentage,saleEndDate,saleOngoing';
   priceStream.write(`${priceKeys}\n`);
   const {
-    courseId, basePrice, discountPercentage, saleNumOfDays, saleOngoing,
+    courseId, basePrice, discountPercentage, saleEndDate, saleOngoing,
   } = course1.price;
-  priceStream.write(`${courseId},${basePrice},${discountPercentage},${saleNumOfDays},${saleOngoing}\n`);
+  priceStream.write(`${courseId},${basePrice},${discountPercentage},${saleEndDate},${saleOngoing}\n`);
 
   for (let i = 2; i <= numberOfCourses; i += 1) {
     const newPrice = createPricing(i);
