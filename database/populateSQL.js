@@ -19,58 +19,64 @@ const copyCSV = (pathToCopy, type) => {
   return pool.query(insertText);
 };
 
-const seedPSQL = async () => Promise.resolve(pool.connect())
-  .then(() => pool.query('SELECT NOW()'))
-  .then((result) => {
-    console.log('DB connected at ', result.rows[0].now);
-    const createTables = `DROP TABLE IF EXISTS price;
-      CREATE TABLE price(
-        courseId SERIAL PRIMARY KEY,
-        basePrice INTEGER,
-        discountPercentage INTEGER,
-        saleNumOfDays INTEGER,
-        saleOngoing BOOLEAN
-      );
-      DROP TABLE IF EXISTS video;
-      CREATE TABLE video(
-        courseId SERIAL PRIMARY KEY,
-        videoImgUrl VARCHAR(30),
-        videoImg VARCHAR(30)
-      );
-      DROP TABLE IF EXISTS sidebar;
-      CREATE TABLE sidebar(
-        courseId SERIAL PRIMARY KEY,
-        fullLifetimeAccess BOOLEAN,
-        assignments BOOLEAN,
-        certificateOfCompletion BOOLEAN,
-        downloadableResources INTEGER
-      );`;
-    return pool.query(createTables);
-  })
-  .then(() => {
-    console.log('Table Creations SUCCESS!');
-    return copyCSV(pricePath, 'price');
-  })
-  .then(() => pool.query('SELECT NOW()'))
-  .then((result) => {
-    console.log('Finished seeding price at ', result.rows[0].now);
-    return copyCSV(videoPath, 'video');
-  })
-  .then(() => pool.query('SELECT NOW()'))
-  .then((result) => {
-    console.log('Finished seeding video at ', result.rows[0].now);
-    return copyCSV(sidebarPath, 'sidebar');
-  })
-  .then(() => pool.query('SELECT NOW()'))
-  .then((result) => {
-    console.log('Completed All Seeding at ', result.rows[0].now);
-    return pool.end();
-  })
-  .then(() => {
-    console.log('bye!');
-  })
-  .catch((error) => {
-    console.warn('Error occured: ', error);
-  });
+const seedPSQL = async () => {
+  await pool.connect()
+    .then((client) => client.query('SELECT NOW()')
+      .then((result) => {
+        console.log('DB connected at ', result.rows[0].now);
+        const createTables = `DROP TABLE IF EXISTS price;
+          CREATE TABLE price(
+            "courseId" SERIAL PRIMARY KEY,
+            "basePrice" INTEGER,
+            "discountPercentage" INTEGER,
+            "saleEndDate" BIGINT,
+            "saleOngoing" BOOLEAN
+          );
+          DROP TABLE IF EXISTS video;
+          CREATE TABLE video(
+            "courseId" SERIAL PRIMARY KEY,
+            "videoImgUrl" VARCHAR(30),
+            "videoUrl" VARCHAR(30)
+          );
+          DROP TABLE IF EXISTS sidebar;
+          CREATE TABLE sidebar(
+            "courseId" SERIAL PRIMARY KEY,
+            "fullLifetimeAccess" BOOLEAN,
+            "assignments" BOOLEAN,
+            "certificateOfCompletion" BOOLEAN,
+            "downloadableResources" INTEGER
+            );`;
+        return client.query(createTables);
+      })
+      .then(() => {
+        console.log('Table Creations SUCCESS!');
+        console.log('Seeding Price');
+        return copyCSV(pricePath, 'Price');
+      })
+      .then(() => client.query('SELECT NOW()'))
+      .then((result) => {
+        console.log('Finished seeding price at ', result.rows[0].now);
+        console.log('Seeding Video');
+        return copyCSV(videoPath, 'Video');
+      })
+      .then(() => client.query('SELECT NOW()'))
+      .then((result) => {
+        console.log('Finished seeding video at ', result.rows[0].now);
+        console.log('Seeding Sidebar');
+        return copyCSV(sidebarPath, 'Sidebar');
+      })
+      .then(() => client.query('SELECT NOW()'))
+      .then(async (result) => {
+        console.log('Completed All Seeding at ', result.rows[0].now);
+        return client.release();
+      })
+      .catch((error) => {
+        console.warn('Error occured: ', error);
+        return client.release();
+      }))
+    .catch((error) => {
+      console.warn('Error occured: ', error);
+    });
+};
 
 seedPSQL();

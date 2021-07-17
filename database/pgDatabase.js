@@ -1,10 +1,15 @@
+/* eslint-disable no-unused-vars */
 /* eslint-disable no-console */
 /* eslint-disable max-classes-per-file */
 const { Sequelize, Model, DataTypes } = require('sequelize');
-const dotenv = require('dotenv');
 
-dotenv.config();
-const sequelize = new Sequelize('postgres://127.0.0.1:5432/SDC');
+const sequelize = new Sequelize('postgres://127.0.0.1:5432/SDC', {
+  benchmark: true,
+  logging: (sqlQuery, timing) => {
+    console.log(sqlQuery);
+    console.log('Query Time: ', timing, ' ms');
+  },
+});
 
 class Price extends Model { }
 Price.init({
@@ -13,14 +18,19 @@ Price.init({
     unique: true,
     primaryKey: true,
   },
-  basePrice: DataTypes.DECIMAL,
+  basePrice: DataTypes.INTEGER,
   discountPercentage: DataTypes.INTEGER,
-  saleEndDate: DataTypes.DATE,
+  saleEndDate: DataTypes.BIGINT,
   saleOngoing: {
     type: DataTypes.BOOLEAN,
     defaultValue: false,
   },
-}, { sequelize });
+}, {
+  sequelize,
+  createdAt: false,
+  updatedAt: false,
+  tableName: 'price',
+});
 
 class PreviewVideo extends Model { }
 PreviewVideo.init({
@@ -29,9 +39,14 @@ PreviewVideo.init({
     unique: true,
     primaryKey: true,
   },
-  previewVideoUrl: DataTypes.STRING,
-  previewVideoImgUrl: DataTypes.STRING,
-}, { sequelize });
+  videoUrl: DataTypes.STRING,
+  videoImgUrl: DataTypes.STRING,
+}, {
+  sequelize,
+  createdAt: false,
+  updatedAt: false,
+  tableName: 'video',
+});
 
 class Sidebar extends Model { }
 Sidebar.init({
@@ -40,8 +55,10 @@ Sidebar.init({
     unique: true,
     primaryKey: true,
   },
-  fullLifetimeAccess: DataTypes.STRING,
-  accessTypes: DataTypes.STRING,
+  fullLifetimeAccess: {
+    type: DataTypes.BOOLEAN,
+    defaultValue: false,
+  },
   assignments: {
     type: DataTypes.BOOLEAN,
     defaultValue: false,
@@ -51,22 +68,32 @@ Sidebar.init({
     defaultValue: true,
   },
   downloadableResources: DataTypes.INTEGER,
-}, { sequelize });
+}, {
+  sequelize,
+  createdAt: false,
+  updatedAt: false,
+  tableName: 'sidebar',
+});
 
-const openConn = async () => {
-  try {
-    await sequelize.authenticate();
+const openConn = () => sequelize.authenticate()
+  .then(() => {
     console.log('DB connection successful.');
-    await Price.sync({ force: true });
-    console.log('The table for the Price model was just (re)created!');
-    await PreviewVideo.sync({ force: true });
-    console.log('The table for the Preview Video model was just (re)created!');
-    await Sidebar.sync({ force: true });
-    console.log('The table for the Sidebar model was just (re)created!');
-  } catch (error) {
+    return Price.sync({ logging: true });
+  })
+  .then(() => {
+    console.log('The table for the Price model was synced!');
+    return PreviewVideo.sync({ logging: true });
+  })
+  .then(() => {
+    console.log('The table for the Preview Video model was synced!');
+    return Sidebar.sync({ logging: true });
+  })
+  .then(() => {
+    console.log('All models were synchronized successfully.');
+  })
+  .catch((error) => {
     console.error('Unable to connect to the database:', error);
-  }
-};
+  });
 
 const closeConn = () => sequelize.close()
   .then(() => {

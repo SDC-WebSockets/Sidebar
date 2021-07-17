@@ -15,9 +15,9 @@ const weightedTrueGenerator = (percentageChance) => Math.random() * 100 < percen
 const course1 = {
   price: {
     courseId: 1,
-    basePrice: 125,
+    basePrice: 90,
     discountPercentage: 24,
-    saleNumOfDays: 11,
+    saleEndDate: 950400505,
     saleOngoing: false,
   },
   sidebar: {
@@ -47,10 +47,13 @@ const createPricing = (courseId) => {
 
   const maxSaleDays = 30;
   const saleNumOfDays = Math.floor(Math.random() * maxSaleDays);
+  const now = Date.now();
+  const msPerDay = 24 * 60 * 60 * 1000;
+  const saleEndDate = now + saleNumOfDays * msPerDay;
 
   const saleOngoing = weightedTrueGenerator(30);
 
-  const priceData = [courseId, basePrice, discountPercentage, saleNumOfDays, saleOngoing];
+  const priceData = [courseId, basePrice, discountPercentage, saleEndDate, saleOngoing];
 
   return priceData;
 };
@@ -77,9 +80,12 @@ const createSidebarData = (courseId) => {
 const generatePriceData = async (numberOfCourses) => {
   console.log(`Generating ${numberOfCourses} Price records`);
   const priceStream = fs.createWriteStream(pricePath);
-  const priceKeys = 'courseId,basePrice,discountPercentage,saleNumOfDays,saleOngoing';
+  const priceKeys = 'courseId,basePrice,discountPercentage,saleEndDate,saleOngoing';
   priceStream.write(`${priceKeys}\n`);
-  priceStream.write(`${course1.price}\n`);
+  const {
+    courseId, basePrice, discountPercentage, saleEndDate, saleOngoing,
+  } = course1.price;
+  priceStream.write(`${courseId},${basePrice},${discountPercentage},${saleEndDate},${saleOngoing}\n`);
 
   for (let i = 2; i <= numberOfCourses; i += 1) {
     const newPrice = createPricing(i);
@@ -94,7 +100,8 @@ const generateVideoData = async (numberOfCourses) => {
   const videoStream = fs.createWriteStream(videoPath);
   const videoKeys = 'courseId,videoImgUrl,videoUrl';
   videoStream.write(`${videoKeys}\n`);
-  videoStream.write(`${course1.video}\n`);
+  const { courseId, videoImgUrl, videoUrl } = course1.video;
+  videoStream.write(`${courseId},${videoImgUrl},${videoUrl}\n`);
 
   for (let i = 2; i <= numberOfCourses; i += 1) {
     const newVideo = createVideoData(i);
@@ -109,7 +116,10 @@ const generateSidebarData = async (numberOfCourses) => {
   const sidebarStream = fs.createWriteStream(sidebarPath);
   const sidebarKeys = 'courseId,fullLifetimeAccess,assignments,certificateOfCompletion,downloadableResources';
   sidebarStream.write(`${sidebarKeys}\n`);
-  sidebarStream.write(`${course1.sidebar}\n`);
+  const {
+    courseId, fullLifetimeAccess, assignments, certificateOfCompletion, downloadableResources,
+  } = course1.sidebar;
+  sidebarStream.write(`${courseId},${fullLifetimeAccess},${assignments},${certificateOfCompletion},${downloadableResources}\n`);
 
   for (let i = 2; i <= numberOfCourses; i += 1) {
     const newSidebar = createSidebarData(i);
