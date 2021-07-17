@@ -1,10 +1,10 @@
 /* eslint-disable no-console */
-module.exports.price = (dbData) => {
+module.exports.priceDBtoAPI = (dbData) => {
   const { courseId, discountPercentage, saleOngoing } = dbData;
   const basePrice = dbData.basePrice - 0.01;
   const discountedPrice = Math.floor(basePrice * (1 - discountPercentage / 100)) + 0.99;
-  const today = new Date();
-  const saleEndDate = Date(today.setDate(today.getDate() + dbData.saleNumOfDays));
+  let saleEndDate = new Date(dbData.saleEndDate);
+  saleEndDate = saleEndDate.toUTCString();
 
   const appData = {
     courseId,
@@ -17,7 +17,7 @@ module.exports.price = (dbData) => {
   return appData;
 };
 
-module.exports.video = (dbData) => {
+module.exports.videoDBtoAPI = (dbData) => {
   const s3Url = 'https://sdc-websockets-sidebar.s3-us-west-2.amazonaws.com/';
   const { courseId } = dbData;
   const previewVideoImgUrl = s3Url + dbData.videoImgUrl;
@@ -32,7 +32,7 @@ module.exports.video = (dbData) => {
   return appData;
 };
 
-module.exports.sidebar = (dbData) => {
+module.exports.sidebarDBtoAPI = (dbData) => {
   const {
     courseId, assignments, certificateOfCompletion, downloadableResources,
   } = dbData;
@@ -173,7 +173,7 @@ module.exports.transformToDBformat = (newDoc) => {
   };
 };
 
-module.exports.updatePrice = (newPrice) => {
+module.exports.updatePriceAPItoDB = (newPrice) => {
   const dbPrice = {};
   const inputPriceTypes = {
     basePrice: 'number',
@@ -211,7 +211,7 @@ module.exports.updatePrice = (newPrice) => {
   return dbPrice;
 };
 
-module.exports.updateVideo = (newVideo) => {
+module.exports.updateVideoAPItoDB = (newVideo) => {
   const dbVideo = {};
   const inputVideoTypes = {
     previewVideoImgUrl: 'string',
@@ -237,7 +237,7 @@ module.exports.updateVideo = (newVideo) => {
   return dbVideo;
 };
 
-module.exports.updateSidebar = (newSidebar) => {
+module.exports.updateSidebarAPItoDB = (newSidebar) => {
   const dbSidebar = {};
   const inputSidebarTypes = {
     fullLifetimeAccess: 'string',

@@ -20,7 +20,7 @@ Price.init({
   },
   basePrice: DataTypes.INTEGER,
   discountPercentage: DataTypes.INTEGER,
-  saleNumOfDays: DataTypes.INTEGER,
+  saleEndDate: DataTypes.BIGINT,
   saleOngoing: {
     type: DataTypes.BOOLEAN,
     defaultValue: false,

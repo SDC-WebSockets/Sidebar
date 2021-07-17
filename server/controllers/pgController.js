@@ -1,6 +1,6 @@
 /* eslint-disable no-console */
 const { Price, PreviewVideo, Sidebar } = require('../../database/pgDatabase');
-const helper = require('./helper.js');
+const helper = require('./formatHelper.js');
 
 module.exports.getPrice = async (req, res) => {
   console.log('GET request received at /price.', req.query);
@@ -14,7 +14,7 @@ module.exports.getPrice = async (req, res) => {
       }
       const data = result[0].dataValues;
       console.log(data);
-      res.send(helper.price(data));
+      res.send(helper.priceDBtoAPI(data));
     })
     .catch((error) => {
       console.warn(error);
@@ -35,7 +35,7 @@ module.exports.getPreviewVideo = async (req, res) => {
       }
       const data = result[0].dataValues;
       console.log(data);
-      res.send(helper.video(data));
+      res.send(helper.videoDBtoAPI(data));
     })
     .catch((error) => {
       console.warn(error);
@@ -55,7 +55,7 @@ module.exports.getSidebar = async (req, res) => {
       }
       const data = result[0].dataValues;
       console.log(data);
-      res.send(helper.sidebar(data));
+      res.send(helper.sidebarDBtoAPI(data));
     })
     .catch((error) => {
       console.warn(error);
@@ -78,7 +78,7 @@ module.exports.getAll = async (req, res) => {
       }
       const data = result[0].dataValues;
       // console.log('Price: ', data);
-      fullResponse.price = helper.price(data);
+      fullResponse.price = helper.priceDBtoAPI(data);
       return PreviewVideo.findAll({
         where: { courseId },
       });
@@ -91,7 +91,7 @@ module.exports.getAll = async (req, res) => {
       }
       const data = result[0].dataValues;
       // console.log('Preview Video: ', data);
-      fullResponse.previewVideo = helper.video(data);
+      fullResponse.previewVideo = helper.videoDBtoAPI(data);
       return Sidebar.findAll({
         where: { courseId },
       });
@@ -104,7 +104,7 @@ module.exports.getAll = async (req, res) => {
       }
       const data = result[0].dataValues;
       // console.log('Sidebar: ', data);
-      fullResponse.sidebar = helper.sidebar(data);
+      fullResponse.sidebar = helper.sidebarDBtoAPI(data);
       const end = new Date();
       const timeElapsed = end - start;
       console.log('Time Elapsed: ', timeElapsed, 'ms');
@@ -214,7 +214,7 @@ module.exports.update = async (req, res) => {
     res.end();
   }
   if (updating.includes('price')) {
-    const updatePrice = helper.updatePrice(updateDoc.price);
+    const updatePrice = helper.updatePriceAPItoDB(updateDoc.price);
     console.log(updatePrice);
     await Price.update(updatePrice, { where: { courseId } })
       .catch((error) => {
@@ -223,7 +223,7 @@ module.exports.update = async (req, res) => {
       });
   }
   if (updating.includes('previewVideo')) {
-    const updateVideo = helper.updateVideo(updateDoc.previewVideo);
+    const updateVideo = helper.updateVideoAPItoDB(updateDoc.previewVideo);
     console.log(updateVideo);
     await PreviewVideo.update(updateVideo, { where: { courseId } })
       .catch((error) => {
@@ -232,7 +232,7 @@ module.exports.update = async (req, res) => {
       });
   }
   if (updating.includes('sidebar')) {
-    const updateSidebar = helper.updateSidebar(updateDoc.sidebar);
+    const updateSidebar = helper.updateSidebarAPItoDB(updateDoc.sidebar);
     console.log(updateSidebar);
     await Sidebar.update(updateSidebar, { where: { courseId } })
       .catch((error) => {
