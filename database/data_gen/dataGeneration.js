@@ -7,6 +7,7 @@ const fs = require('fs');
 const path = require('path');
 
 const pricePath = path.join(`${__dirname}/priceData.csv`);
+const salePath = path.join(`${__dirname}/saleData.csv`);
 const videoPath = path.join(`${__dirname}/videoData.csv`);
 const sidebarPath = path.join(`${__dirname}/sidebarData.csv`);
 
@@ -43,8 +44,22 @@ const createPricing = (courseId) => {
 
   const maxDiscount = 85;
   const minDiscount = 5;
-  const discountPercentage = Math.floor(Math.random() * (maxDiscount - minDiscount)) + minDiscount;
+  const discountPercentage = Math.floor(Math.random() * ((maxDiscount - minDiscount) / multiplesOf)) * multiplesOf + minDiscount;
 
+  // const maxSaleDays = 30;
+  // const saleNumOfDays = Math.floor(Math.random() * maxSaleDays);
+  // const now = Date.now();
+  // const msPerDay = 24 * 60 * 60 * 1000;
+  // const saleEndDate = now + saleNumOfDays * msPerDay;
+
+  // const saleOngoing = weightedTrueGenerator(30);
+
+  const priceData = [courseId, basePrice, discountPercentage];
+
+  return priceData;
+};
+
+const createSale = (courseId) => {
   const maxSaleDays = 30;
   const saleNumOfDays = Math.floor(Math.random() * maxSaleDays);
   const now = Date.now();
@@ -53,9 +68,7 @@ const createPricing = (courseId) => {
 
   const saleOngoing = weightedTrueGenerator(30);
 
-  const priceData = [courseId, basePrice, discountPercentage, saleEndDate, saleOngoing];
-
-  return priceData;
+  return [courseId, saleEndDate, saleOngoing];
 };
 
 const createVideoData = (courseId) => {
@@ -78,21 +91,28 @@ const createSidebarData = (courseId) => {
 };
 
 const generatePriceData = async (numberOfCourses) => {
-  console.log(`Generating ${numberOfCourses} Price records`);
+  console.log(`Generating ${numberOfCourses} Price & Sale records`);
   const priceStream = fs.createWriteStream(pricePath);
-  const priceKeys = 'courseId,basePrice,discountPercentage,saleEndDate,saleOngoing';
+  const saleStream = fs.createWriteStream(salePath);
+  const priceKeys = 'courseId,basePrice,discountPercentage';
+  const saleKeys = 'courseId,saleEndDate,saleOngoing';
   priceStream.write(`${priceKeys}\n`);
+  saleStream.write(`${saleKeys}\n`);
   const {
     courseId, basePrice, discountPercentage, saleEndDate, saleOngoing,
   } = course1.price;
-  priceStream.write(`${courseId},${basePrice},${discountPercentage},${saleEndDate},${saleOngoing}\n`);
+  priceStream.write(`${courseId},${basePrice},${discountPercentage}\n`);
+  saleStream.write(`${courseId},${saleEndDate},${saleOngoing}\n`);
 
   for (let i = 2; i <= numberOfCourses; i += 1) {
     const newPrice = createPricing(i);
     priceStream.write(`${newPrice}\n`);
+    const newSale = createSale(i);
+    saleStream.write(`${newSale}\n`);
   }
   priceStream.end();
-  console.log('Completed Price Writing.');
+  saleStream.end();
+  console.log('Completed Price & Sale Writing.');
 };
 
 const generateVideoData = async (numberOfCourses) => {
@@ -132,8 +152,8 @@ const generateSidebarData = async (numberOfCourses) => {
 const dataGen = async (numberOfCourses) => {
   console.log(`Generating ${3 * numberOfCourses} total records of data`);
   generatePriceData(numberOfCourses);
-  generateVideoData(numberOfCourses);
-  generateSidebarData(numberOfCourses);
+  // generateVideoData(numberOfCourses);
+  // generateSidebarData(numberOfCourses);
 };
 
 dataGen(10 ** 7);

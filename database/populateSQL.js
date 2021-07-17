@@ -8,6 +8,7 @@ const pool = new Pool({
 });
 
 const pricePath = path.join(`${__dirname}/data_gen/priceData.csv`);
+const salePath = path.join(`${__dirname}/data_gen/saleData.csv`);
 const videoPath = path.join(`${__dirname}/data_gen/videoData.csv`);
 const sidebarPath = path.join(`${__dirname}/data_gen/sidebarData.csv`);
 
@@ -29,6 +30,10 @@ const seedPSQL = async () => {
             "courseId" SERIAL PRIMARY KEY,
             "basePrice" INTEGER,
             "discountPercentage" INTEGER,
+          );
+          DROP TABLE IF EXISTS sale;
+          CREATE TABLE sale(
+            "courseId" SERIAL PRIMARY KEY,
             "saleEndDate" BIGINT,
             "saleOngoing" BOOLEAN
           );
@@ -56,6 +61,12 @@ const seedPSQL = async () => {
       .then(() => client.query('SELECT NOW()'))
       .then((result) => {
         console.log('Finished seeding price at ', result.rows[0].now);
+        console.log('Seeding Sale');
+        return copyCSV(salePath, 'Sale');
+      })
+      .then(() => client.query('SELECT NOW()'))
+      .then((result) => {
+        console.log('Finished seeding sale at ', result.rows[0].now);
         console.log('Seeding Video');
         return copyCSV(videoPath, 'Video');
       })
