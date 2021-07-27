@@ -5,10 +5,10 @@ const { Sequelize, Model, DataTypes } = require('sequelize');
 
 const sequelize = new Sequelize('postgres://127.0.0.1:5432/SDC', {
   benchmark: true,
-  logging: (sqlQuery, timing) => {
-    console.log(sqlQuery);
-    console.log('Query Time: ', timing, ' ms');
-  },
+  // logging: (sqlQuery, timing) => {
+  //   console.log(sqlQuery);
+  //   console.log('Query Time: ', timing, ' ms');
+  // },
 });
 
 class Price extends Model { }
@@ -78,15 +78,15 @@ Sidebar.init({
 const openConn = () => sequelize.authenticate()
   .then(() => {
     console.log('DB connection successful.');
-    return Price.sync({ logging: true });
+    return Price.sync({ logging: false });
   })
   .then(() => {
     console.log('The table for the Price model was synced!');
-    return PreviewVideo.sync({ logging: true });
+    return PreviewVideo.sync({ logging: false });
   })
   .then(() => {
     console.log('The table for the Preview Video model was synced!');
-    return Sidebar.sync({ logging: true });
+    return Sidebar.sync({ logging: false });
   })
   .then(() => {
     console.log('All models were synchronized successfully.');

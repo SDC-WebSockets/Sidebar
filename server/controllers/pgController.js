@@ -4,7 +4,10 @@ const helper = require('./formatHelper.js');
 
 module.exports.getPrice = async (req, res) => {
   console.log('GET request received at /price.', req.query);
-  const { courseId } = req.query;
+  let { courseId } = req.query;
+  if (courseId === undefined) {
+    courseId = 1;
+  }
   await Price.findAll({ where: { courseId } })
     .then((result) => {
       if (result.length > 1) {
@@ -24,8 +27,10 @@ module.exports.getPrice = async (req, res) => {
 
 module.exports.getPreviewVideo = async (req, res) => {
   console.log('GET request received at /previewVideo.', req.query);
-  const { courseId } = req.query;
-
+  let { courseId } = req.query;
+  if (courseId === undefined) {
+    courseId = 1;
+  }
   await PreviewVideo.findAll({ where: { courseId } })
     .then((result) => {
       if (result.length > 1) {
@@ -45,7 +50,10 @@ module.exports.getPreviewVideo = async (req, res) => {
 
 module.exports.getSidebar = async (req, res) => {
   console.log('GET request received at /sidebar ', req.query);
-  const { courseId } = req.query;
+  let { courseId } = req.query;
+  if (courseId === undefined) {
+    courseId = 1;
+  }
   await Sidebar.findAll({ where: { courseId } })
     .then((result) => {
       if (result.length > 1) {
@@ -66,7 +74,10 @@ module.exports.getSidebar = async (req, res) => {
 // Read
 module.exports.getAll = async (req, res) => {
   console.log('GET request received at /sidebar/all.');
-  const { courseId } = req.query;
+  let { courseId } = req.query;
+  if (courseId === undefined) {
+    courseId = 1;
+  }
   const fullResponse = {};
   const start = new Date();
   await Price.findAll({ where: { courseId } })
@@ -144,7 +155,7 @@ module.exports.add = async (req, res) => {
         const end = new Date();
         const timeElapsed = end - start;
         console.log('Time Elapsed: ', timeElapsed, 'ms');
-        res.status(201).send(`New Record created at courseId: ${newCourseId} \n Time Elapsed: ${timeElapsed}`);
+        res.status(201).send(req.body);
         res.end();
       })
       .catch((error) => {
@@ -159,7 +170,11 @@ module.exports.add = async (req, res) => {
 module.exports.delete = async (req, res) => {
   const start = new Date();
   console.log('DELETE request to /sidebar/all', req.query);
-  const { courseId } = req.query;
+  let { courseId } = req.query;
+  if (courseId === undefined) {
+    res.status(404).send(`Sorry, Error in deleting occured -- courseId = ${courseId} is not valid`);
+      res.end();
+  }
   await Price.destroy({ where: { courseId } })
     .then((result) => {
       if (result) {
