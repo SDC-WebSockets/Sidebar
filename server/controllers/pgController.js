@@ -10,9 +10,7 @@ module.exports.getPrice = async (req, res) => {
   }
   await Price.findOne({ where: { courseId } })
     .then((result) => {
-      if (result.length > 1) {
-        throw Error('Expected 1 result, received '.result.length);
-      } else if (result.length === 0) {
+      if (result === null) {
         throw Error('Database does not contain requested record.');
       }
       const data = result.dataValues;
@@ -33,9 +31,7 @@ module.exports.getPreviewVideo = async (req, res) => {
   }
   await PreviewVideo.findOne({ where: { courseId } })
     .then((result) => {
-      if (result.length > 1) {
-        throw Error('Expected 1 result, received '.result.length);
-      } else if (result.length === 0) {
+      if (result === null) {
         throw Error('Database does not contain requested record.');
       }
       const data = result.dataValues;
@@ -56,9 +52,7 @@ module.exports.getSidebar = async (req, res) => {
   }
   await Sidebar.findOne({ where: { courseId } })
     .then((result) => {
-      if (result.length > 1) {
-        throw Error('Expected 1 result, received '.result.length);
-      } else if (result.length === 0) {
+      if (result === null) {
         throw Error('Database does not contain requested record.');
       }
       const data = result.dataValues;
@@ -82,9 +76,7 @@ module.exports.getAll = async (req, res) => {
   const start = new Date();
   await Price.findOne({ where: { courseId } })
     .then((result) => {
-      if (result.length > 1) {
-        throw Error('Expected 1 result, received '.result.length);
-      } else if (result.length === 0) {
+      if (result === null) {
         throw Error('Database does not contain requested record.');
       }
       const data = result.dataValues;
@@ -95,9 +87,7 @@ module.exports.getAll = async (req, res) => {
       });
     })
     .then((result) => {
-      if (result.length > 1) {
-        throw Error('Expected 1 result, received '.result.length);
-      } else if (result.length === 0) {
+      if (result === null) {
         throw Error('Database does not contain requested record.');
       }
       const data = result.dataValues;
@@ -108,9 +98,7 @@ module.exports.getAll = async (req, res) => {
       });
     })
     .then((result) => {
-      if (result.length > 1) {
-        throw Error('Expected 1 result, received '.result.length);
-      } else if (result.length === 0) {
+      if (result === null) {
         throw Error('Database does not contain requested record.');
       }
       const data = result.dataValues;
@@ -143,7 +131,7 @@ module.exports.add = async (req, res) => {
     await Price.findOne({ where: { courseId: newCourseId } })
       .then((result) => {
         // console.log('return from courseId query:', result);
-        if (result.length > 0) {
+        if (result !== null) {
           throw Error('courseId already exists.');
         }
         console.log('courseId is available!');

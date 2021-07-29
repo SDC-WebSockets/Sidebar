@@ -1,4 +1,3 @@
-/* eslint-disable no-console */
 module.exports.priceDBtoAPI = (dbData) => {
   const { courseId, discountPercentage, saleOngoing } = dbData;
   const basePrice = dbData.basePrice - 0.01;
@@ -56,7 +55,7 @@ const transformPrice = (newPrice) => {
   const inputPriceTypes = {
     basePrice: 'number',
     discountPercentage: 'number',
-    saleEndDate: 'string',
+    saleEndDate: 'number',
     saleOngoing: 'boolean',
   };
   const dbKeys = ['basePrice', 'discountPercentage', 'saleNumOfDays', 'saleOngoing'];
@@ -118,7 +117,7 @@ const transformVideo = (newVideo) => {
 const transformSidebar = (newSidebar) => {
   const dbSidebar = {};
   const inputSidebarTypes = {
-    fullLifetimeAccess: 'string',
+    fullLifetimeAccess: 'boolean',
     assignments: 'boolean',
     certificateOfCompletion: 'boolean',
     downloadableResources: 'number',

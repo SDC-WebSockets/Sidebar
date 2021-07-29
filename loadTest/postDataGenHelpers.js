@@ -29,8 +29,8 @@ const createVideoData = (courseId) => {
 
   const videoData = {
     courseId,
-    videoImgUrl: `videoImg/${courseId % 1000}.jpg#${fragment}`,
-    videoUrl: `video/${courseId % 1000}.mp4#${fragment}`,
+    previewVideoImgUrl: `videoImg/${courseId % 1000}.jpg#${fragment}`,
+    previewVideoUrl: `video/${courseId % 1000}.mp4#${fragment}`,
   };
 
   return videoData;
