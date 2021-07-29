@@ -8,14 +8,14 @@ module.exports.getPrice = async (req, res) => {
   if (courseId === undefined) {
     courseId = 1;
   }
-  await Price.findAll({ where: { courseId } })
+  await Price.findOne({ where: { courseId } })
     .then((result) => {
       if (result.length > 1) {
         throw Error('Expected 1 result, received '.result.length);
       } else if (result.length === 0) {
         throw Error('Database does not contain requested record.');
       }
-      const data = result[0].dataValues;
+      const data = result.dataValues;
       console.log(data);
       res.send(helper.priceDBtoAPI(data));
     })
@@ -31,14 +31,14 @@ module.exports.getPreviewVideo = async (req, res) => {
   if (courseId === undefined) {
     courseId = 1;
   }
-  await PreviewVideo.findAll({ where: { courseId } })
+  await PreviewVideo.findOne({ where: { courseId } })
     .then((result) => {
       if (result.length > 1) {
         throw Error('Expected 1 result, received '.result.length);
       } else if (result.length === 0) {
         throw Error('Database does not contain requested record.');
       }
-      const data = result[0].dataValues;
+      const data = result.dataValues;
       console.log(data);
       res.send(helper.videoDBtoAPI(data));
     })
@@ -54,14 +54,14 @@ module.exports.getSidebar = async (req, res) => {
   if (courseId === undefined) {
     courseId = 1;
   }
-  await Sidebar.findAll({ where: { courseId } })
+  await Sidebar.findOne({ where: { courseId } })
     .then((result) => {
       if (result.length > 1) {
         throw Error('Expected 1 result, received '.result.length);
       } else if (result.length === 0) {
         throw Error('Database does not contain requested record.');
       }
-      const data = result[0].dataValues;
+      const data = result.dataValues;
       console.log(data);
       res.send(helper.sidebarDBtoAPI(data));
     })
@@ -80,17 +80,17 @@ module.exports.getAll = async (req, res) => {
   }
   const fullResponse = {};
   const start = new Date();
-  await Price.findAll({ where: { courseId } })
+  await Price.findOne({ where: { courseId } })
     .then((result) => {
       if (result.length > 1) {
         throw Error('Expected 1 result, received '.result.length);
       } else if (result.length === 0) {
         throw Error('Database does not contain requested record.');
       }
-      const data = result[0].dataValues;
+      const data = result.dataValues;
       // console.log('Price: ', data);
       fullResponse.price = helper.priceDBtoAPI(data);
-      return PreviewVideo.findAll({
+      return PreviewVideo.findOne({
         where: { courseId },
       });
     })
@@ -100,10 +100,10 @@ module.exports.getAll = async (req, res) => {
       } else if (result.length === 0) {
         throw Error('Database does not contain requested record.');
       }
-      const data = result[0].dataValues;
+      const data = result.dataValues;
       // console.log('Preview Video: ', data);
       fullResponse.previewVideo = helper.videoDBtoAPI(data);
-      return Sidebar.findAll({
+      return Sidebar.findOne({
         where: { courseId },
       });
     })
@@ -113,7 +113,7 @@ module.exports.getAll = async (req, res) => {
       } else if (result.length === 0) {
         throw Error('Database does not contain requested record.');
       }
-      const data = result[0].dataValues;
+      const data = result.dataValues;
       // console.log('Sidebar: ', data);
       fullResponse.sidebar = helper.sidebarDBtoAPI(data);
       const end = new Date();
@@ -140,7 +140,7 @@ module.exports.add = async (req, res) => {
     res.status(400).send('Sorry, invalid request: courseId is not a number');
     res.end();
   } else {
-    await Price.findAll({ where: { courseId: newCourseId } })
+    await Price.findOne({ where: { courseId: newCourseId } })
       .then((result) => {
         // console.log('return from courseId query:', result);
         if (result.length > 0) {

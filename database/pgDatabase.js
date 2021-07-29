@@ -30,6 +30,12 @@ Price.init({
   createdAt: false,
   updatedAt: false,
   tableName: 'price',
+  indexes: [
+    {
+      unique: true,
+      fields: ['courseId']
+    }
+  ],
 });
 
 class PreviewVideo extends Model { }
@@ -46,6 +52,12 @@ PreviewVideo.init({
   createdAt: false,
   updatedAt: false,
   tableName: 'video',
+  indexes: [
+    {
+      unique: true,
+      fields: ['courseId']
+    }
+  ],
 });
 
 class Sidebar extends Model { }
@@ -73,6 +85,12 @@ Sidebar.init({
   createdAt: false,
   updatedAt: false,
   tableName: 'sidebar',
+  indexes: [
+    {
+      unique: true,
+      fields: ['courseId']
+    }
+  ],
 });
 
 const openConn = () => sequelize.authenticate()
