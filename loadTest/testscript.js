@@ -6,9 +6,9 @@ export let options = {
   scenarios: {
     constant_request_rate: {
       executor: 'constant-arrival-rate',
-      rate: 10 ** 3,
+      rate: 10 ** 0,
       timeUnit: '1s',
-      duration: '30s',
+      duration: '10s',
       preAllocatedVUs: 100,
       maxVUs: 300,
     }
@@ -20,10 +20,10 @@ export default function () {
   // const before = new Date().getTime();
   // const T = 2;
 
-  const randCourseID = Math.floor(Math.random() * 10 ** 7);
-  const getUrl = new URL('http://localhost:3004/sidebar/all');
-  getUrl.searchParams.append('courseId', randCourseID);
-  http.get(getUrl.toString());
+  // const randCourseID = Math.floor(Math.random() * 10 ** 7);
+  // const getUrl = new URL('http://localhost:3004/sidebar/all');
+  // getUrl.searchParams.append('courseId', randCourseID);
+  // http.get(getUrl.toString());
 
   const postUrl = 'http://localhost:3004/sidebar/all';
   const newPost = postDataGen();

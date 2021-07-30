@@ -48,3 +48,6 @@ videoURLs.txt
 
 # Any config files that may have keys
 *.config.js
+
+# New Relic file
+newrelic.js
