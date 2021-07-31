@@ -1,14 +1,38 @@
-/* eslint-disable no-unused-vars */
-/* eslint-disable no-console */
-/* eslint-disable max-classes-per-file */
 const { Sequelize, Model, DataTypes } = require('sequelize');
 
-const sequelize = new Sequelize('postgres://127.0.0.1:5432/SDC', {
+const sequelize = new Sequelize('postgres://127.0.0.1:5432/SDCsidebar', {
   benchmark: true,
-  // logging: (sqlQuery, timing) => {
-  //   console.log(sqlQuery);
-  //   console.log('Query Time: ', timing, ' ms');
-  // },
+  logging: (sqlQuery, timing) => {
+    console.log(sqlQuery);
+    console.log('Query Time: ', timing, ' ms');
+  },
+});
+
+class Sale extends Model { }
+Sale.init({
+  sale_id: {
+    type: DataTypes.INTEGER,
+    unique: true,
+    primaryKey: true,
+  },
+  discountPercentage: DataTypes.INTEGER,
+  saleEndDate: DataTypes.BIGINT,
+  saleOngoing: {
+    type: DataTypes.BOOLEAN,
+    defaultValue: false,
+  },
+  downloadableResources: DataTypes.INTEGER,
+}, {
+  sequelize,
+  createdAt: false,
+  updatedAt: false,
+  tableName: 'sale',
+  indexes: [
+    {
+      unique: true,
+      fields: ['sale_id']
+    }
+  ],
 });
 
 class Price extends Model { }
@@ -19,8 +43,13 @@ Price.init({
     primaryKey: true,
   },
   basePrice: DataTypes.INTEGER,
-  discountPercentage: DataTypes.INTEGER,
-  saleEndDate: DataTypes.BIGINT,
+  sale_id: {
+    type: DataTypes.INTEGER,
+    references: {
+      model: Sale,
+      key: 'sale_id'
+    },
+  },
   saleOngoing: {
     type: DataTypes.BOOLEAN,
     defaultValue: false,
@@ -62,24 +91,12 @@ PreviewVideo.init({
 
 class Sidebar extends Model { }
 Sidebar.init({
-  courseId: {
+  content_id: {
     type: DataTypes.INTEGER,
     unique: true,
     primaryKey: true,
   },
-  fullLifetimeAccess: {
-    type: DataTypes.BOOLEAN,
-    defaultValue: false,
-  },
-  assignments: {
-    type: DataTypes.BOOLEAN,
-    defaultValue: false,
-  },
-  certificateOfCompletion: {
-    type: DataTypes.BOOLEAN,
-    defaultValue: true,
-  },
-  downloadableResources: DataTypes.INTEGER,
+  contentType: DataTypes.STRING,
 }, {
   sequelize,
   createdAt: false,
@@ -88,7 +105,41 @@ Sidebar.init({
   indexes: [
     {
       unique: true,
-      fields: ['courseId']
+      fields: ['content_id']
+    }
+  ],
+});
+
+class SidebarSale extends Model { }
+SidebarSale.init({
+  id: {
+    type: DataTypes.INTEGER,
+    unique: true,
+    primaryKey: true,
+  },
+  sale_id: {
+    type: DataTypes.INTEGER,
+    references: {
+      model: Sale,
+      key: 'sale_id'
+    },
+  },
+  content_id: {
+    type: DataTypes.INTEGER,
+    references: {
+      model: Sidebar,
+      key: 'content_id',
+    },
+  },
+}, {
+  sequelize,
+  createdAt: false,
+  updatedAt: false,
+  tableName: 'sidebar_sale',
+  indexes: [
+    {
+      unique: false,
+      fields: ['sale_id']
     }
   ],
 });
@@ -105,6 +156,14 @@ const openConn = () => sequelize.authenticate()
   .then(() => {
     console.log('The table for the Preview Video model was synced!');
     return Sidebar.sync({ logging: false });
+  })
+  .then(() => {
+    console.log('The table for the Sidebar model was synced!');
+    return Sale.sync({ logging: false });
+  })
+  .then(() => {
+    console.log('The table for the Sale model was synced!');
+    return SidebarSale.sync({ logging: false });
   })
   .then(() => {
     console.log('All models were synchronized successfully.');
