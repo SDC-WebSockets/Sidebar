@@ -1,14 +1,11 @@
-/* eslint-disable max-len */
-/* eslint-disable implicit-arrow-linebreak */
-/* eslint-disable no-param-reassign */
-/* eslint-disable no-await-in-loop */
-/* eslint-disable no-console */
 const fs = require('fs');
 const path = require('path');
 
 const pricePath = path.join(`${__dirname}/priceData.csv`);
+const salePath = path.join(`${__dirname}/saleData.csv`);
 const videoPath = path.join(`${__dirname}/videoData.csv`);
-const sidebarPath = path.join(`${__dirname}/sidebarData.csv`);
+const sidebarPath = path.join(`${__dirname}/sidebar.csv`);
+const junctionPath = path.join(`${__dirname}/junctionTable.csv`);
 
 const weightedTrueGenerator = (percentageChance) => Math.random() * 100 < percentageChance;
 
@@ -16,9 +13,14 @@ const course1 = {
   price: {
     courseId: 1,
     basePrice: 90,
-    discountPercentage: 24,
-    saleEndDate: 950400505,
+    sale_id: 1,
     saleOngoing: false,
+  },
+  sale: {
+    sale_id: 1,
+    discountPercentage: 25,
+    saleEndDate: 950400505,
+    downloadableResources: 23,
   },
   sidebar: {
     courseId: 1,
@@ -33,14 +35,23 @@ const course1 = {
     videoUrl: 'video/1.mp4#116378',
   },
 };
-
-const createPricing = (courseId) => {
+const createPricing = (courseId, maxSaleTypes) => {
   const minPrice = 50;
   //  the calculation: (range * multiplesOf) + minPrice would give you the maxPrice = 150
   const range = 20;
   const multiplesOf = 5;
   const basePrice = Math.floor(Math.random() * range) * multiplesOf + minPrice;
 
+  const saleOngoing = weightedTrueGenerator(30);
+
+  const sale_id = Math.ceil(Math.random() * maxSaleTypes);
+
+  const priceData = [courseId, basePrice, sale_id, saleOngoing];
+
+  return priceData;
+};
+
+const createSale = (sale_id) => {
   const maxDiscount = 85;
   const minDiscount = 5;
   const discountPercentage = Math.floor(Math.random() * (maxDiscount - minDiscount)) + minDiscount;
@@ -51,12 +62,10 @@ const createPricing = (courseId) => {
   const msPerDay = 24 * 60 * 60 * 1000;
   const saleEndDate = now + saleNumOfDays * msPerDay;
 
-  const saleOngoing = weightedTrueGenerator(30);
+  const downloadableResources = Math.ceil(Math.random() * 105);
 
-  const priceData = [courseId, basePrice, discountPercentage, saleEndDate, saleOngoing];
-
-  return priceData;
-};
+  return [sale_id, discountPercentage, saleEndDate, downloadableResources];
+}
 
 const createVideoData = (courseId) => {
   const fragment = Math.floor(Math.random() * 888888);
@@ -66,33 +75,53 @@ const createVideoData = (courseId) => {
   return videoData;
 };
 
-const createSidebarData = (courseId) => {
-  const fullLifetimeAccess = !!weightedTrueGenerator(70);
-  // const accessTypes = 'Access on mobile and TV';
-  const assignments = weightedTrueGenerator(70);
-  const certificateOfCompletion = weightedTrueGenerator(90);
-  const downloadableResources = weightedTrueGenerator(90) ? Math.round(Math.random() * 25) : 0;
-  const sidebarData = [courseId, fullLifetimeAccess, assignments, certificateOfCompletion, downloadableResources];
+const createSidebarCSV = () => {
+  const sidebarStream = fs.createWriteStream(sidebarPath);
+  const sidebarKeys = 'contentId,contentType';
+  sidebarStream.write(`${sidebarKeys}\n`);
+  sidebarStream.write(`1,fullLifetimeAccess\n`);
+  sidebarStream.write(`2,assignments\n`);
+  sidebarStream.write(`3,certificateOfCompletion\n`);
+  sidebarStream.write(`4,downloadableResources\n`);
 
-  return sidebarData;
-};
+  sidebarStream.end();
+  console.log('Completed Sidebar Writing.');
+}
 
-const generatePriceData = async (numberOfCourses) => {
+const generatePriceData = async (numberOfCourses, maxSaleTypes) => {
   console.log(`Generating ${numberOfCourses} Price records`);
   const priceStream = fs.createWriteStream(pricePath);
-  const priceKeys = 'courseId,basePrice,discountPercentage,saleEndDate,saleOngoing';
+  const priceKeys = 'courseId,basePrice,sale_id,saleOngoing';
   priceStream.write(`${priceKeys}\n`);
   const {
-    courseId, basePrice, discountPercentage, saleEndDate, saleOngoing,
+    courseId, basePrice, sale_id, saleOngoing,
   } = course1.price;
-  priceStream.write(`${courseId},${basePrice},${discountPercentage},${saleEndDate},${saleOngoing}\n`);
+  priceStream.write(`${courseId},${basePrice},${sale_id},${saleOngoing}\n`);
 
   for (let i = 2; i <= numberOfCourses; i += 1) {
-    const newPrice = createPricing(i);
+    const newPrice = createPricing(i, maxSaleTypes);
     priceStream.write(`${newPrice}\n`);
   }
   priceStream.end();
   console.log('Completed Price Writing.');
+};
+
+const generateSaleData = async (maxSaleTypes) => {
+  console.log(`Generating ${maxSaleTypes} Sale records`);
+  const priceStream = fs.createWriteStream(salePath);
+  const priceKeys = 'sale_id,discountPercentage,saleEndDate,downloadableResources';
+  priceStream.write(`${priceKeys}\n`);
+  const {
+    sale_id, discountPercentage, saleEndDate, downloadableResources
+  } = course1.sale;
+  priceStream.write(`${sale_id},${discountPercentage},${saleEndDate},${downloadableResources}\n`);
+
+  for (let i = 2; i <= maxSaleTypes; i += 1) {
+    const newPrice = createSale(i);
+    priceStream.write(`${newPrice}\n`);
+  }
+  priceStream.end();
+  console.log('Completed Sale Writing.');
 };
 
 const generateVideoData = async (numberOfCourses) => {
@@ -111,29 +140,66 @@ const generateVideoData = async (numberOfCourses) => {
   console.log('Completed Video Writing.');
 };
 
-const generateSidebarData = async (numberOfCourses) => {
-  console.log(`Generating ${numberOfCourses} sidebar records`);
-  const sidebarStream = fs.createWriteStream(sidebarPath);
-  const sidebarKeys = 'courseId,fullLifetimeAccess,assignments,certificateOfCompletion,downloadableResources';
-  sidebarStream.write(`${sidebarKeys}\n`);
-  const {
+const generateJunctionTable = async (numberOfCourses, maxSaleTypes) => {
+  console.log(`Generating Junction Table`);
+  const junctionStream = fs.createWriteStream(junctionPath);
+  const junctionKeys = 'id,content_id,sale_id';
+  let id = 1;
+  junctionStream.write(`${junctionKeys}\n`);
+  let {
     courseId, fullLifetimeAccess, assignments, certificateOfCompletion, downloadableResources,
   } = course1.sidebar;
-  sidebarStream.write(`${courseId},${fullLifetimeAccess},${assignments},${certificateOfCompletion},${downloadableResources}\n`);
-
-  for (let i = 2; i <= numberOfCourses; i += 1) {
-    const newSidebar = createSidebarData(i);
-    sidebarStream.write(`${newSidebar}\n`);
+  if (fullLifetimeAccess) {
+    junctionStream.write(`${id},1,1\n`);
+    id++;
   }
-  sidebarStream.end();
-  console.log('Completed Sidebar Writing.');
+  if (assignments) {
+    junctionStream.write(`${id},2,1\n`);
+    id++;
+  }
+  if (certificateOfCompletion) {
+    junctionStream.write(`${id},3,1\n`);
+    id++;
+  }
+  if (downloadableResources) {
+    junctionStream.write(`${id},4,1\n`);
+    id++;
+  }
+
+  for (let i = 2; i <= maxSaleTypes; i += 1) {
+    fullLifetimeAccess = !!weightedTrueGenerator(70);
+    assignments = weightedTrueGenerator(70);
+    certificateOfCompletion = weightedTrueGenerator(90);
+    downloadableResources = weightedTrueGenerator(90);
+
+    if (fullLifetimeAccess) {
+      junctionStream.write(`${id},1,${i}\n`);
+      id++;
+    }
+    if (assignments) {
+      junctionStream.write(`${id},2,${i}\n`);
+      id++;
+    }
+    if (certificateOfCompletion) {
+      junctionStream.write(`${id},3,${i}\n`);
+      id++;
+    }
+    if (downloadableResources) {
+      junctionStream.write(`${id},4,${i}\n`);
+      id++;
+    }
+  }
+  junctionStream.end();
+  console.log('Completed Junction Writing.');
 };
 
-const dataGen = async (numberOfCourses) => {
-  console.log(`Generating ${3 * numberOfCourses} total records of data`);
-  generatePriceData(numberOfCourses);
+const dataGen = async (numberOfCourses, maxSaleTypes) => {
+  console.log(`Generating ${numberOfCourses} course records and ${maxSaleTypes} sale types`);
+  createSidebarCSV();
+  generateSaleData(maxSaleTypes);
+  generatePriceData(numberOfCourses, maxSaleTypes);
   generateVideoData(numberOfCourses);
-  generateSidebarData(numberOfCourses);
+  generateJunctionTable(numberOfCourses, maxSaleTypes);
 };
 
-dataGen(10 ** 7);
+dataGen(10 ** 7, 10 ** 6 * 1.5);
