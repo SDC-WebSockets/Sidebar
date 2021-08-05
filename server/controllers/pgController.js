@@ -1,5 +1,4 @@
-/* eslint-disable no-console */
-const { Price, PreviewVideo, Sidebar } = require('../../database/pgDatabase');
+const { Price, PreviewVideo, Sidebar, Sale, SidebarSale } = require('../../database/pgDatabase');
 const helper = require('./formatHelper.js');
 
 module.exports.getPrice = async (req, res) => {
@@ -8,13 +7,28 @@ module.exports.getPrice = async (req, res) => {
   if (courseId === undefined) {
     courseId = 1;
   }
-  await Price.findOne({ where: { courseId } })
+  await Price.findOne({
+    where: { courseId },
+    include: {
+      model: Sale,
+      required: true
+    },
+  })
     .then((result) => {
       if (result === null) {
         throw Error('Database does not contain requested record.');
       }
-      const data = result.dataValues;
-      console.log(data);
+      // console.log(result)
+      const { courseId, basePrice, saleOngoing } = result.dataValues;
+      const { discountPercentage, saleEndDate } = result.dataValues.Sale.dataValues;
+      console.log(courseId, basePrice, saleOngoing, saleEndDate);
+      const data = {
+        courseId,
+        basePrice,
+        discountPercentage,
+        saleEndDate,
+        saleOngoing,
+      }
       res.send(helper.priceDBtoAPI(data));
     })
     .catch((error) => {
@@ -50,13 +64,31 @@ module.exports.getSidebar = async (req, res) => {
   if (courseId === undefined) {
     courseId = 1;
   }
-  await Sidebar.findOne({ where: { courseId } })
+  await Price.findOne({
+    where: { courseId },
+    include: [{
+      model: Sale,
+      include: [Sidebar],
+      required: true,
+    }],
+  })
     .then((result) => {
       if (result === null) {
         throw Error('Database does not contain requested record.');
       }
-      const data = result.dataValues;
-      console.log(data);
+      const { courseId } = result.dataValues;
+      const { Sidebars, downloadableResources } = result.dataValues.Sale;
+      const data = {
+        courseId,
+        fullLifetimeAccess: false,
+        assignments: false,
+        certificateOfCompletion: false,
+        downloadableResources,
+      };
+      for (let i = 0; i < Sidebars.length; i++) {
+        const currentContent = Sidebars[i].dataValues.contentType;
+        data[currentContent] = true;
+      }
       res.send(helper.sidebarDBtoAPI(data));
     })
     .catch((error) => {
@@ -74,14 +106,45 @@ module.exports.getAll = async (req, res) => {
   }
   const fullResponse = {};
   const start = new Date();
-  await Price.findOne({ where: { courseId } })
+  await Price.findOne({
+    where: { courseId },
+    include: [{
+      model: Sale,
+      include: [Sidebar],
+      required: true,
+    }],
+  })
     .then((result) => {
       if (result === null) {
         throw Error('Database does not contain requested record.');
       }
-      const data = result.dataValues;
-      // console.log('Price: ', data);
-      fullResponse.price = helper.priceDBtoAPI(data);
+      const { courseId, basePrice, saleOngoing } = result.dataValues;
+      const { discountPercentage, saleEndDate } = result.dataValues.Sale.dataValues;
+      const { Sidebars, downloadableResources } = result.dataValues.Sale;
+
+      const priceData = {
+        courseId,
+        basePrice,
+        discountPercentage,
+        saleEndDate,
+        saleOngoing,
+      }
+      fullResponse.price = helper.priceDBtoAPI(priceData);
+
+      // console.log(downloadableResources);
+      const data = {
+        courseId,
+        fullLifetimeAccess: false,
+        assignments: false,
+        certificateOfCompletion: false,
+        downloadableResources,
+      };
+      for (let i = 0; i < Sidebars.length; i++) {
+        const currentContent = Sidebars[i].dataValues.contentType;
+        data[currentContent] = true;
+      }
+      fullResponse.sidebar = helper.sidebarDBtoAPI(data);
+
       return PreviewVideo.findOne({
         where: { courseId },
       });
@@ -93,17 +156,6 @@ module.exports.getAll = async (req, res) => {
       const data = result.dataValues;
       // console.log('Preview Video: ', data);
       fullResponse.previewVideo = helper.videoDBtoAPI(data);
-      return Sidebar.findOne({
-        where: { courseId },
-      });
-    })
-    .then((result) => {
-      if (result === null) {
-        throw Error('Database does not contain requested record.');
-      }
-      const data = result.dataValues;
-      // console.log('Sidebar: ', data);
-      fullResponse.sidebar = helper.sidebarDBtoAPI(data);
       const end = new Date();
       const timeElapsed = end - start;
       console.log('Time Elapsed: ', timeElapsed, 'ms');
@@ -120,25 +172,29 @@ module.exports.getAll = async (req, res) => {
 module.exports.add = async (req, res) => {
   console.log('POST request to /sidebar/all');
   const start = new Date();
-  const newDocument = helper.transformToDBformat(req.body);
+  const newDocument = await helper.transformToDBformat(req.body);
   const newCourseId = newDocument.courseId;
-  // console.log(newDocument);
+  console.log(newDocument);
 
   if (typeof newCourseId !== 'number') {
     res.status(400).send('Sorry, invalid request: courseId is not a number');
     res.end();
   } else {
-    await Price.findOne({ where: { courseId: newCourseId } })
+    await Sale.findOrCreate({ where: newDocument.sale })
+      .then(async (result, created) =>{
+        if (created) {
+          await SidebarSale.create(newDocument.junction)
+        }
+        return Price.findOrCreate({ where: newDocument.price })
+      })
       .then((result) => {
-        // console.log('return from courseId query:', result);
-        if (result !== null) {
+        const created = result[1]
+        if (!created) {
           throw Error('courseId already exists.');
         }
         console.log('courseId is available!');
-        return Price.create(newDocument.price);
       })
       .then(() => PreviewVideo.create(newDocument.previewVideo))
-      .then(() => Sidebar.create(newDocument.sidebar))
       .then(() => {
         const end = new Date();
         const timeElapsed = end - start;
@@ -147,7 +203,7 @@ module.exports.add = async (req, res) => {
         res.end();
       })
       .catch((error) => {
-        console.warn('Error occured during POST: ', error.message);
+        console.warn('Error occured during POST: ', error);
         res.status(400).send(`Sorry, error occured: ${error.message} \n`);
         res.end();
       });
@@ -161,38 +217,86 @@ module.exports.delete = async (req, res) => {
   let { courseId } = req.query;
   if (courseId === undefined) {
     res.status(404).send(`Sorry, Error in deleting occured -- courseId = ${courseId} is not valid`);
-      res.end();
-  }
-  await Price.destroy({ where: { courseId } })
-    .then((result) => {
-      if (result) {
-        console.log(result);
-        return PreviewVideo.destroy({ where: { courseId } });
-      }
-      throw Error('Check Price DB side');
+    res.end();
+  } else {
+    const entryToBeDeleted = {};
+    await Price.findOne({
+      where: { courseId },
+      include: [{
+        model: Sale,
+        include: [Sidebar],
+        required: true,
+      }],
     })
-    .then((result) => {
-      if (result) {
-        return Sidebar.destroy({ where: { courseId } });
-      }
-      throw Error('Check Video DB side');
-    })
-    .then((result) => {
-      if (result) {
-        const end = new Date();
-        const timeElapsed = end - start;
-        console.log('Time Elapsed: ', timeElapsed, 'ms');
-        res.send({ timeElapsed });
+      .then((result) => {
+        if (result === null) {
+          throw Error('Database does not contain requested record.');
+        }
+        const { courseId, basePrice, saleOngoing } = result.dataValues;
+        const { discountPercentage, saleEndDate } = result.dataValues.Sale.dataValues;
+        const { Sidebars, downloadableResources } = result.dataValues.Sale;
+
+        const priceData = {
+          courseId,
+          basePrice,
+          discountPercentage,
+          saleEndDate,
+          saleOngoing,
+        }
+        entryToBeDeleted.price = helper.priceDBtoAPI(priceData);
+
+        // console.log(downloadableResources);
+        const data = {
+          courseId,
+          fullLifetimeAccess: false,
+          assignments: false,
+          certificateOfCompletion: false,
+          downloadableResources,
+        };
+        for (let i = 0; i < Sidebars.length; i++) {
+          const currentContent = Sidebars[i].dataValues.contentType;
+          data[currentContent] = true;
+        }
+        entryToBeDeleted.sidebar = helper.sidebarDBtoAPI(data);
+
+        return PreviewVideo.findOne({
+          where: { courseId },
+        });
+      })
+      .then((result) => {
+        if (result === null) {
+          throw Error('Database does not contain requested record.');
+        }
+        const data = result.dataValues;
+        // console.log('Preview Video: ', data);
+        entryToBeDeleted.previewVideo = helper.videoDBtoAPI(data);
+        return Price.destroy({ where: { courseId } })
+      })
+      .then((result) => {
+        if (result) {
+          console.log(result);
+          return PreviewVideo.destroy({ where: { courseId } });
+        }
+        throw Error('Check Price DB side');
+      })
+      .then((result) => {
+        if (result) {
+          const end = new Date();
+          const timeElapsed = end - start;
+          console.log('Time Elapsed: ', timeElapsed, 'ms');
+
+          res.send(entryToBeDeleted);
+          res.end();
+        } else {
+          throw Error('Check Video DB side');
+        }
+      })
+      .catch((error) => {
+        console.warn('Error occured during delete', error);
+        res.status(400).send(error.message);
         res.end();
-      } else {
-        throw Error('Check DB side');
-      }
-    })
-    .catch((error) => {
-      console.warn('Error occured during delete', error);
-      res.status(400).send('Sorry, Error in deleting occured.');
-      res.end();
-    });
+      });
+  }
 };
 
 // Update
@@ -217,9 +321,12 @@ module.exports.update = async (req, res) => {
     res.end();
   }
   if (updating.includes('price')) {
-    const updatePrice = helper.updatePriceAPItoDB(updateDoc.price);
+    const updatePrice = await helper.updatePriceAPItoDB(updateDoc.price, courseId);
     console.log(updatePrice);
-    await Price.update(updatePrice, { where: { courseId } })
+    if (updatePrice.sale !== undefined) {
+      await Sale.findOrCreate({ where: updatePrice.sale });
+    }
+    await Price.update(updatePrice.price, { where: { courseId } })
       .catch((error) => {
         console.warn('Error occured during update (server side): ', error);
         errors.push(`price error: ${error.message} \n`);
@@ -235,13 +342,19 @@ module.exports.update = async (req, res) => {
       });
   }
   if (updating.includes('sidebar')) {
-    const updateSidebar = helper.updateSidebarAPItoDB(updateDoc.sidebar);
+    const updateSidebar = await helper.updateSidebarAPItoDB(updateDoc.sidebar, courseId);
     console.log(updateSidebar);
-    await Sidebar.update(updateSidebar, { where: { courseId } })
-      .catch((error) => {
-        console.warn('Error occured during update (server side): ', error);
-        errors.push(`Sidebar error: ${error.message} \n`);
-      });
+    if (updateSidebar.sale !== undefined) {
+      await Sale.findOrCreate({ where: updateSidebar.sale });
+    }
+    updateSidebar.sidebar.forEach(async (junctionUpdate) => {
+      console.log(junctionUpdate)
+      await SidebarSale.create(junctionUpdate)
+        .catch((error) => {
+          console.warn('Error occured during update (server side): ', error);
+          errors.push(`Sidebar error: ${error.message} \n`);
+        });
+    })
   }
   const end = new Date();
   const timeElapsed = end - start;
