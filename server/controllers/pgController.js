@@ -76,7 +76,7 @@ module.exports.getSidebar = async (req, res) => {
     }],
   })
     .then(async (result) => {
-      console.log(result);
+      // console.log(result);
       let resultData = {};
       if (result === null) {
         const checkPrice = await Price.findOne({
@@ -133,16 +133,24 @@ module.exports.getAll = async (req, res) => {
         required: true,
       }],
       required: true,
+    }, {
+      model: PreviewVideo,
+      where: { courseId },
+      required: true,
     }],
   })
     .then(async (result) => {
-      console.log(result);
+      // console.log(result);
       let resultData = {};
       if (result === null) {
         const checkPrice = await Price.findOne({
           where: { courseId },
           include: [{
             model: Sale,
+            required: true,
+          }, {
+            model: PreviewVideo,
+            where: { courseId },
             required: true,
           }],
         });
@@ -157,6 +165,9 @@ module.exports.getAll = async (req, res) => {
       const { discountPercentage, saleEndDate } = resultData.Sale.dataValues;
       const { Sidebars, downloadableResources } = resultData.Sale;
 
+      const videoData = resultData.PreviewVideo.dataValues;
+      fullResponse.previewVideo = helper.videoDBtoAPI(videoData);
+
       const priceData = {
         courseId,
         basePrice,
@@ -166,8 +177,7 @@ module.exports.getAll = async (req, res) => {
       }
       fullResponse.price = helper.priceDBtoAPI(priceData);
 
-      // console.log(downloadableResources);
-      const data = {
+      const sidebarData = {
         courseId,
         fullLifetimeAccess: false,
         assignments: false,
@@ -177,22 +187,11 @@ module.exports.getAll = async (req, res) => {
       if (Sidebars) {
         for (let i = 0; i < Sidebars.length; i++) {
           const currentContent = Sidebars[i].dataValues.contentType;
-          data[currentContent] = true;
+          sidebarData[currentContent] = true;
         }
       }
-      fullResponse.sidebar = helper.sidebarDBtoAPI(data);
+      fullResponse.sidebar = helper.sidebarDBtoAPI(sidebarData);
 
-      return PreviewVideo.findOne({
-        where: { courseId },
-      });
-    })
-    .then((result) => {
-      if (result === null) {
-        throw Error('Database does not contain requested record.');
-      }
-      const data = result.dataValues;
-      // console.log('Preview Video: ', data);
-      fullResponse.previewVideo = helper.videoDBtoAPI(data);
       const end = new Date();
       const timeElapsed = end - start;
       console.log('Time Elapsed: ', timeElapsed, 'ms');
@@ -218,7 +217,7 @@ module.exports.add = async (req, res) => {
     res.end();
   } else {
     await Sale.findOrCreate({ where: newDocument.sale })
-      .then(async (result, created) =>{
+      .then(async (result, created) => {
         if (created) {
           await SidebarSale.create(newDocument.junction)
         }

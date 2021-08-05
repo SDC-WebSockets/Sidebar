@@ -2,10 +2,11 @@ const { Sequelize, Model, DataTypes } = require('sequelize');
 
 const sequelize = new Sequelize('postgres://127.0.0.1:5432/sdc_sidebar', {
   benchmark: true,
-  logging: (sqlQuery, timing) => {
-    console.log(sqlQuery);
-    console.log('Query Time: ', timing, ' ms');
-  },
+  logging: false,
+  // logging: (sqlQuery, timing) => {
+  //   console.log(sqlQuery);
+  //   console.log('Query Time: ', timing, ' ms');
+  // },
 });
 
 class Sale extends Model { }
@@ -23,12 +24,12 @@ Sale.init({
   createdAt: false,
   updatedAt: false,
   tableName: 'sale',
-  indexes: [
-    {
-      unique: true,
-      fields: ['sale_id']
-    }
-  ],
+  // indexes: [
+  //   {
+  //     unique: true,
+  //     fields: ['sale_id']
+  //   }
+  // ],
 });
 
 class Price extends Model { }
@@ -55,12 +56,12 @@ Price.init({
   createdAt: false,
   updatedAt: false,
   tableName: 'price',
-  indexes: [
-    {
-      unique: true,
-      fields: ['courseId']
-    }
-  ],
+  // indexes: [
+  //   {
+  //     unique: true,
+  //     fields: ['courseId']
+  //   }
+  // ],
 });
 
 class PreviewVideo extends Model { }
@@ -77,12 +78,12 @@ PreviewVideo.init({
   createdAt: false,
   updatedAt: false,
   tableName: 'video',
-  indexes: [
-    {
-      unique: true,
-      fields: ['courseId']
-    }
-  ],
+  // indexes: [
+  //   {
+  //     unique: true,
+  //     fields: ['courseId']
+  //   }
+  // ],
 });
 
 class Sidebar extends Model { }
@@ -132,14 +133,16 @@ SidebarSale.init({
   createdAt: false,
   updatedAt: false,
   tableName: 'sidebar_sale',
-  indexes: [
-    {
-      unique: false,
-      fields: ['id']
-    }
-  ],
+  // indexes: [
+  //   {
+  //     unique: false,
+  //     fields: ['sale_id']
+  //   }
+  // ],
 });
 
+Price.hasOne(PreviewVideo, { foreignKey: 'courseId', targetKey: 'courseId', onDelete: 'CASCADE' });
+PreviewVideo.belongsTo(Price, { foreignKey: 'courseId', targetKey: 'courseId', onDelete: 'CASCADE' });
 Sale.hasMany(Price, { foreignKey: 'sale_id', targetKey: 'sale_id', onDelete: 'CASCADE' });
 Price.belongsTo(Sale, { foreignKey: 'sale_id', targetKey: 'sale_id', onDelete: 'CASCADE' });
 Sale.belongsToMany(Sidebar, {
