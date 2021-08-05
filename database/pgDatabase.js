@@ -1,6 +1,6 @@
 const { Sequelize, Model, DataTypes } = require('sequelize');
 
-const sequelize = new Sequelize('postgres://127.0.0.1:5432/SDCsidebar', {
+const sequelize = new Sequelize('postgres://127.0.0.1:5432/sdc_sidebar', {
   benchmark: true,
   logging: (sqlQuery, timing) => {
     console.log(sqlQuery);
@@ -17,10 +17,6 @@ Sale.init({
   },
   discountPercentage: DataTypes.INTEGER,
   saleEndDate: DataTypes.BIGINT,
-  saleOngoing: {
-    type: DataTypes.BOOLEAN,
-    defaultValue: false,
-  },
   downloadableResources: DataTypes.INTEGER,
 }, {
   sequelize,
@@ -45,10 +41,10 @@ Price.init({
   basePrice: DataTypes.INTEGER,
   sale_id: {
     type: DataTypes.INTEGER,
-    references: {
-      model: Sale,
-      key: 'sale_id'
-    },
+    // references: {
+    //   model: Sale,
+    //   key: 'sale_id'
+    // },
   },
   saleOngoing: {
     type: DataTypes.BOOLEAN,
@@ -128,7 +124,7 @@ SidebarSale.init({
     type: DataTypes.INTEGER,
     references: {
       model: Sidebar,
-      key: 'content_id',
+      key: 'content_id'
     },
   },
 }, {
@@ -139,9 +135,23 @@ SidebarSale.init({
   indexes: [
     {
       unique: false,
-      fields: ['sale_id']
+      fields: ['id']
     }
   ],
+});
+
+Sale.hasMany(Price, { foreignKey: 'sale_id', targetKey: 'sale_id', onDelete: 'CASCADE' });
+Price.belongsTo(Sale, { foreignKey: 'sale_id', targetKey: 'sale_id', onDelete: 'CASCADE' });
+Sale.belongsToMany(Sidebar, {
+  through: SidebarSale,
+  otherKey: 'sale_id',
+  foreignKey: 'content_id',
+});
+Sidebar.belongsToMany(Sale, {
+  through: SidebarSale,
+  as: 'sidebar',
+  foreignKey: 'sale_id',
+  otherKey: 'content_id',
 });
 
 const openConn = () => sequelize.authenticate()
@@ -180,5 +190,7 @@ const closeConn = () => sequelize.close()
 module.exports.Price = Price;
 module.exports.PreviewVideo = PreviewVideo;
 module.exports.Sidebar = Sidebar;
+module.exports.Sale = Sale;
+module.exports.SidebarSale = SidebarSale;
 module.exports.openConn = openConn;
 module.exports.closeConn = closeConn;

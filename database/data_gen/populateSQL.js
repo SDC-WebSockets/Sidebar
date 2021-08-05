@@ -3,7 +3,7 @@ const { Pool } = require('pg');
 
 const pool = new Pool({
   host: 'localhost',
-  database: 'SDCsidebar',
+  database: 'sdc_sidebar',
 });
 
 const pricePath = path.join(`${__dirname}/priceData.csv`);

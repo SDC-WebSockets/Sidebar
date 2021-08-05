@@ -82,7 +82,6 @@ const createSidebarCSV = () => {
   sidebarStream.write(`1,fullLifetimeAccess\n`);
   sidebarStream.write(`2,assignments\n`);
   sidebarStream.write(`3,certificateOfCompletion\n`);
-  sidebarStream.write(`4,downloadableResources\n`);
 
   sidebarStream.end();
   console.log('Completed Sidebar Writing.');
@@ -161,16 +160,11 @@ const generateJunctionTable = async (numberOfCourses, maxSaleTypes) => {
     junctionStream.write(`${id},3,1\n`);
     id++;
   }
-  if (downloadableResources) {
-    junctionStream.write(`${id},4,1\n`);
-    id++;
-  }
 
   for (let i = 2; i <= maxSaleTypes; i += 1) {
     fullLifetimeAccess = !!weightedTrueGenerator(70);
     assignments = weightedTrueGenerator(70);
     certificateOfCompletion = weightedTrueGenerator(90);
-    downloadableResources = weightedTrueGenerator(90);
 
     if (fullLifetimeAccess) {
       junctionStream.write(`${id},1,${i}\n`);
@@ -182,10 +176,6 @@ const generateJunctionTable = async (numberOfCourses, maxSaleTypes) => {
     }
     if (certificateOfCompletion) {
       junctionStream.write(`${id},3,${i}\n`);
-      id++;
-    }
-    if (downloadableResources) {
-      junctionStream.write(`${id},4,${i}\n`);
       id++;
     }
   }
