@@ -68,16 +68,32 @@ module.exports.getSidebar = async (req, res) => {
     where: { courseId },
     include: [{
       model: Sale,
-      include: [Sidebar],
+      include: [{
+        model: Sidebar,
+        required: true,
+      }],
       required: true,
     }],
   })
-    .then((result) => {
+    .then(async (result) => {
+      console.log(result);
+      let resultData = {};
       if (result === null) {
-        throw Error('Database does not contain requested record.');
+        const checkPrice = await Price.findOne({
+          where: { courseId },
+          include: [{
+            model: Sale,
+            required: true,
+          }],
+        });
+        if (checkPrice === null) {
+          throw Error('Database does not contain requested record.');
+        }
+        resultData = checkPrice.dataValues;
+      } else {
+        resultData = result.dataValues;
       }
-      const { courseId } = result.dataValues;
-      const { Sidebars, downloadableResources } = result.dataValues.Sale;
+      const { Sidebars, downloadableResources } = resultData.Sale;
       const data = {
         courseId,
         fullLifetimeAccess: false,
@@ -85,9 +101,11 @@ module.exports.getSidebar = async (req, res) => {
         certificateOfCompletion: false,
         downloadableResources,
       };
-      for (let i = 0; i < Sidebars.length; i++) {
-        const currentContent = Sidebars[i].dataValues.contentType;
-        data[currentContent] = true;
+      if (Sidebars) {
+        for (let i = 0; i < Sidebars.length; i++) {
+          const currentContent = Sidebars[i].dataValues.contentType;
+          data[currentContent] = true;
+        }
       }
       res.send(helper.sidebarDBtoAPI(data));
     })
@@ -99,7 +117,7 @@ module.exports.getSidebar = async (req, res) => {
 
 // Read
 module.exports.getAll = async (req, res) => {
-  console.log('GET request received at /sidebar/all.');
+  console.log('GET request received at /sidebar/all.', req.query);
   let { courseId } = req.query;
   if (courseId === undefined) {
     courseId = 1;
@@ -110,17 +128,34 @@ module.exports.getAll = async (req, res) => {
     where: { courseId },
     include: [{
       model: Sale,
-      include: [Sidebar],
+      include: [{
+        model: Sidebar,
+        required: true,
+      }],
       required: true,
     }],
   })
-    .then((result) => {
+    .then(async (result) => {
+      console.log(result);
+      let resultData = {};
       if (result === null) {
-        throw Error('Database does not contain requested record.');
+        const checkPrice = await Price.findOne({
+          where: { courseId },
+          include: [{
+            model: Sale,
+            required: true,
+          }],
+        });
+        if (checkPrice === null) {
+          throw Error('Database does not contain requested record.');
+        }
+        resultData = checkPrice.dataValues;
+      } else {
+        resultData = result.dataValues;
       }
-      const { courseId, basePrice, saleOngoing } = result.dataValues;
-      const { discountPercentage, saleEndDate } = result.dataValues.Sale.dataValues;
-      const { Sidebars, downloadableResources } = result.dataValues.Sale;
+      const { basePrice, saleOngoing } = resultData;
+      const { discountPercentage, saleEndDate } = resultData.Sale.dataValues;
+      const { Sidebars, downloadableResources } = resultData.Sale;
 
       const priceData = {
         courseId,
@@ -139,9 +174,11 @@ module.exports.getAll = async (req, res) => {
         certificateOfCompletion: false,
         downloadableResources,
       };
-      for (let i = 0; i < Sidebars.length; i++) {
-        const currentContent = Sidebars[i].dataValues.contentType;
-        data[currentContent] = true;
+      if (Sidebars) {
+        for (let i = 0; i < Sidebars.length; i++) {
+          const currentContent = Sidebars[i].dataValues.contentType;
+          data[currentContent] = true;
+        }
       }
       fullResponse.sidebar = helper.sidebarDBtoAPI(data);
 
