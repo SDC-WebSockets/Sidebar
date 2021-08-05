@@ -28,14 +28,14 @@ const seedPSQL = async () => {
         const createTables = `
           DROP TABLE IF EXISTS sale CASCADE;
           CREATE TABLE sale(
-            sale_id SERIAL PRIMARY KEY,
+            sale_id SERIAL PRIMARY KEY NOT NULL,
             "discountPercentage" INTEGER,
             "saleEndDate" BIGINT,
             "downloadableResources" INTEGER
           );
           DROP TABLE IF EXISTS price;
           CREATE TABLE price(
-            "courseId" SERIAL PRIMARY KEY,
+            "courseId" SERIAL PRIMARY KEY NOT NULL,
             "basePrice" INTEGER,
             sale_id INTEGER,
             "saleOngoing" BOOLEAN default false,
@@ -43,18 +43,18 @@ const seedPSQL = async () => {
           );
           DROP TABLE IF EXISTS video;
           CREATE TABLE video(
-            "courseId" SERIAL PRIMARY KEY,
+            "courseId" SERIAL PRIMARY KEY NOT NULL,
             "videoImgUrl" VARCHAR(30),
             "videoUrl" VARCHAR(30)
           );
           DROP TABLE IF EXISTS sidebar CASCADE;
           CREATE TABLE sidebar(
-            content_id SERIAL PRIMARY KEY,
+            content_id SERIAL PRIMARY KEY NOT NULL,
             "contentType" VARCHAR(30)
           );
           DROP TABLE IF EXISTS sidebar_sale;
           CREATE TABLE sidebar_sale(
-            "id" SERIAL PRIMARY KEY,
+            "id" SERIAL PRIMARY KEY NOT NULL,
             content_id INTEGER REFERENCES sidebar ON DELETE CASCADE,
             sale_id INTEGER REFERENCES sale ON DELETE CASCADE
           );`;
