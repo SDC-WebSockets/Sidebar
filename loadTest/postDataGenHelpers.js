@@ -15,7 +15,7 @@ const createPricing = (courseId) => {
   const saleNumOfDays = Math.floor(Math.random() * maxSaleDays);
   const now = Date.now();
   const msPerDay = 24 * 60 * 60 * 1000;
-  const saleEndDate = now + saleNumOfDays * msPerDay;
+  const saleEndDate = Date(now + saleNumOfDays * msPerDay);
 
   const saleOngoing = weightedTrueGenerator(30);
 

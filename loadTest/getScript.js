@@ -1,26 +1,28 @@
 import http from 'k6/http';
 import { check } from 'k6';
-import { URL } from 'https://jslib.k6.io/url/1.0.0/index.js';
 
 export let options = {
   scenarios: {
     constant_request_rate: {
       executor: 'constant-arrival-rate',
-      rate: 10 ** 3,
+      rate: 10 ** 2 * 2.5,
       timeUnit: '1s',
-      duration: '30s',
-      preAllocatedVUs: 100,
+      duration: '2m',
+      preAllocatedVUs: 1000,
       maxVUs: 12500,
+      gracefulStop: '3m',
     }
   },
 };
 
 export default function () {
-  const randCourseID = Math.floor(Math.random() * 10 ** 7);
-  const getUrl = new URL('http://127.0.0.1:3004/sidebar/all');
-  getUrl.searchParams.append('courseId', randCourseID);
-  const res = http.get(getUrl.toString());
+  const params = {
+    timeout:'90s',
+  }
+  const randCourseID = 9 * 10 ** 6 + Math.floor(Math.random() * 10 ** 6);
+  const res = http.get(`http://localhost:3004/sidebar/all?courseId=${randCourseID}`, params);
   check(res, {
     'is status 200': (r) => r.status === 200,
+    'status is 404': (r) => r.status === 404,
   });
 };
