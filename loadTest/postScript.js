@@ -7,12 +7,12 @@ export let options = {
   scenarios: {
     constant_request_rate: {
       executor: 'constant-arrival-rate',
-      rate: 10 ** 1,
+      rate: 10 ** 0 *5,
       timeUnit: '1s',
-      duration: '1s',
-      preAllocatedVUs: 100,
-      gracefulStop: '3m',
-      maxVUs: 2500,
+      duration: '2m',
+      preAllocatedVUs: 1000,
+      gracefulStop: '5m',
+      maxVUs: 12500,
     }
   },
 };
@@ -23,6 +23,6 @@ export default function () {
   const res = http.post(postUrl, JSON.stringify(newPost), { headers: { 'Content-Type': 'application/json' } });
     check(res, {
     'is status 201?': (r) => r.status === 201,
-    'status is 404': (r) => r.status === 404,
+    'status is 400': (r) => r.status === 400,
   });
 };

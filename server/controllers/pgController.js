@@ -217,12 +217,12 @@ module.exports.add = async (req, res) => {
     res.end();
   } else {
     await Sale.findOrCreate({ where: newDocument.sale })
-      .then(async (result) => {
+      .then((result) => {
         let { sale_id } = result[0].dataValues;
         const created = result[1];
-        console.log(result)
+        console.log(sale_id);
         if (created) {
-          await SidebarSale.bulkCreate(newDocument.junction);
+          SidebarSale.bulkCreate(newDocument.junction);
         }
         newDocument.price.sale_id = sale_id;
         return Price.findOrCreate({ where: newDocument.price })
