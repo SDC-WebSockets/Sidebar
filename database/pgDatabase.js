@@ -12,8 +12,8 @@ const sequelize = new Sequelize('postgres://127.0.0.1:5432/sdc_sidebar', {
 class Sale extends Model { }
 Sale.init({
   sale_id: {
-    type: DataTypes.INTEGER,
-    unique: true,
+    type: DataTypes.UUID,
+    // unique: true,
     primaryKey: true,
   },
   discountPercentage: DataTypes.INTEGER,
@@ -99,12 +99,12 @@ Sidebar.init({
   createdAt: false,
   updatedAt: false,
   tableName: 'sidebar',
-  indexes: [
-    {
-      unique: true,
-      fields: ['content_id']
-    }
-  ],
+  // indexes: [
+  //   {
+  //     unique: true,
+  //     fields: ['content_id']
+  //   }
+  // ],
 });
 
 class SidebarSale extends Model { }
@@ -159,23 +159,23 @@ Sidebar.belongsToMany(Sale, {
 const openConn = () => sequelize.authenticate()
   .then(() => {
     console.log('DB connection successful.');
-    return Price.sync({ logging: false });
+    return Price.sync({ logging: true });
   })
   .then(() => {
     console.log('The table for the Price model was synced!');
-    return PreviewVideo.sync({ logging: false });
+    return PreviewVideo.sync({ logging: true });
   })
   .then(() => {
     console.log('The table for the Preview Video model was synced!');
-    return Sidebar.sync({ logging: false });
+    return Sidebar.sync({ logging: true });
   })
   .then(() => {
     console.log('The table for the Sidebar model was synced!');
-    return Sale.sync({ logging: false });
+    return Sale.sync({ logging: true });
   })
   .then(() => {
     console.log('The table for the Sale model was synced!');
-    return SidebarSale.sync({ logging: false });
+    return SidebarSale.sync({ logging: true });
   })
   .then(() => {
     console.log('All models were synchronized successfully.');

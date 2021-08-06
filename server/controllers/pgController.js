@@ -224,7 +224,7 @@ module.exports.add = async (req, res) => {
         return Price.findOrCreate({ where: newDocument.price })
       })
       .then((result) => {
-        const created = result[1]
+        const created = result[1];
         if (!created) {
           throw Error('courseId already exists.');
         }

@@ -25,25 +25,20 @@ const seedPSQL = async () => {
     .then((client) => client.query('SELECT NOW()')
       .then((result) => {
         console.log('DB connected at ', result.rows[0].now);
-        const createTables = `
+        const createTables = `CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
           DROP TABLE IF EXISTS sale CASCADE;
           CREATE TABLE sale(
-            sale_id SERIAL PRIMARY KEY NOT NULL,
+            sale_id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
             "discountPercentage" INTEGER,
             "saleEndDate" BIGINT,
             "downloadableResources" INTEGER
-          ) PARTITION BY RANGE (sale_id);
-          CREATE TABLE  sale_50k PARTITION OF sale FOR VALUES FROM (0) TO (500000);
-          CREATE TABLE  sale_100k PARTITION OF sale FOR VALUES FROM (500000) TO (1000000);
-          CREATE TABLE  sale_150k PARTITION OF sale FOR VALUES FROM (1000000) TO (1500000);
-          CREATE TABLE  sale_200k PARTITION OF sale FOR VALUES FROM (1500000) TO (2000000);
-          CREATE TABLE  sale_250k PARTITION OF sale FOR VALUES FROM (2000000) TO (2500000);
+          );
 
           DROP TABLE IF EXISTS price;
           CREATE TABLE price(
             "courseId" SERIAL PRIMARY KEY NOT NULL,
             "basePrice" INTEGER,
-            sale_id INTEGER,
+            sale_id UUID,
             "saleOngoing" BOOLEAN default false,
             FOREIGN KEY (sale_id) REFERENCES sale (sale_id) ON DELETE CASCADE
           ) PARTITION BY RANGE ("courseId");
@@ -87,13 +82,17 @@ const seedPSQL = async () => {
           CREATE TABLE sidebar_sale(
             "id" SERIAL PRIMARY KEY NOT NULL,
             content_id INTEGER REFERENCES sidebar ON DELETE CASCADE,
-            sale_id INTEGER REFERENCES sale ON DELETE CASCADE
+            sale_id UUID REFERENCES sale ON DELETE CASCADE
           ) PARTITION BY RANGE (id);
           CREATE TABLE  sidebarsale_1m PARTITION OF sidebar_sale FOR VALUES FROM (0) TO (1000000);
           CREATE TABLE  sidebarsale_2m PARTITION OF sidebar_sale FOR VALUES FROM (1000000) TO (2000000);
           CREATE TABLE  sidebarsale_3m PARTITION OF sidebar_sale FOR VALUES FROM (2000000) TO (3000000);
           CREATE TABLE  sidebarsale_4m PARTITION OF sidebar_sale FOR VALUES FROM (3000000) TO (4000000);
-          CREATE TABLE  sidebarsale_5m PARTITION OF sidebar_sale FOR VALUES FROM (4000000) TO (5000000);`;
+          CREATE TABLE  sidebarsale_5m PARTITION OF sidebar_sale FOR VALUES FROM (4000000) TO (5000000);
+          CREATE TABLE  sidebarsale_6m PARTITION OF sidebar_sale FOR VALUES FROM (5000000) TO (6000000);
+          CREATE TABLE  sidebarsale_7m PARTITION OF sidebar_sale FOR VALUES FROM (6000000) TO (7000000);
+          CREATE TABLE  sidebarsale_8m PARTITION OF sidebar_sale FOR VALUES FROM (7000000) TO (8000000);
+          CREATE TABLE  sidebarsale_9m PARTITION OF sidebar_sale FOR VALUES FROM (8000000) TO (9000000);`;
         return client.query(createTables);
       })
       .then(() => {

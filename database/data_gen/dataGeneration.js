@@ -1,5 +1,6 @@
 const fs = require('fs');
 const path = require('path');
+const uuid = require('uuid');
 
 const pricePath = path.join(`${__dirname}/priceData.csv`);
 const salePath = path.join(`${__dirname}/saleData.csv`);
@@ -9,15 +10,17 @@ const junctionPath = path.join(`${__dirname}/junctionTable.csv`);
 
 const weightedTrueGenerator = (percentageChance) => Math.random() * 100 < percentageChance;
 
+const sale_ids = [uuid.v4()];
+
 const course1 = {
   price: {
     courseId: 1,
     basePrice: 90,
-    sale_id: 1,
+    sale_id: sale_ids[0],
     saleOngoing: false,
   },
   sale: {
-    sale_id: 1,
+    sale_id: sale_ids[0],
     discountPercentage: 25,
     saleEndDate: 950400505,
     downloadableResources: 23,
@@ -35,7 +38,8 @@ const course1 = {
     videoUrl: 'video/1.mp4#116378',
   },
 };
-const createPricing = (courseId, maxSaleTypes) => {
+
+const createPricing = (courseId) => {
   const minPrice = 50;
   //  the calculation: (range * multiplesOf) + minPrice would give you the maxPrice = 150
   const range = 20;
@@ -44,7 +48,8 @@ const createPricing = (courseId, maxSaleTypes) => {
 
   const saleOngoing = weightedTrueGenerator(30);
 
-  const sale_id = Math.ceil(Math.random() * maxSaleTypes);
+  const saleIndex = Math.ceil(Math.random() * sale_ids.length);
+  const sale_id = sale_ids[saleIndex];
 
   const priceData = [courseId, basePrice, sale_id, saleOngoing];
 
@@ -54,7 +59,9 @@ const createPricing = (courseId, maxSaleTypes) => {
 const createSale = (sale_id) => {
   const maxDiscount = 85;
   const minDiscount = 5;
-  const discountPercentage = Math.floor(Math.random() * (maxDiscount - minDiscount)) + minDiscount;
+  const multiplesOf = 5;
+  const range = (maxDiscount - minDiscount)/multiplesOf
+  const discountPercentage = Math.floor(Math.random() * range) * multiplesOf + minDiscount;
 
   const maxSaleDays = 30;
   const saleNumOfDays = Math.floor(Math.random() * maxSaleDays);
@@ -87,7 +94,7 @@ const createSidebarCSV = () => {
   console.log('Completed Sidebar Writing.');
 }
 
-const generatePriceData = async (numberOfCourses, maxSaleTypes) => {
+const generatePriceData = async (numberOfCourses) => {
   console.log(`Generating ${numberOfCourses} Price records`);
   const priceStream = fs.createWriteStream(pricePath);
   const priceKeys = 'courseId,basePrice,sale_id,saleOngoing';
@@ -98,7 +105,7 @@ const generatePriceData = async (numberOfCourses, maxSaleTypes) => {
   priceStream.write(`${courseId},${basePrice},${sale_id},${saleOngoing}\n`);
 
   for (let i = 2; i <= numberOfCourses; i += 1) {
-    const newPrice = createPricing(i, maxSaleTypes);
+    const newPrice = createPricing(i);
     priceStream.write(`${newPrice}\n`);
   }
   priceStream.end();
@@ -116,7 +123,9 @@ const generateSaleData = async (maxSaleTypes) => {
   priceStream.write(`${sale_id},${discountPercentage},${saleEndDate},${downloadableResources}\n`);
 
   for (let i = 2; i <= maxSaleTypes; i += 1) {
-    const newPrice = createSale(i);
+    const sale_id = uuid.v4();
+    sale_ids.push(sale_id);
+    const newPrice = createSale(sale_id);
     priceStream.write(`${newPrice}\n`);
   }
   priceStream.end();
@@ -139,7 +148,7 @@ const generateVideoData = async (numberOfCourses) => {
   console.log('Completed Video Writing.');
 };
 
-const generateJunctionTable = async (numberOfCourses, maxSaleTypes) => {
+const generateJunctionTable = async (numberOfCourses) => {
   console.log(`Generating Junction Table`);
   const junctionStream = fs.createWriteStream(junctionPath);
   const junctionKeys = 'id,content_id,sale_id';
@@ -148,34 +157,23 @@ const generateJunctionTable = async (numberOfCourses, maxSaleTypes) => {
   let {
     courseId, fullLifetimeAccess, assignments, certificateOfCompletion, downloadableResources,
   } = course1.sidebar;
-  if (fullLifetimeAccess) {
-    junctionStream.write(`${id},1,1\n`);
-    id++;
-  }
-  if (assignments) {
-    junctionStream.write(`${id},2,1\n`);
-    id++;
-  }
-  if (certificateOfCompletion) {
-    junctionStream.write(`${id},3,1\n`);
-    id++;
-  }
 
-  for (let i = 2; i <= maxSaleTypes; i += 1) {
+  for (let i = 1; i < sale_ids.length; i += 1) {
+    const currSaleId = sale_ids[i];
     fullLifetimeAccess = !!weightedTrueGenerator(70);
     assignments = weightedTrueGenerator(70);
     certificateOfCompletion = weightedTrueGenerator(90);
 
     if (fullLifetimeAccess) {
-      junctionStream.write(`${id},1,${i}\n`);
+      junctionStream.write(`${id},1,${currSaleId}\n`);
       id++;
     }
     if (assignments) {
-      junctionStream.write(`${id},2,${i}\n`);
+      junctionStream.write(`${id},2,${currSaleId}\n`);
       id++;
     }
     if (certificateOfCompletion) {
-      junctionStream.write(`${id},3,${i}\n`);
+      junctionStream.write(`${id},3,${currSaleId}\n`);
       id++;
     }
   }
@@ -185,11 +183,11 @@ const generateJunctionTable = async (numberOfCourses, maxSaleTypes) => {
 
 const dataGen = async (numberOfCourses, maxSaleTypes) => {
   console.log(`Generating ${numberOfCourses} course records and ${maxSaleTypes} sale types`);
-  createSidebarCSV();
+  // createSidebarCSV();
   generateSaleData(maxSaleTypes);
-  generatePriceData(numberOfCourses, maxSaleTypes);
-  generateVideoData(numberOfCourses);
-  generateJunctionTable(numberOfCourses, maxSaleTypes);
+  generatePriceData(numberOfCourses);
+  // generateVideoData(numberOfCourses);
+  generateJunctionTable(numberOfCourses);
 };
 
-dataGen(10 ** 7, 10 ** 6 * 1.5);
+dataGen(10 ** 7, 10 ** 6 * 2.5);
