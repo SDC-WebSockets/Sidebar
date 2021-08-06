@@ -170,16 +170,10 @@ module.exports.transformToDBformat = async (newDoc) => {
     attributes: ['sale_id'],
   });
   console.log(sale_id)
-  if (sale_id.length === 0) {
-    const currNumSaleTypes = await Sale.count();
-    const newSaleId = currNumSaleTypes + 1;
-    sale_id.unshift(newSaleId);
-  } else {
+  if (sale_id.length !== 0) {
     const exisitngSaleId = sale_id[0].dataValues.sale_id;
-    sale_id.unshift(exisitngSaleId);
+    dbSale.sale_id = exisitngSaleId;
   }
-  dbSale.sale_id = sale_id[0];
-  dbPrice.sale_id = sale_id[0];
 
   const inputSaleTypes = {
     discountPercentage: 'number',
