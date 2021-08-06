@@ -1,5 +1,5 @@
 const { Price, PreviewVideo, Sidebar, Sale, SidebarSale } = require('../../database/pgDatabase');
-
+const uuid = require('uuid');
 
 module.exports.priceDBtoAPI = (dbData) => {
   const { courseId, discountPercentage, saleOngoing } = dbData;
@@ -169,10 +169,13 @@ module.exports.transformToDBformat = async (newDoc) => {
     },
     attributes: ['sale_id'],
   });
-  console.log(sale_id)
+  // console.log(sale_id)
   if (sale_id.length !== 0) {
-    const exisitngSaleId = sale_id[0].dataValues.sale_id;
-    dbSale.sale_id = exisitngSaleId;
+    const existingSaleId = sale_id[0].dataValues.sale_id;
+    console.log(existingSaleId)
+    dbSale.sale_id = existingSaleId;
+  } else {
+    dbSale.sale_id = uuid.v4();
   }
 
   const inputSaleTypes = {
@@ -237,9 +240,7 @@ module.exports.transformToDBformat = async (newDoc) => {
   dbPrice.courseId = courseId;
   // console.log(dbPrice);
 
-  // *** look for next id# in junction table
-  const lastJunctionId = await SidebarSale.count();
-  let id = lastJunctionId + 1;
+  let id = uuid.v4();
   const dbContentTypes = {
     fullLifetimeAccess: 1,
     assignments: 2,
@@ -254,14 +255,14 @@ module.exports.transformToDBformat = async (newDoc) => {
     if (newSidebar[currKey]) {
       const newJunc = {
         id,
-        sale_id: sale_id[0],
+        sale_id: dbSale.sale_id,
         content_id: dbContentTypes[currKey],
       }
       dbJunction.push(newJunc);
-      id++;
+      id = uuid.v4();
     }
   }
-  console.log(dbJunction);
+  // console.log(dbJunction);
 
   const dbVideo = transformVideo(newPreviewVideo);
   if (dbVideo.courseId === undefined) {
@@ -338,8 +339,6 @@ module.exports.updatePriceAPItoDB = async (newPrice, courseId) => {
     const exisitngSaleId = sale_id[0].dataValues.sale_id;
     sale_id.unshift(exisitngSaleId);
   }
-  dbSale.sale_id = sale_id[0];
-  dbPrice.sale_id = sale_id[0];
 
   return {
     price: dbPrice,

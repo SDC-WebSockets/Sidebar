@@ -60,7 +60,7 @@ const createSale = (sale_id) => {
   const maxDiscount = 85;
   const minDiscount = 5;
   const multiplesOf = 5;
-  const range = (maxDiscount - minDiscount)/multiplesOf
+  const range = (maxDiscount - minDiscount) / multiplesOf
   const discountPercentage = Math.floor(Math.random() * range) * multiplesOf + minDiscount;
 
   const maxSaleDays = 30;
@@ -152,11 +152,25 @@ const generateJunctionTable = async (numberOfCourses) => {
   console.log(`Generating Junction Table`);
   const junctionStream = fs.createWriteStream(junctionPath);
   const junctionKeys = 'id,content_id,sale_id';
-  let id = 1;
+  let id = uuid.v4();
   junctionStream.write(`${junctionKeys}\n`);
   let {
     courseId, fullLifetimeAccess, assignments, certificateOfCompletion, downloadableResources,
   } = course1.sidebar;
+  if (fullLifetimeAccess) {
+    junctionStream.write(`${id},1,${sale_ids[0]}\n`);
+    id = uuid.v4();
+
+  }
+  if (assignments) {
+    junctionStream.write(`${id},2,${sale_ids[0]}\n`);
+    id = uuid.v4();
+
+  }
+  if (certificateOfCompletion) {
+    junctionStream.write(`${id},3,${sale_ids[0]}\n`);
+    id = uuid.v4();
+  }
 
   for (let i = 1; i < sale_ids.length; i += 1) {
     const currSaleId = sale_ids[i];
@@ -166,15 +180,15 @@ const generateJunctionTable = async (numberOfCourses) => {
 
     if (fullLifetimeAccess) {
       junctionStream.write(`${id},1,${currSaleId}\n`);
-      id++;
+      id = uuid.v4();
     }
     if (assignments) {
       junctionStream.write(`${id},2,${currSaleId}\n`);
-      id++;
+      id = uuid.v4();
     }
     if (certificateOfCompletion) {
       junctionStream.write(`${id},3,${currSaleId}\n`);
-      id++;
+      id = uuid.v4();
     }
   }
   junctionStream.end();

@@ -174,17 +174,21 @@ module.exports.add = async (req, res) => {
   const start = new Date();
   const newDocument = await helper.transformToDBformat(req.body);
   const newCourseId = newDocument.courseId;
-  console.log(newDocument);
+  // console.log(newDocument);
 
   if (typeof newCourseId !== 'number') {
     res.status(400).send('Sorry, invalid request: courseId is not a number');
     res.end();
   } else {
     await Sale.findOrCreate({ where: newDocument.sale })
-      .then(async (result, created) =>{
+      .then(async (result) => {
+        let { sale_id } = result[0].dataValues;
+        const created = result[1];
+        console.log(result)
         if (created) {
-          await SidebarSale.create(newDocument.junction)
+          await SidebarSale.bulkCreate(newDocument.junction);
         }
+        newDocument.price.sale_id = sale_id;
         return Price.findOrCreate({ where: newDocument.price })
       })
       .then((result) => {

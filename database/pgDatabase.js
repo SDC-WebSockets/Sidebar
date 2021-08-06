@@ -7,13 +7,15 @@ const sequelize = new Sequelize('postgres://127.0.0.1:5432/sdc_sidebar', {
     console.log('Query Time: ', timing, ' ms');
   },
 });
+const queryInterface = sequelize.getQueryInterface();
 
 class Sale extends Model { }
 Sale.init({
   sale_id: {
     type: DataTypes.UUID,
-    // unique: true,
+    unique: true,
     primaryKey: true,
+    defaultValue: Sequelize.UUIDV4,
   },
   discountPercentage: DataTypes.INTEGER,
   saleEndDate: DataTypes.BIGINT,
@@ -57,6 +59,7 @@ Price.init({
   tableName: 'price',
   indexes: [
     {
+      name:'price_course_id',
       unique: true,
       fields: ['courseId']
     }
@@ -79,6 +82,7 @@ PreviewVideo.init({
   tableName: 'video',
   indexes: [
     {
+      name: 'video_course_id',
       unique: true,
       fields: ['courseId']
     }
@@ -98,12 +102,12 @@ Sidebar.init({
   createdAt: false,
   updatedAt: false,
   tableName: 'sidebar',
-  // indexes: [
-  //   {
-  //     unique: true,
-  //     fields: ['content_id']
-  //   }
-  // ],
+  indexes: [
+    {
+      unique: true,
+      fields: ['content_id']
+    }
+  ],
 });
 
 class SidebarSale extends Model { }
@@ -134,8 +138,9 @@ SidebarSale.init({
   tableName: 'sidebar_sale',
   indexes: [
     {
+      name: 'sidebar_sale_sale_id',
       unique: false,
-      fields: ['id']
+      fields: ['sale_id']
     }
   ],
 });
@@ -157,23 +162,37 @@ Sidebar.belongsToMany(Sale, {
 const openConn = () => sequelize.authenticate()
   .then(() => {
     console.log('DB connection successful.');
-    return Price.sync({ logging: true });
+    return Price.sync({ logging: false });
+  })
+  .catch((error) => {
+    if (error.message === 'relation "price_course_id" already exists') {
+      queryInterface.removeIndex('price', 'price_course_id');
+      return Price.sync({ logging: false });
+    }
+    throw error;
   })
   .then(() => {
     console.log('The table for the Price model was synced!');
-    return PreviewVideo.sync({ logging: true });
+    return PreviewVideo.sync({ logging: false });
+  })
+  .catch((error) => {
+    if (error.message === 'relation "video_course_id" already exists') {
+      queryInterface.removeIndex('video', 'video_course_id');
+      return PreviewVideo.sync({ logging: false });
+    }
+    throw error;
   })
   .then(() => {
     console.log('The table for the Preview Video model was synced!');
-    return Sidebar.sync({ logging: true });
+    return Sidebar.sync({ logging: false });
   })
   .then(() => {
     console.log('The table for the Sidebar model was synced!');
-    return Sale.sync({ logging: true });
+    return Sale.sync({ logging: false });
   })
   .then(() => {
     console.log('The table for the Sale model was synced!');
-    return SidebarSale.sync({ logging: true });
+    return SidebarSale.sync({ logging: false });
   })
   .then(() => {
     console.log('All models were synchronized successfully.');
