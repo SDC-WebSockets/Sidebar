@@ -64,7 +64,7 @@ const seedPSQL = async () => {
             "courseId" SERIAL,
             "videoImgUrl" VARCHAR(30),
             "videoUrl" VARCHAR(30),
-            CONSTRAINT "price_key" PRIMARY KEY ("courseId")
+            CONSTRAINT "video_id_key" PRIMARY KEY ("courseId")
           ) PARTITION BY RANGE ("courseId");
           CREATE TABLE  video_1m PARTITION OF video FOR VALUES FROM (0) TO (1000000);
           CREATE TABLE  video_2m PARTITION OF video FOR VALUES FROM (1000000) TO (2000000);
@@ -104,15 +104,6 @@ const seedPSQL = async () => {
         return createIndexQuery('sidebar', 'content_id');
       })
       .then(() => {
-        console.log('Seeding Video');
-        return copyCSV(videoPath, 'video');
-      })
-      .then(() => client.query('SELECT NOW()'))
-      .then((result) => {
-        console.log('Finished seeding video at ', result.rows[0].now);
-        return createIndexQuery('video', 'courseId');
-      })
-      .then(() => {
         console.log('Seeding sale');
         return copyCSV(salePath, 'sale');
       })
@@ -129,6 +120,15 @@ const seedPSQL = async () => {
       .then((result) => {
         console.log('Finished seeding price at ', result.rows[0].now);
         return createIndexQuery('price', 'courseId');
+      })
+      .then(() => {
+        console.log('Seeding Video');
+        return copyCSV(videoPath, 'video');
+      })
+      .then(() => client.query('SELECT NOW()'))
+      .then((result) => {
+        console.log('Finished seeding video at ', result.rows[0].now);
+        return createIndexQuery('video', 'courseId');
       })
       .then(() => {
         console.log('Seeding junction');
