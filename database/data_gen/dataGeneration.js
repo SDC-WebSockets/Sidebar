@@ -197,10 +197,10 @@ const generateJunctionTable = async (numberOfCourses) => {
 
 const dataGen = async (numberOfCourses, maxSaleTypes) => {
   console.log(`Generating ${numberOfCourses} course records and ${maxSaleTypes} sale types`);
-  // createSidebarCSV();
+  createSidebarCSV();
   generateSaleData(maxSaleTypes);
   generatePriceData(numberOfCourses);
-  // generateVideoData(numberOfCourses);
+  generateVideoData(numberOfCourses);
   generateJunctionTable(numberOfCourses);
 };
 
