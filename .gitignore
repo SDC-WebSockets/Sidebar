@@ -51,3 +51,6 @@ videoURLs.txt
 
 # New Relic file
 newrelic.js
+
+#EC2 PEM
+*.pem
