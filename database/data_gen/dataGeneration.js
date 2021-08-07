@@ -204,4 +204,10 @@ const dataGen = async (numberOfCourses, maxSaleTypes) => {
   generateJunctionTable(numberOfCourses);
 };
 
-dataGen(10 ** 7, 10 ** 6 * 2.5);
+// dataGen(10 ** 7, 10 ** 6 * 2.5);
+
+module.exports.junction = generateJunctionTable;
+module.exports.price = generatePriceData;
+module.exports.sale = generateSaleData;
+module.exports.video = generateVideoData;
+module.exports.sidebar = createSidebarCSV;
