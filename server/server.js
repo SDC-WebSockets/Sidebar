@@ -1,12 +1,10 @@
-/* eslint-disable no-console */
 const shrinkRay = require('shrink-ray-current');
 const express = require('express');
 const path = require('path');
 const cors = require('cors');
 const config = require('./config.js');
 const db = require('../database/database');
-const controller = require('./controllers/pgController'); // postgres
-// const controller = require('./controllers/cbController'); // couchbase
+const controller = require('./controllers/pgController');
 
 const app = express();
 
