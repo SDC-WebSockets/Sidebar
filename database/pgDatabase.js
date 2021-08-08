@@ -1,6 +1,7 @@
 const { Sequelize, Model, DataTypes } = require('sequelize');
+const pgconfig = require('./pg.config.js');
 
-const sequelize = new Sequelize('postgres://54.218.71.45:5432/sdc_sidebar', {
+const sequelize = new Sequelize(`postgres://${pgconfig.user}:${pgconfig.pw}@54.213.241.244:5432/sdc_sidebar`, {
   benchmark: true,
   logging: (sqlQuery, timing) => {
     console.log(sqlQuery);
