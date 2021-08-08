@@ -50,3 +50,8 @@ app.put('/sidebar/all', controller.update);
 app.delete('/sidebar/all', controller.delete);
 
 module.exports = app;
+
+app.get('/loaderio-b5ff1ab5cdd85f8a18e883ea59b6524b/', (req, res) => {
+  res.send('loaderio-b5ff1ab5cdd85f8a18e883ea59b6524b');
+  res.end();
+})
