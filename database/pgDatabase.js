@@ -44,10 +44,10 @@ Price.init({
   basePrice: DataTypes.INTEGER,
   sale_id: {
     type: DataTypes.INTEGER,
-    // references: {
-    //   model: Sale,
-    //   key: 'sale_id'
-    // },
+    references: {
+      model: Sale,
+      key: 'sale_id'
+    },
   },
   saleOngoing: {
     type: DataTypes.BOOLEAN,
@@ -150,8 +150,8 @@ Sale.hasMany(Price, { foreignKey: 'sale_id', targetKey: 'sale_id', onDelete: 'CA
 Price.belongsTo(Sale, { foreignKey: 'sale_id', targetKey: 'sale_id', onDelete: 'CASCADE' });
 Sale.belongsToMany(Sidebar, {
   through: SidebarSale,
-  otherKey: 'sale_id',
-  foreignKey: 'content_id',
+  foreignKey: 'sale_id',
+  otherKey: 'content_id',
 });
 Sidebar.belongsToMany(Sale, {
   through: SidebarSale,

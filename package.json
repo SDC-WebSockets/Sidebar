@@ -6,6 +6,7 @@
     "test": "jest --detectOpenHandles",
     "sdc-tests": "jest --detectOpenHandles --forceExit -- test/sdc-api.spec.js",
     "start": "node server/start.js",
+    "start-dev": "nodemon server/start.js",
     "build": "webpack --mode=production",
     "dev": "webpack --watch",
     "pop": "node database/populateDatabase.js",

@@ -99,11 +99,14 @@ module.exports.getSidebar = async (req, res) => {
 
 // Read
 module.exports.getAll = async (req, res) => {
-  console.log('GET request received at /sidebar/all.');
+  console.log('GET request received at /sidebar/all. ', req.query);
   let { courseId } = req.query;
   if (courseId === undefined) {
     courseId = 1;
+  } else {
+    courseId = parseInt(courseId);
   }
+
   const fullResponse = {};
   const start = new Date();
   await Price.findOne({
