@@ -3,7 +3,7 @@ const shrinkRay = require('shrink-ray-current');
 const express = require('express');
 const path = require('path');
 const cors = require('cors');
-// eslint-disable-next-line no-unused-vars
+const config = require('./config.js');
 const db = require('../database/database');
 const controller = require('./controllers/pgController'); // postgres
 // const controller = require('./controllers/cbController'); // couchbase
@@ -13,7 +13,9 @@ const app = express();
 app.use(shrinkRay());
 app.use(express.static(path.join(__dirname, '..', 'public')));
 app.use(express.json());
+const allowedOrigins = config.allowedOrigins;
 app.use(cors());
+app.use(cors({ origin: allowedOrigins }));
 
 app.get('*.js', (req, res, next) => {
   if (req.header('Accept-Encoding').includes('br')) {

@@ -5,7 +5,7 @@ const BrotliPlugin = require('brotli-webpack-plugin');
 const CompressionPlugin = require("compression-webpack-plugin");
 
 module.exports = {
-  mode: process.env.NODE_ENV || "development",
+  mode: process.env.NODE_ENV,
   entry: ['./client/index.jsx', './client/styles.css'],
   output: {
     filename: 'sidebar.js',
