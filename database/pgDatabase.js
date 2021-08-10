@@ -1,7 +1,11 @@
 const { Sequelize, Model, DataTypes } = require('sequelize');
 const pgconfig = require('./pg.config.js');
+const dotenv = require('dotenv');
+
+dotenv.config();
 
 console.log(`DB connect at ${process.env.NODE_ENV === 'production' ? pgconfig.production : pgconfig.dev}`);
+console.log(`${process.env.NODE_ENV}`);
 const sequelize = new Sequelize(`postgres://${process.env.NODE_ENV === 'production' ? pgconfig.production : pgconfig.dev}:5432/sdc_sidebar`, {
   benchmark: true,
   logging: (sqlQuery, timing) => {
