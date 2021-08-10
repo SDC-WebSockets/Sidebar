@@ -8,7 +8,7 @@ import { DateTime } from 'luxon';
 const host = process.env.PUBLIC_HOST || 'localhost';
 const port = process.env.PORT || 3004;
 const courseContentURL = process.env.COURSE_CONTENT_URL || 'localhost:9800';
-console.log('host: ', host);
+console.log('host: ', host, ' port: ', port);
 console.log(process.env.PUBLIC_HOST);
 
 export const Sidebar = () => {

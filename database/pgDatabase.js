@@ -1,7 +1,7 @@
 const { Sequelize, Model, DataTypes } = require('sequelize');
 const pgconfig = require('./pg.config.js');
 
-const sequelize = new Sequelize(`postgres://${pgconfig.user}:${pgconfig.pw}@54.213.241.244:5432/sdc_sidebar`, {
+const sequelize = new Sequelize(`postgres://${process.env.NODE_ENV === 'production' ? pgconfig.production : pgconfig.dev}:5432/sdc_sidebar`, {
   benchmark: true,
   logging: (sqlQuery, timing) => {
     console.log(sqlQuery);
@@ -60,7 +60,7 @@ Price.init({
   tableName: 'price',
   indexes: [
     {
-      name:'price_course_id',
+      name: 'price_course_id',
       unique: true,
       fields: ['courseId']
     }
@@ -162,7 +162,7 @@ Sidebar.belongsToMany(Sale, {
 
 const openConn = () => sequelize.authenticate()
   .then(() => {
-    console.log('DB connection successful.');
+    console.log(`DB connection at ${process.env.NODE_ENV === 'production'? pgconfig.production : pgconfig.dev } successful.`);
     return Price.sync({ logging: false });
   })
   .catch((error) => {
