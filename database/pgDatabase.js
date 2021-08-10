@@ -1,6 +1,7 @@
 const { Sequelize, Model, DataTypes } = require('sequelize');
 const pgconfig = require('./pg.config.js');
 
+console.log(`DB connect at ${process.env.NODE_ENV === 'production' ? pgconfig.production : pgconfig.dev}`);
 const sequelize = new Sequelize(`postgres://${process.env.NODE_ENV === 'production' ? pgconfig.production : pgconfig.dev}:5432/sdc_sidebar`, {
   benchmark: true,
   logging: (sqlQuery, timing) => {
@@ -162,7 +163,7 @@ Sidebar.belongsToMany(Sale, {
 
 const openConn = () => sequelize.authenticate()
   .then(() => {
-    console.log(`DB connection at ${process.env.NODE_ENV === 'production'? pgconfig.production : pgconfig.dev } successful.`);
+    console.log(`DB connection successful.`);
     return Price.sync({ logging: false });
   })
   .catch((error) => {
