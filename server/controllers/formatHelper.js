@@ -161,22 +161,22 @@ module.exports.transformToDBformat = async (newDoc) => {
   const dbJunction = [];
 
   // *** look up to see if type of sale exists.
-  const sale_id = await Sale.findAll({
-    where: {
-      discountPercentage: newPrice.discountPercentage,
-      saleEndDate: Date.parse(newPrice.saleEndDate),
-      downloadableResources: newSidebar.downloadableResources,
-    },
-    attributes: ['sale_id'],
-  });
-  // console.log(sale_id)
-  if (sale_id.length !== 0) {
-    const existingSaleId = sale_id[0].dataValues.sale_id;
-    console.log(existingSaleId)
-    dbSale.sale_id = existingSaleId;
-  } else {
+  // const sale_id = await Sale.findAll({
+  //   where: {
+  //     discountPercentage: newPrice.discountPercentage,
+  //     saleEndDate: Date.parse(newPrice.saleEndDate),
+  //     downloadableResources: newSidebar.downloadableResources,
+  //   },
+  //   attributes: ['sale_id'],
+  // });
+  // // console.log(sale_id)
+  // if (sale_id.length !== 0) {
+  //   const existingSaleId = sale_id[0].dataValues.sale_id;
+  //   console.log(existingSaleId)
+  //   dbSale.sale_id = existingSaleId;
+  // } else {
     dbSale.sale_id = uuid.v4();
-  }
+  // }
 
   const inputSaleTypes = {
     discountPercentage: 'number',
