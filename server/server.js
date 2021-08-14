@@ -2,7 +2,7 @@ const shrinkRay = require('shrink-ray-current');
 const express = require('express');
 const path = require('path');
 const cors = require('cors');
-const config = require('./config.js');
+// const config = require('./config.js');
 const db = require('../database/database');
 const controller = require('./controllers/pgController');
 
@@ -11,9 +11,9 @@ const app = express();
 app.use(shrinkRay());
 app.use(express.static(path.join(__dirname, '..', 'public')));
 app.use(express.json());
-const allowedOrigins = config.allowedOrigins;
+// const allowedOrigins = config.allowedOrigins;
 app.use(cors());
-app.use(cors({ origin: allowedOrigins }));
+// app.use(cors({ origin: allowedOrigins }));
 
 app.get('*.js', (req, res, next) => {
   if (req.header('Accept-Encoding').includes('br')) {
@@ -48,6 +48,9 @@ app.get('/sidebar/all', controller.getAll);
 app.put('/sidebar/all', controller.update);
 // Delete
 app.delete('/sidebar/all', controller.delete);
+
+// get all including course content
+app.get('/sidebar/allPlus', controller.allPlus);
 
 module.exports = app;
 

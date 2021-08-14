@@ -1,13 +1,9 @@
-/* eslint-disable react/button-has-type */
-/* eslint-disable import/prefer-default-export */
-/* eslint-disable prefer-destructuring */
-/* eslint-disable no-console */
-import React, { useState, useEffect } from 'react';
-import { DateTime } from 'luxon';
+// import React, { useState, useEffect } from 'react';
+// import { DateTime } from 'luxon';
 
 const host = process.env.PUBLIC_HOST || 'localhost';
 const port = process.env.PORT || 3004;
-const courseContentURL = process.env.COURSE_CONTENT_URL || 'localhost:9800';
+// const courseContentURL = process.env.COURSE_CONTENT_URL || 'localhost:9800';
 console.log('host: ', host, ' port: ', port);
 console.log(process.env.PUBLIC_HOST);
 
@@ -32,15 +28,15 @@ export const Sidebar = () => {
     currentCourse = window.location.pathname.match(regex)[0];
   }
 
-  const [courseId, setCourseId] = useState(currentCourse);
-  const [priceData, setPriceData] = useState();
-  const [previewVideoData, setPreviewVideoData] = useState();
-  const [sidebarData, setSidebarData] = useState();
-  const [courseData, setCourseData] = useState();
-  const [couponMenuOpen, setCouponMenuOpen] = useState(false);
-  const [offset, setOffset] = useState(0);
+  const [courseId, setCourseId] = React.useState(currentCourse);
+  const [priceData, setPriceData] = React.useState();
+  const [previewVideoData, setPreviewVideoData] = React.useState();
+  const [sidebarData, setSidebarData] = React.useState();
+  const [courseData, setCourseData] = React.useState();
+  const [couponMenuOpen, setCouponMenuOpen] = React.useState(false);
+  const [offset, setOffset] = React.useState(0);
 
-  useEffect(() => {
+  React.useEffect(() => {
     let mounted = true;
 
     // fetch(`http://${host}:${port}/price?courseId=${courseId}`)
@@ -61,36 +57,38 @@ export const Sidebar = () => {
     //   })
     //   .catch((error) => console.warn(`Error: ${error.message}`));
 
-    fetch(`http://${host}:${port}/sidebar/all?courseId=${courseId}`)
+    fetch(`http://${host}:${port}/sidebar/allPlus?courseId=${courseId}`)
       .then((response) => response.json())
       .then((data) => {
         console.log(data);
         const priceResponse = data.price;
         const previewVideoResponse = data.previewVideo;
         const sidebarResponse = data.sidebar;
+        const courseResponse = data.course;
         if (mounted) {
           setPriceData(priceResponse);
           setPreviewVideoData(previewVideoResponse);
           setSidebarData(sidebarResponse);
+          setCourseData(courseResponse);
         }
       })
       .catch((error) => console.warn(`Error: ${error.message}`));
 
-    fetch(`http://${courseContentURL}/course/item?courseId=${courseId}`)
-      .then((response) => response.json())
-      .then((data) => {
-        if (mounted) {
-          setCourseData(data);
-        }
-      })
-      .catch((error) => console.warn(`Error: ${error.message}`));
+    // fetch(`http://${courseContentURL}/course/item?courseId=${courseId}`)
+    //   .then((response) => response.json())
+    //   .then((data) => {
+    //     if (mounted) {
+    //       setCourseData(data);
+    //     }
+    //   })
+    //   .catch((error) => console.warn(`Error: ${error.message}`));
 
     return () => {
       mounted = false;
     };
   }, []);
 
-  useEffect(() => {
+  React.useEffect(() => {
     window.addEventListener('scroll', handleScroll);
   }, [offset]);
 
@@ -139,7 +137,7 @@ export const Sidebar = () => {
     ({
       totalArticles, totalLectures, totalQuizzes, totalExercises, courseLength,
     } = courseData);
-    courseLength = DateTime.fromISO(courseLength).toSeconds();
+    courseLength = luxon.DateTime.fromISO(courseLength).toSeconds();
     courseLength = Math.round((courseLength / 3600) * 2) / 2;
   }
 

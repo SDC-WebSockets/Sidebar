@@ -1,5 +1,10 @@
 const { Price, PreviewVideo, Sidebar, Sale, SidebarSale } = require('../../database/pgDatabase');
 const helper = require('./formatHelper.js');
+const dotenv = require('dotenv');
+const axios = require('axios');
+
+dotenv.config();
+const courseContentURL = process.env.COURSE_CONTENT_URL || 'localhost:9800';
 
 module.exports.getPrice = async (req, res) => {
   console.log('GET request received at /price.', req.query);
@@ -90,6 +95,84 @@ module.exports.getSidebar = async (req, res) => {
         data[currentContent] = true;
       }
       res.send(helper.sidebarDBtoAPI(data));
+    })
+    .catch((error) => {
+      console.warn(error);
+      res.status(404).send(error.message);
+    });
+};
+
+
+module.exports.allPlus = async (req, res) => {
+  console.log('GET request received at /sidebar/allPlus. ', req.query);
+  let { courseId } = req.query;
+  if (courseId === undefined) {
+    courseId = 1;
+  } else {
+    courseId = parseInt(courseId);
+  }
+
+  const fullResponse = {};
+  await Price.findOne({
+    where: { courseId },
+    include: [{
+      model: Sale,
+      include: [Sidebar],
+      required: true,
+    }],
+  })
+    .then((result) => {
+      if (result === null) {
+        throw Error('Database does not contain requested record.');
+      }
+      const { courseId, basePrice, saleOngoing } = result.dataValues;
+      const { discountPercentage, saleEndDate } = result.dataValues.Sale.dataValues;
+      const { Sidebars, downloadableResources } = result.dataValues.Sale;
+
+      const priceData = {
+        courseId,
+        basePrice,
+        discountPercentage,
+        saleEndDate,
+        saleOngoing,
+      }
+      fullResponse.price = helper.priceDBtoAPI(priceData);
+
+      // console.log(downloadableResources);
+      const data = {
+        courseId,
+        fullLifetimeAccess: false,
+        assignments: false,
+        certificateOfCompletion: false,
+        downloadableResources,
+      };
+      for (let i = 0; i < Sidebars.length; i++) {
+        const currentContent = Sidebars[i].dataValues.contentType;
+        data[currentContent] = true;
+      }
+      fullResponse.sidebar = helper.sidebarDBtoAPI(data);
+
+      return PreviewVideo.findOne({
+        where: { courseId },
+      });
+    })
+    .then((result) => {
+      if (result === null) {
+        throw Error('Database does not contain requested record.');
+      }
+      const data = result.dataValues;
+      // console.log('Preview Video: ', data);
+      fullResponse.previewVideo = helper.videoDBtoAPI(data);
+      return axios.get(`http://${courseContentURL}/course/item?courseId=${courseId}`)
+    })
+    .then ((response) => {
+      if (response.status !== 200) {
+        throw Error(response.data);
+      }
+
+      // console.log('course content response: ', response)
+      fullResponse.course = response.data;
+      res.send(fullResponse);
     })
     .catch((error) => {
       console.warn(error);
