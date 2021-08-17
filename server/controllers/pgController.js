@@ -165,10 +165,15 @@ module.exports.allPlus = async (req, res) => {
       fullResponse.previewVideo = helper.videoDBtoAPI(data);
       return axios.get(`http://${courseContentURL}/course/item?courseId=${courseId}`)
     })
+    .catch((error) => {
+      console.log('Deployed Course Content Issue');
+      console.warn(error.message);
+      return axios.get('https://charlotte-badger-course-content-sample-data.s3.eu-west-2.amazonaws.com/course.json');
+    })
     .then (async (response) => {
       if (response.status !== 200) {
         // throw Error(response.data);
-        fullResponse.course = await axios.get('https://charlotte-badger-course-content-sample-data.s3.eu-west-2.amazonaws.com/course.json');
+        fullResponse.course = {error: true}
       } else {
         fullResponse.course = response.data;
       }
